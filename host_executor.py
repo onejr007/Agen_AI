@@ -502,8 +502,254 @@ def send_telegram_reply(token: str, chat_id: int, reply: str, message_id: int = 
     status, body = requests_post_json(url_send, payload_plain, timeout=10)
     return status == 200
 
+# ============ Preferences & RAG Database Helpers ============
+def get_telegram_user_setting(chat_id: str, key: str) -> str:
+    """Retrieves a specific setting for a telegram chat from the database."""
+    try:
+        import mysql.connector
+        clean_url = DATABASE_URL.split("://", 1)[1]
+        user_pass, host_db = clean_url.split("@", 1)
+        user = user_pass.split(":", 1)[0]
+        password = user_pass.split(":", 1)[1] if ":" in user_pass else ""
+        host_port, db_name = host_db.split("/", 1)
+        host = host_port.split(":", 1)[0]
+        if host == "host.docker.internal":
+            host = "localhost"
+        port = int(host_port.split(":", 1)[1]) if ":" in host_port else 3306
+        
+        conn = mysql.connector.connect(
+            host=host,
+            port=port,
+            user=user,
+            password=password,
+            database=db_name
+        )
+        try:
+            cursor = conn.cursor()
+            # Ensure table exists
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS telegram_user_settings (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    chat_id VARCHAR(50),
+                    setting_key VARCHAR(100),
+                    setting_value VARCHAR(255),
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                    UNIQUE KEY (chat_id, setting_key)
+                )
+            """)
+            conn.commit()
+            
+            cursor.execute("SELECT setting_value FROM telegram_user_settings WHERE chat_id = %s AND setting_key = %s", (chat_id, key))
+            row = cursor.fetchone()
+            cursor.close()
+            if row:
+                return row[0]
+        finally:
+            conn.close()
+    except Exception as e:
+        log_telegram(f"[Host Telegram Bot] Setting load error: {str(e)}")
+    return None
+
+def save_telegram_user_setting(chat_id: str, key: str, value: str):
+    """Saves or updates a setting for a telegram chat in the database."""
+    try:
+        import mysql.connector
+        clean_url = DATABASE_URL.split("://", 1)[1]
+        user_pass, host_db = clean_url.split("@", 1)
+        user = user_pass.split(":", 1)[0]
+        password = user_pass.split(":", 1)[1] if ":" in user_pass else ""
+        host_port, db_name = host_db.split("/", 1)
+        host = host_port.split(":", 1)[0]
+        if host == "host.docker.internal":
+            host = "localhost"
+        port = int(host_port.split(":", 1)[1]) if ":" in host_port else 3306
+        
+        conn = mysql.connector.connect(
+            host=host,
+            port=port,
+            user=user,
+            password=password,
+            database=db_name
+        )
+        try:
+            cursor = conn.cursor()
+            # Ensure table exists
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS telegram_user_settings (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    chat_id VARCHAR(50),
+                    setting_key VARCHAR(100),
+                    setting_value VARCHAR(255),
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                    UNIQUE KEY (chat_id, setting_key)
+                )
+            """)
+            conn.commit()
+            
+            sql = """
+                INSERT INTO telegram_user_settings (chat_id, setting_key, setting_value) 
+                VALUES (%s, %s, %s)
+                ON DUPLICATE KEY UPDATE setting_value = %s
+            """
+            cursor.execute(sql, (chat_id, key, value, value))
+            conn.commit()
+            cursor.close()
+        finally:
+            conn.close()
+    except Exception as e:
+        log_telegram(f"[Host Telegram Bot] Setting save error: {str(e)}")
+
+def extract_city_from_text(text: str) -> str:
+    """Extracts city name from text. Look for patterns like 'cuaca di <city>', 'cuaca kota <city>', etc."""
+    text_lower = text.lower()
+    
+    # Check common Indonesian patterns (omit general 'cuaca <city>' to prevent greedy matching on 'cuaca hari ini')
+    patterns = [
+        r"\bcuaca\s+di\s+kota\s+([a-zA-Z\s]+)",
+        r"\bcuaca\s+di\s+([a-zA-Z\s]+)",
+        r"\bcuaca\s+kota\s+([a-zA-Z\s]+)"
+    ]
+    for pattern in patterns:
+        match = re.search(pattern, text_lower)
+        if match:
+            city_candidate = match.group(1).strip()
+            # Clean up trailing words like "hari ini", "besok", "sekarang", "saya", "dong", "ya"
+            clean_patterns = [
+                r"\s+hari\s+ini.*",
+                r"\s+besok.*",
+                r"\s+sekarang.*",
+                r"\s+saya.*",
+                r"\s+dong.*",
+                r"\s+ya.*",
+                r"\s+kah.*"
+            ]
+            for cp in clean_patterns:
+                city_candidate = re.sub(cp, "", city_candidate).strip()
+            
+            # If the city candidate is not empty and not a generic word, return it
+            generic_words = ["saya", "kami", "kita", "sini", "situ", "mana", "kota", "daerah", "wilayah", "desa", "dusun", "hari", "ini", "besok", "lusa"]
+            if city_candidate and city_candidate not in generic_words:
+                return city_candidate
+                
+    return None
+
+def is_search_query(text: str) -> bool:
+    """Determines whether the query is a search query that needs search engine enrichment."""
+    text_lower = text.lower()
+    
+    # 1. Explicit search commands
+    explicit = ["cari di", "search for", "coba cari", "tolong cari", "google", "pencarian di", "cari informasi", "carikan info"]
+    if any(exp in text_lower for exp in explicit):
+        return True
+        
+    # 2. Informational questions that aren't simple greetings or about the agent's identity
+    greetings = ["halo", "hi", "hey", "apa kabar", "selamat pagi", "selamat siang", "selamat sore", "selamat malam", "test", "halo agen", "reset", "clear"]
+    identity = ["siapa kamu", "kamu siapa", "nama kamu", "buat apa", "kamu apa", "siapa Anda", "kenal saya", "siapa diri", "pembuat kamu"]
+    
+    if any(greet in text_lower for greet in greetings):
+        return False
+    if any(id_q in text_lower for id_q in identity):
+        return False
+        
+    # Factual question words
+    factual = ["siapa", "apa", "mengapa", "bagaimana", "kapan", "dimana", "apakah", "info", "berita", "terbaru", "harga", "perkembangan", "sejarah"]
+    if any(kw in text_lower for kw in factual):
+        return True
+        
+    return False
+
+def get_host_language_guideline(text: str) -> str:
+    """Checks if query contains programming language keywords and retrieves guidelines from MySQL."""
+    try:
+        import mysql.connector
+        clean_url = DATABASE_URL.split("://", 1)[1]
+        user_pass, host_db = clean_url.split("@", 1)
+        user = user_pass.split(":", 1)[0]
+        password = user_pass.split(":", 1)[1] if ":" in user_pass else ""
+        host_port, db_name = host_db.split("/", 1)
+        host = host_port.split(":", 1)[0]
+        if host == "host.docker.internal":
+            host = "localhost"
+        port = int(host_port.split(":", 1)[1]) if ":" in host_port else 3306
+        
+        conn = mysql.connector.connect(
+            host=host,
+            port=port,
+            user=user,
+            password=password,
+            database=db_name
+        )
+        try:
+            cursor = conn.cursor(dictionary=True)
+            cursor.execute("SELECT language_name, keywords, instructions FROM language_guidelines WHERE is_active = 1")
+            rows = cursor.fetchall()
+            cursor.close()
+            
+            text_lower = text.lower()
+            for r in rows:
+                lang = r["language_name"]
+                kws = [k.strip() for k in r["keywords"].split(",") if k.strip()] if r["keywords"] else [lang]
+                if lang in text_lower or any(kw in text_lower for kw in kws):
+                    return f"\n\n[PANDUAN CODING {lang.upper()}]\n{r['instructions']}"
+        finally:
+            conn.close()
+    except Exception as e:
+        log_telegram(f"[Host Telegram Bot] Guideline load error: {str(e)}")
+    return ""
+
+def get_host_knowledge_base_enrichment(text: str) -> str:
+    """Performs a lightweight keyword search on knowledge base to retrieve relevant context."""
+    words = [w.strip() for w in re.split(r'\W+', text) if len(w.strip()) > 3]
+    if not words:
+        return ""
+    try:
+        import mysql.connector
+        clean_url = DATABASE_URL.split("://", 1)[1]
+        user_pass, host_db = clean_url.split("@", 1)
+        user = user_pass.split(":", 1)[0]
+        password = user_pass.split(":", 1)[1] if ":" in user_pass else ""
+        host_port, db_name = host_db.split("/", 1)
+        host = host_port.split(":", 1)[0]
+        if host == "host.docker.internal":
+            host = "localhost"
+        port = int(host_port.split(":", 1)[1]) if ":" in host_port else 3306
+        
+        conn = mysql.connector.connect(
+            host=host,
+            port=port,
+            user=user,
+            password=password,
+            database=db_name
+        )
+        try:
+            cursor = conn.cursor(dictionary=True)
+            conditions = []
+            params = []
+            for w in words[:3]:
+                conditions.append("title LIKE %s OR tags LIKE %s")
+                params.extend([f"%{w}%", f"%{w}%"])
+            
+            if not conditions:
+                return ""
+                
+            sql = f"SELECT title, content FROM knowledge_base WHERE { ' OR '.join(conditions) } LIMIT 2"
+            cursor.execute(sql, params)
+            rows = cursor.fetchall()
+            cursor.close()
+            
+            if rows:
+                parts = ["[KNOWLEDGE BASE CONTEXT]"]
+                for r in rows:
+                    parts.append(f"Topik: {r['title']}\nKonten: {r['content']}")
+                return "\n\n" + "\n\n".join(parts)
+        finally:
+            conn.close()
+    except Exception as e:
+        log_telegram(f"[Host Telegram Bot] KB load error: {str(e)}")
+    return ""
+
 # ============ Real-time Data Enrichment Engine ============
-def fetch_realtime_enrichment(text: str) -> str:
+def fetch_realtime_enrichment(text: str, chat_id: str = None) -> str:
     """Detect if user asks about real-time data and fetch from free public APIs.
     Returns compact enrichment string to inject into user message."""
     text_lower = text.lower()
@@ -539,23 +785,20 @@ def fetch_realtime_enrichment(text: str) -> str:
     weather_keywords = ["cuaca", "weather", "hujan", "panas", "suhu", "temperatur",
                         "temperature", "ramalan", "forecast"]
     if any(kw in text_lower for kw in weather_keywords):
-        cities = {
-            "jakarta": "Jakarta", "surabaya": "Surabaya", "bandung": "Bandung",
-            "medan": "Medan", "semarang": "Semarang", "yogya": "Yogyakarta",
-            "bali": "Bali", "makassar": "Makassar", "palembang": "Palembang",
-            "tokyo": "Tokyo", "singapore": "Singapore", "london": "London",
-            "new york": "New+York", "paris": "Paris", "bogor": "Bogor",
-            "depok": "Depok", "tangerang": "Tangerang", "bekasi": "Bekasi",
-            "malang": "Malang", "solo": "Solo", "denpasar": "Denpasar"
-        }
-        city = "Jakarta"
-        for key, val in cities.items():
-            if key in text_lower:
-                city = val
-                break
+        city = extract_city_from_text(text)
+        has_saved_city = False
         
+        if not city and chat_id:
+            city = get_telegram_user_setting(chat_id, "default_city")
+            if city:
+                has_saved_city = True
+                
+        if not city:
+            city = "Jakarta"
+            
         try:
-            url = f"https://wttr.in/{city}?format=j1"
+            city_query = city.replace(" ", "+")
+            url = f"https://wttr.in/{city_query}?format=j1"
             req = urllib.request.Request(url, method="GET")
             req.add_header("User-Agent", "AgentAI/1.0")
             with urllib.request.urlopen(req, timeout=8) as resp:
@@ -586,15 +829,60 @@ def fetch_realtime_enrichment(text: str) -> str:
                             forecast_parts.append(f"{hr}:00={h_desc},{h_temp}°C,hujan {h_rain}%")
                 
                 fc_str = " | ".join(forecast_parts) if forecast_parts else ""
+                city_name_display = city.replace("+", " ").title()
                 enrichments.append(
-                    f"[CUACA {city.replace('+', ' ')}] Sekarang: {desc}, {temp}°C (terasa {feels}°C), "
+                    f"[CUACA {city_name_display}] Sekarang: {desc}, {temp}°C (terasa {feels}°C), "
                     f"Kelembapan {hum}%, Angin {wind}km/h. {fc_str}"
                 )
+                
+                if not has_saved_city and city.lower() == "jakarta":
+                    enrichments.append(
+                        "\n[PENTING: Beritahu user di akhir jawaban Anda bahwa cuaca ini adalah cuaca default Jakarta karena mereka belum menyetel kota default. Beritahu mereka bahwa mereka bisa menyetel kota default dengan mengetik perintah /setcity <nama_kota> di Telegram (contoh: /setcity Bandung).]"
+                    )
         except Exception as e:
-            log_telegram(f"[Enrichment] Weather API error: {str(e)}")
+            log_telegram(f"[Enrichment] Weather API error for {city}: {str(e)}")
+            
+    # --- General Web Search ---
+    if is_search_query(text):
+        try:
+            from app.search import search_internet, format_search_results
+            log_telegram(f"[Enrichment] Running web search for query: {text}")
+            
+            clean_query = text
+            fillers = [
+                r"(?i)\bcari\s+di\s+internet\s+(tentang|untuk)?\b",
+                r"(?i)\bcoba\s+cari\s+tentang\b",
+                r"(?i)\bcari\s+tentang\b",
+                r"(?i)\btolong\s+cari\s+tentang\b",
+                r"(?i)\bsearch\s+for\b"
+            ]
+            for pattern in fillers:
+                clean_query = re.sub(pattern, "", clean_query)
+            clean_query = clean_query.strip("? .! \t\n")
+            
+            search_res = search_internet(clean_query, max_results=3)
+            if search_res:
+                formatted = format_search_results(search_res, max_chars=1500)
+                enrichments.append(
+                    f"\n[DATA PENCARIAN INTERNET UNTUK: {clean_query}]\n"
+                    f"{formatted}\n"
+                    f"[PENTING: Jawab pertanyaan user berdasarkan data pencarian di atas secara akurat. Cantumkan sumber/link penting jika relevan. Jawablah dengan bahasa yang sama seperti pertanyaan.]"
+                )
+        except Exception as e:
+            log_telegram(f"[Enrichment] Web search failed: {str(e)}")
+            
+    # --- Language Guidelines RAG ---
+    guidelines = get_host_language_guideline(text)
+    if guidelines:
+        enrichments.append(guidelines)
+        
+    # --- Knowledge Base RAG ---
+    kb_context = get_host_knowledge_base_enrichment(text)
+    if kb_context:
+        enrichments.append(kb_context)
     
     if enrichments:
-        return "\n\n[DATA REAL-TIME - format ulang data ini dengan visual cantik pakai emoji]\n" + "\n".join(enrichments)
+        return "\n\n[DATA REAL-TIME & CONTEXT - format ulang data ini dengan visual cantik pakai emoji]\n" + "\n".join(enrichments)
     return ""
 
 # Main agent thread logic
@@ -628,17 +916,39 @@ def process_host_telegram_message(token: str, api_key: str, chat_id: int, text: 
     username_str = telegram_user.get("username", "")
     
     # Fetch real-time data BEFORE building messages (runs in parallel with prompt building)
-    enrichment = fetch_realtime_enrichment(text)
+    enrichment = fetch_realtime_enrichment(text, db_chat_id)
     if enrichment:
         log_telegram(f"[Enrichment] Data fetched for query: {text[:30]}")
     
+    # Classify casual/informational query to suppress developer tools and prevent JSON output
+    text_lower = text.lower()
+    weather_keywords = ["cuaca", "weather", "hujan", "panas", "suhu", "temperatur", "temperature", "ramalan", "forecast"]
+    currency_keywords = ["kurs", "dolar", "dollar", "mata uang", "currency", "exchange", "usd", "eur", "gbp", "jpy", "idr", "rupiah", "euro", "yen", "pound", "nilai tukar", "curs"]
+    is_casual = (
+        any(kw in text_lower for kw in weather_keywords) or
+        any(kw in text_lower for kw in currency_keywords) or
+        is_search_query(text) or
+        text_lower in ["hello", "hi", "hey", "halo", "test", "siapa kamu", "bantuan", "help", "/help", "clear", "reset"]
+    )
+    
     # System prompt MUST be ultra-compact for 1.5B model performance
-    if is_developer:
+    if is_developer and not enrichment and not is_casual:
+        # Developer prompt WITH tool access (only when no enrichment and not casual query)
         compact_system = (
             f"Kamu AgentAI. Developer: {user_name} (@{username_str}). "
             f"Waktu: {local_time_str}. "
             "Jawab natural pakai emoji, bold, bullet. JANGAN output raw JSON/code kecuali diminta. "
             "Untuk command sistem: ```json\n{\"tool\":\"run_command\",\"arguments\":{\"CommandLine\":\"<cmd>\"}}\n```"
+        )
+    elif enrichment:
+        # Enrichment available — SUPPRESS tool calls, force model to use provided data
+        compact_system = (
+            f"Kamu AgentAI. User: {user_name}. "
+            f"Waktu: {local_time_str}. "
+            "PENTING: Data real-time SUDAH disediakan di pesan user. "
+            "GUNAKAN data tersebut langsung. JANGAN coba fetch sendiri. "
+            "Terjemahkan data real-time tersebut dan jawab dalam bahasa yang sama dengan bahasa yang digunakan oleh user. "
+            "Format jawaban dengan emoji, bold, bullet point yang cantik."
         )
     else:
         compact_system = (
@@ -659,7 +969,7 @@ def process_host_telegram_message(token: str, api_key: str, chat_id: int, text: 
     ollama_messages = [{"role": "system", "content": compact_system}] + list(history)
     ollama_url = "http://localhost:11434/api/chat"
     
-    max_iterations = 5 if is_developer else 1
+    max_iterations = 5 if (is_developer and not is_casual) else 1
     iteration = 0
     executed_calls = []
     reply = ""
@@ -864,6 +1174,62 @@ def run_host_telegram_polling():
                                 
                             db_chat_id = f"telegram-{chat_id}"
                             text_clean = text.strip().lower()
+                            
+                            # === /help command ===
+                            if text_clean in ("/help", "help", "/bantuan", "bantuan"):
+                                help_text = (
+                                    "🤖 *Selamat datang di AGEN AI!* 🤖\n"
+                                    "━━━━━━━━━━━━━━━━━━━━\n"
+                                    "Berikut adalah perintah yang dapat Anda gunakan:\n\n"
+                                    "💬 *Obrolan Biasa*:\n"
+                                    "Ketik pertanyaan Anda secara langsung. Saya akan menjawab secara cerdas dan natural.\n\n"
+                                    "🔍 *Pencarian Web Otomatis*:\n"
+                                    "Tanyakan berita terbaru, fakta, atau minta saya mencari sesuatu di internet (misal: _'cari di internet harga Bitcoin hari ini'_).\n\n"
+                                    "🌦️ *Informasi Cuaca*:\n"
+                                    "• Tanya cuaca secara spesifik: _'cuaca di Bandung'_\n"
+                                    "• Setel kota default Anda: `/setcity <nama_kota>`\n"
+                                    "• Tanya cuaca kota default Anda: _'cuaca hari ini'_\n\n"
+                                    "🧹 *Pengaturan Sesi*:\n"
+                                    "• `/reset` atau `/clear` - Menghapus riwayat percakapan saat ini agar memori bersih.\n\n"
+                                    "⚙️ *Menu Bantuan*:\n"
+                                    "• `/help` - Menampilkan panduan bantuan ini.\n"
+                                    "━━━━━━━━━━━━━━━━━━━━\n"
+                                    "💡 _Tip: Sebagai asisten cerdas, saya juga mendukung pengerjaan kode pemrograman & eksekusi terminal (khusus Developer)._"
+                                )
+                                try:
+                                    requests_post_json(url_send, {
+                                        "chat_id": chat_id,
+                                        "text": help_text,
+                                        "parse_mode": "Markdown"
+                                    }, timeout=5)
+                                except Exception as err:
+                                    log_telegram(f"Error sending help message: {str(err)}")
+                                continue
+                                
+                            # === /setcity command ===
+                            if text_clean.startswith("/setcity"):
+                                city_val = text[len("/setcity"):].strip()
+                                if city_val:
+                                    save_telegram_user_setting(db_chat_id, "default_city", city_val)
+                                    try:
+                                        requests_post_json(url_send, {
+                                            "chat_id": chat_id,
+                                            "text": f"✅ *Kota default Anda berhasil disetel ke:* `{city_val}`\n\nSekarang Anda cukup bertanya 'cuaca hari ini' atau 'bagaimana cuaca di kota saya', dan saya akan menampilkan ramalan cuaca untuk kota `{city_val}`.",
+                                            "parse_mode": "Markdown"
+                                        }, timeout=5)
+                                    except Exception as err:
+                                        log_telegram(f"Error sending setcity confirmation: {str(err)}")
+                                else:
+                                    try:
+                                        requests_post_json(url_send, {
+                                            "chat_id": chat_id,
+                                            "text": "⚠️ *Format Salah!*\n\nGunakan format: `/setcity <nama_kota>`\nContoh: `/setcity Bandung`",
+                                            "parse_mode": "Markdown"
+                                        }, timeout=5)
+                                    except Exception as err:
+                                        log_telegram(f"Error sending setcity instructions: {str(err)}")
+                                continue
+
                             if text_clean in ("/clear", "clear", "/reset", "reset"):
                                 # Interrupt previous session if still running
                                 with sessions_lock:

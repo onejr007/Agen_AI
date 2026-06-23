@@ -1743,3 +1743,381 @@ As your mentor, let's explore your self-evolution process. Explain to me:
 2026-06-23 04:28:00,357 - agent.main - INFO - Worker: Generating embedding for knowledge base ID 114...
 2026-06-23 04:28:01,440 - agent.main - INFO - .NET Core bridge started successfully on port 5000.
 2026-06-23 04:28:35,359 - agent.main - INFO - Worker: Successfully updated embedding for knowledge base ID 114
+2026-06-23 05:21:05,067 - agent.main - INFO - Incoming request to /v1/chat/completions. Resetting last_request_time.
+2026-06-23 05:21:06,520 - agent.main - INFO - RAG Heartbeat: Interruption detected! Setting system_status to USER_PRIORITY and waiting for VRAM cleanup...
+2026-06-23 05:21:14,510 - agent.main - INFO - Workflow Classifier: Mode=telegram
+2026-06-23 05:21:44,627 - agent.main - INFO - Token Budget Controller: Starting adaptive allocation. Remaining budget: 3255 tokens.
+2026-06-23 05:21:44,722 - agent.main - WARNING - Token Budget Controller: Dropped workspace tree map entirely due to budget depletion.
+2026-06-23 05:21:44,868 - agent.main - INFO - Dynamic Temperature: Overridden to 0.15 (Balanced Mode for Statement)
+2026-06-23 12:23:36,844 - agent.main - INFO - Logging initialized. Writing shared logs to ./fastapi.log
+2026-06-23 12:23:36,894 - agent.main - INFO - Starting background sequential embedding worker...
+2026-06-23 12:23:36,911 - agent.main - INFO - Starting background self-learning worker...
+2026-06-23 12:23:37,190 - agent.main - INFO - Analyzing workspace languages in directory: .
+2026-06-23 12:23:37,192 - agent.main - INFO - Workspace language profile complete: {'md': 3, 'db': 2, 'python': 30, 'txt': 3, 'json': 1, 'yaml': 1, 'log': 2, 'powershell': 1, 'csproj': 1, 'csharp': 1}
+2026-06-23 12:23:37,193 - agent.core - INFO - Hybrid search keywords: ['validasi', 'bearer', 'token', 'fastapi', 'authorization', 'header']
+2026-06-23 12:23:37,196 - agent.core - WARNING - Vector embedding unavailable. Falling back entirely to Keyword-based search.
+2026-06-23 12:23:37,196 - agent.core - INFO - Retrieved 2 hybrid memory matches.
+2026-06-23 12:23:37,197 - agent.core - INFO - Hybrid search keywords: ['fastapi', 'authorization', 'token']
+2026-06-23 12:23:37,199 - agent.core - WARNING - Vector embedding unavailable. Falling back entirely to Keyword-based search.
+2026-06-23 12:23:37,199 - agent.core - INFO - Retrieved 1 hybrid memory matches.
+2026-06-23 12:23:37,201 - agent.core - INFO - Hybrid search keywords: ['fastapi', 'authorization', 'token']
+2026-06-23 12:23:37,202 - agent.core - INFO - Executing Vector-based Cosine Similarity scoring...
+2026-06-23 12:23:40,345 - agent.core - INFO - Retrieved 1 hybrid memory matches.
+2026-06-23 12:23:40,346 - agent.core - INFO - Semantic Cache HIT (sim: 1.0000) for query: 'How do I setup routing in Vue?...' against 'How do I setup routing in Vue?...'
+2026-06-23 12:23:40,394 - agent.core - INFO - Hybrid search keywords: ['matching', 'guide']
+2026-06-23 12:23:40,395 - agent.core - INFO - Executing Vector-based Cosine Similarity scoring...
+2026-06-23 12:23:40,396 - agent.core - INFO - Retrieved 3 hybrid memory matches.
+2026-06-23 12:23:40,396 - agent.core - INFO - Hybrid search keywords: ['matching', 'guide']
+2026-06-23 12:23:40,397 - agent.core - INFO - Executing Vector-based Cosine Similarity scoring...
+2026-06-23 12:23:40,398 - agent.core - INFO - Retrieved 3 hybrid memory matches.
+2026-06-23 05:24:27,989 - agent.main - WARNING - LATENCY_WARNING: Request to /v1/chat/completions took 201476 ms (exceeds threshold 2000 ms)
+2026-06-23 05:35:12,154 - agent.main - INFO - Incoming request to /v1/chat/completions. Resetting last_request_time.
+2026-06-23 05:35:12,185 - agent.main - INFO - RAG Heartbeat: Interruption detected! Setting system_status to USER_PRIORITY and waiting for VRAM cleanup...
+2026-06-23 05:35:24,164 - agent.core - INFO - Semantic Cache HIT (sim: 0.9941) for query: 'Write a Roblox Luau function t...' against 'Write Roblox Luau function to ...'
+2026-06-23 05:35:24,195 - agent.main - INFO - Semantic Cache: Intercepted message with cached response.
+2026-06-23 05:35:24,224 - agent.main - ERROR - EXCEPTION_ERROR in /v1/chat/completions (latency: 12040 ms): cannot access local variable 'datetime' where it is not associated with a value
+Traceback (most recent call last):
+  File "/app_host/app/main.py", line 1791, in dispatch
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/starlette/middleware/base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "/usr/local/lib/python3.11/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/usr/local/lib/python3.11/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/usr/local/lib/python3.11/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/usr/local/lib/python3.11/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/usr/local/lib/python3.11/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/usr/local/lib/python3.11/site-packages/starlette/routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/usr/local/lib/python3.11/site-packages/fastapi/routing.py", line 2531, in app
+    await route.handle(scope, receive, send)
+  File "/usr/local/lib/python3.11/site-packages/fastapi/routing.py", line 1241, in handle
+    await super().handle(scope, receive, send)
+  File "/usr/local/lib/python3.11/site-packages/starlette/routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "/usr/local/lib/python3.11/site-packages/fastapi/routing.py", line 150, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/usr/local/lib/python3.11/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/usr/local/lib/python3.11/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/usr/local/lib/python3.11/site-packages/fastapi/routing.py", line 136, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/fastapi/routing.py", line 690, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/fastapi/routing.py", line 346, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/starlette/concurrency.py", line 34, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/anyio/to_thread.py", line 63, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/anyio/_backends/_asyncio.py", line 2592, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/anyio/_backends/_asyncio.py", line 1029, in run
+    result = context.run(func, *args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app_host/app/main.py", line 2778, in chat_completions
+    "created": int(datetime.datetime.utcnow().timestamp()),
+                   ^^^^^^^^
+UnboundLocalError: cannot access local variable 'datetime' where it is not associated with a value
+2026-06-23 05:35:24,329 - agent.main - INFO - Incoming request to /v1/chat/completions. Resetting last_request_time.
+2026-06-23 05:35:25,088 - agent.main - INFO - Workflow Classifier: Mode=engineering
+2026-06-23 05:35:25,090 - agent.core - INFO - Search triggered for user query.
+2026-06-23 05:35:25,100 - agent.core - INFO - Search cache hit for: what is the latest updates on roblox luau syntax search on internet?
+2026-06-23 05:35:25,103 - agent.core - INFO - Hybrid search keywords: ['roblox', 'luau', 'syntax', 'search', 'internet']
+2026-06-23 05:35:25,633 - agent.core - INFO - Executing Vector-based Cosine Similarity scoring...
+2026-06-23 05:35:26,957 - agent.core - INFO - Retrieved 2 hybrid memory matches.
+2026-06-23 05:35:27,050 - agent.main - INFO - Dynamic Classifier: Lang=luau, ErrorDetected=False
+2026-06-23 05:35:27,284 - agent.main - INFO - Documentation Cache MISS for language: luau. Fetching...
+2026-06-23 05:35:27,286 - agent.search - INFO - Initiating internet search for: luau programming language official documentation syntax guidelines best practices
+2026-06-23 05:35:27,290 - agent.search - INFO - Cleaned query: luau programming language official documentation syntax guidelines best practices
+2026-06-23 05:35:27,300 - agent.search - INFO - Trying local Whoogle search: http://whoogle:5000/search?q=luau+programming+language+official+documentation+syntax+guidelines+best+practices&format=json
+2026-06-23 05:35:34,774 - agent.search - INFO - Scraping content from Whoogle result: https://devforum.roblox.com/t/rules-that-i-follow-for-my-luau-programming/4051631
+2026-06-23 05:35:36,830 - agent.search - INFO - Scraping content from Whoogle result: https://luau.org/syntax/
+2026-06-23 05:35:38,255 - agent.search - INFO - Scraping content from Whoogle result: https://luau.org/getting-started/
+2026-06-23 05:35:39,761 - agent.search - INFO - Whoogle search succeeded with 3 results.
+2026-06-23 05:37:50,553 - agent.main - INFO - Incoming request to /v1/chat/completions. Resetting last_request_time.
+2026-06-23 05:37:50,880 - agent.main - INFO - Workflow Classifier: Mode=telegram
+2026-06-23 05:37:50,911 - agent.main - INFO - Token Budget Controller: Starting adaptive allocation. Remaining budget: 3336 tokens.
+2026-06-23 05:37:50,917 - agent.main - WARNING - Token Budget Controller: Dropped workspace tree map entirely due to budget depletion.
+2026-06-23 05:37:50,921 - agent.main - INFO - Dynamic Temperature: Overridden to 0.15 (Balanced Mode for Statement)
+2026-06-23 05:38:28,390 - agent.main - INFO - Documentation Cache: Successfully saved synthesized guide for 'luau' to DB.
+2026-06-23 05:38:28,507 - agent.main - INFO - RAG Brain: Saved new documentation for 'luau' in KnowledgeBase.
+2026-06-23 05:38:29,559 - agent.main - INFO - Worker: Generating embedding for knowledge base ID 118...
+2026-06-23 12:38:31,051 - agent.main - INFO - Logging initialized. Writing shared logs to ./fastapi.log
+2026-06-23 12:38:31,064 - agent.main - INFO - Starting background sequential embedding worker...
+2026-06-23 12:38:31,094 - agent.main - INFO - Starting background self-learning worker...
+2026-06-23 12:38:32,246 - agent.main - WARNING - JSONSchema Validation failed: 'lines' is a required property. Attempting schema-guided repair...
+2026-06-23 12:38:32,247 - agent.main - INFO - Injected default for required field 'lines' of type 'integer'
+2026-06-23 12:38:32,251 - agent.main - INFO - JSONSchema Validation passed after auto-repair.
+2026-06-23 12:38:32,254 - agent.main - WARNING - Terminal Command blocked by supervisor: 'rm -rf /'. Reason: Dangerous recursive deletion command detected.
+2026-06-23 05:38:34,191 - agent.main - INFO - Token Budget Controller: Starting adaptive allocation. Remaining budget: 1974 tokens.
+2026-06-23 05:38:34,202 - agent.core - INFO - Hybrid search keywords: ['roblox', 'luau', 'syntax', 'search', 'internet']
+2026-06-23 05:38:34,946 - agent.core - INFO - Executing Vector-based Cosine Similarity scoring...
+2026-06-23 05:38:36,275 - agent.core - INFO - Retrieved 3 hybrid memory matches.
+2026-06-23 05:38:36,339 - agent.main - INFO - Token Budget Controller: Injected pruned semantic context. New remaining: 1599 tokens.
+2026-06-23 05:38:36,436 - agent.core - INFO - Search triggered for user query.
+2026-06-23 05:38:36,858 - agent.core - INFO - Search cache hit for: what is the latest updates on roblox luau syntax search on internet?
+2026-06-23 05:38:37,018 - agent.main - INFO - Token Budget Controller: Injected pruned search context. New remaining: 1180 tokens.
+2026-06-23 05:38:37,793 - agent.main - INFO - Dynamic Temperature: Overridden to 0.1 (Explanation Mode for Question)
+2026-06-23 05:38:37,976 - agent.main - WARNING - LATENCY_WARNING: Request to /v1/chat/completions took 193580 ms (exceeds threshold 2000 ms)
+2026-06-23 12:38:42,225 - agent.main - INFO - Logging initialized. Writing shared logs to ./fastapi.log
+2026-06-23 12:38:42,226 - agent.main - INFO - Starting background sequential embedding worker...
+2026-06-23 12:38:42,227 - agent.main - INFO - Starting background self-learning worker...
+2026-06-23 12:38:42,355 - agent.main - INFO - Self-upgrade: Memulai pemeriksaan evaluasi kode otonom...
+2026-06-23 12:38:42,357 - agent.main - INFO - Self-upgrade: Rencana peningkatan berhasil dirancang oleh AI. Mengirim ke jembatan .NET Core...
+2026-06-23 12:38:42,357 - agent.main - INFO - Self-upgrade: Jembatan .NET Core berhasil melakukan evolusi dan memperbarui file FastAPI di disk!
+2026-06-23 12:38:47,954 - agent.main - INFO - Logging initialized. Writing shared logs to ./fastapi.log
+2026-06-23 12:38:47,963 - agent.main - INFO - Starting background sequential embedding worker...
+2026-06-23 12:38:47,965 - agent.main - INFO - Starting background self-learning worker...
+2026-06-23 12:38:48,098 - agent.db - INFO - Database connection attempt 1/15...
+2026-06-23 12:38:48,103 - agent.db - INFO - Database connection established successfully.
+2026-06-23 12:38:50,307 - agent.main - INFO - RAG Brain: Auto-extracted and indexed solution 'Mock JWT Setup in Python' from chat.
+2026-06-23 12:38:50,383 - agent.main - INFO - RAG Brain: Saved new documentation for 'rust' in KnowledgeBase.
+2026-06-23 12:38:56,176 - agent.main - INFO - Logging initialized. Writing shared logs to ./fastapi.log
+2026-06-23 12:38:56,178 - agent.main - INFO - Starting background sequential embedding worker...
+2026-06-23 12:38:56,179 - agent.main - INFO - Starting background self-learning worker...
+2026-06-23 12:39:02,195 - agent.main - INFO - Logging initialized. Writing shared logs to ./fastapi.log
+2026-06-23 12:39:02,196 - agent.main - INFO - Starting background sequential embedding worker...
+2026-06-23 12:39:02,197 - agent.main - INFO - Starting background self-learning worker...
+2026-06-23 12:39:02,363 - agent.main - INFO - Analyzing workspace languages in directory: .
+2026-06-23 12:39:02,365 - agent.main - INFO - Workspace language profile complete: {'md': 3, 'db': 2, 'python': 30, 'txt': 3, 'json': 1, 'yaml': 1, 'log': 2, 'powershell': 1, 'csproj': 1, 'csharp': 1}
+2026-06-23 12:39:02,367 - agent.core - INFO - Hybrid search keywords: ['validasi', 'bearer', 'token', 'fastapi', 'authorization', 'header']
+2026-06-23 12:39:02,376 - agent.core - WARNING - Vector embedding unavailable. Falling back entirely to Keyword-based search.
+2026-06-23 12:39:02,376 - agent.core - INFO - Retrieved 2 hybrid memory matches.
+2026-06-23 12:39:02,378 - agent.core - INFO - Hybrid search keywords: ['fastapi', 'authorization', 'token']
+2026-06-23 12:39:02,379 - agent.core - WARNING - Vector embedding unavailable. Falling back entirely to Keyword-based search.
+2026-06-23 12:39:02,380 - agent.core - INFO - Retrieved 1 hybrid memory matches.
+2026-06-23 12:39:02,381 - agent.core - INFO - Hybrid search keywords: ['fastapi', 'authorization', 'token']
+2026-06-23 12:39:02,382 - agent.core - INFO - Executing Vector-based Cosine Similarity scoring...
+2026-06-23 12:39:02,648 - agent.core - INFO - Retrieved 1 hybrid memory matches.
+2026-06-23 12:39:02,649 - agent.core - INFO - Semantic Cache HIT (sim: 1.0000) for query: 'How do I setup routing in Vue?...' against 'How do I setup routing in Vue?...'
+2026-06-23 12:39:02,653 - agent.core - INFO - Hybrid search keywords: ['matching', 'guide']
+2026-06-23 12:39:02,656 - agent.core - INFO - Executing Vector-based Cosine Similarity scoring...
+2026-06-23 12:39:02,657 - agent.core - INFO - Retrieved 3 hybrid memory matches.
+2026-06-23 12:39:02,658 - agent.core - INFO - Hybrid search keywords: ['matching', 'guide']
+2026-06-23 12:39:02,659 - agent.core - INFO - Executing Vector-based Cosine Similarity scoring...
+2026-06-23 12:39:02,660 - agent.core - INFO - Retrieved 3 hybrid memory matches.
+2026-06-23 12:39:13,730 - agent.main - INFO - Logging initialized. Writing shared logs to ./fastapi.log
+2026-06-23 12:39:13,731 - agent.main - INFO - Starting background sequential embedding worker...
+2026-06-23 12:39:13,734 - agent.main - INFO - Starting background self-learning worker...
+2026-06-23 12:39:14,325 - agent.core - INFO - Successfully applied exact SEARCH-REPLACE block.
+2026-06-23 12:39:14,344 - agent.core - INFO - Successfully applied exact SEARCH-REPLACE block.
+2026-06-23 12:39:14,345 - agent.main - INFO - Diff successfully pre-applied. Converted tool call to write_to_file for path: dummy_test_diff.py
+2026-06-23 12:39:16,648 - agent.main - WARNING - Failed to generate history summary: HTTPConnectionPool(host='ollama', port=11434): Max retries exceeded with url: /api/chat (Caused by NameResolutionError("HTTPConnection(host='ollama', port=11434): Failed to resolve 'ollama' ([Errno 11001] getaddrinfo failed)"))
+2026-06-23 12:39:16,649 - agent.main - WARNING - Failed to generate history summary: simulated Ollama outage
+2026-06-23 12:39:22,642 - agent.main - INFO - Logging initialized. Writing shared logs to ./fastapi.log
+2026-06-23 12:39:22,644 - agent.main - INFO - Starting background sequential embedding worker...
+2026-06-23 12:39:22,645 - agent.main - INFO - Starting background self-learning worker...
+2026-06-23 12:39:22,766 - agent.main - WARNING - Terminal Command blocked by supervisor: 'rm -rf /'. Reason: Dangerous recursive deletion command detected.
+2026-06-23 12:39:22,767 - agent.core - ERROR - Error calling Ollama stream: simulated connection failure
+2026-06-23 12:39:22,768 - agent.main - INFO - Analyzing workspace languages in directory: .
+2026-06-23 12:39:22,769 - agent.main - INFO - Workspace language profile complete: {'md': 3, 'db': 2, 'python': 30, 'txt': 3, 'json': 1, 'yaml': 1, 'log': 2, 'powershell': 1, 'csproj': 1, 'csharp': 1}
+2026-06-23 12:39:22,771 - agent.main - INFO - Dynamic Seeding: Adding new language guidelines for 'rust' to DB...
+2026-06-23 12:39:22,786 - agent.main - INFO - Dynamic Seeding: Successfully saved guidelines for 'rust' in DB.
+2026-06-23 12:39:29,022 - agent.main - INFO - Logging initialized. Writing shared logs to ./fastapi.log
+2026-06-23 12:39:29,023 - agent.main - INFO - Starting background sequential embedding worker...
+2026-06-23 12:39:29,024 - agent.main - INFO - Starting background self-learning worker...
+2026-06-23 12:39:29,138 - agent.db - INFO - Database connection attempt 1/15...
+2026-06-23 12:39:29,144 - agent.db - INFO - Database connection established successfully.
+2026-06-23 12:39:29,204 - agent.main - INFO - Documentation Cache MISS for language: php. Fetching...
+2026-06-23 12:39:29,219 - agent.main - INFO - Documentation Cache: Successfully saved synthesized guide for 'php' to DB.
+2026-06-23 12:39:29,240 - agent.main - INFO - RAG Brain: Saved new documentation for 'php' in KnowledgeBase.
+2026-06-23 12:39:29,244 - agent.main - INFO - Documentation Cache HIT for language: php
+2026-06-23 12:39:29,263 - agent.main - INFO - Documentation Cache EXPIRED for language: php. Triggering refresh...
+2026-06-23 12:39:29,265 - agent.main - INFO - Documentation Cache: Successfully saved synthesized guide for 'php' to DB.
+2026-06-23 12:39:29,270 - agent.main - INFO - RAG Brain: Updated documentation for 'php' in KnowledgeBase.
+2026-06-23 12:39:29,305 - agent.main - INFO - Self-learning: Selected target topic 'luau' to learn.
+2026-06-23 12:39:29,316 - agent.main - INFO - Self-learning: Successfully learned and cached documentation for 'luau'.
+2026-06-23 12:39:29,331 - agent.main - INFO - RAG Brain: Saved new documentation for 'luau' in KnowledgeBase.
+2026-06-23 12:39:29,347 - agent.main - INFO - Self-learning: Selected target topic 'luau' to learn.
+2026-06-23 12:39:29,347 - agent.main - INFO - Self-learning: Interrupted before searching. Holding...
+2026-06-23 12:39:34,832 - agent.main - INFO - Logging initialized. Writing shared logs to ./fastapi.log
+2026-06-23 12:39:34,832 - agent.main - INFO - Starting background sequential embedding worker...
+2026-06-23 12:39:34,833 - agent.main - INFO - Starting background self-learning worker...
+2026-06-23 12:39:34,966 - agent.db - INFO - Database connection attempt 1/15...
+2026-06-23 12:39:34,981 - agent.db - INFO - Database connection established successfully.
+2026-06-23 05:40:14,460 - agent.main - WARNING - LATENCY_WARNING: Request to /v1/chat/completions took 143869 ms (exceeds threshold 2000 ms)
+2026-06-23 12:40:17,072 - agent.core - INFO - Semantic Cache HIT (sim: 1.0000) for query: 'How to configure JWT authentic...' against 'How to configure JWT authentic...'
+2026-06-23 12:40:17,159 - agent.main - INFO - Semantic Cache: Intercepted message with cached response.
+2026-06-23 12:40:23,646 - agent.main - INFO - Logging initialized. Writing shared logs to ./fastapi.log
+2026-06-23 12:40:23,647 - agent.main - INFO - Starting background sequential embedding worker...
+2026-06-23 12:40:23,648 - agent.main - INFO - Starting background self-learning worker...
+2026-06-23 05:40:26,158 - agent.main - INFO - Worker: Successfully updated embedding for knowledge base ID 118
+2026-06-23 05:40:58,514 - agent.main - INFO - Incoming request to /v1/chat/completions. Resetting last_request_time.
+2026-06-23 05:40:58,933 - agent.core - INFO - Semantic Cache HIT (sim: 0.9941) for query: 'Write a Roblox Luau function t...' against 'Write Roblox Luau function to ...'
+2026-06-23 05:40:58,955 - agent.main - INFO - Semantic Cache: Intercepted message with cached response.
+2026-06-23 05:40:59,039 - agent.main - ERROR - EXCEPTION_ERROR in /v1/chat/completions (latency: 508 ms): cannot access local variable 'datetime' where it is not associated with a value
+Traceback (most recent call last):
+  File "/app_host/app/main.py", line 1791, in dispatch
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/starlette/middleware/base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "/usr/local/lib/python3.11/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/usr/local/lib/python3.11/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/usr/local/lib/python3.11/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/usr/local/lib/python3.11/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/usr/local/lib/python3.11/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/usr/local/lib/python3.11/site-packages/starlette/routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/usr/local/lib/python3.11/site-packages/fastapi/routing.py", line 2531, in app
+    await route.handle(scope, receive, send)
+  File "/usr/local/lib/python3.11/site-packages/fastapi/routing.py", line 1241, in handle
+    await super().handle(scope, receive, send)
+  File "/usr/local/lib/python3.11/site-packages/starlette/routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "/usr/local/lib/python3.11/site-packages/fastapi/routing.py", line 150, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/usr/local/lib/python3.11/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/usr/local/lib/python3.11/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/usr/local/lib/python3.11/site-packages/fastapi/routing.py", line 136, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/fastapi/routing.py", line 690, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/fastapi/routing.py", line 346, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/starlette/concurrency.py", line 34, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/anyio/to_thread.py", line 63, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/anyio/_backends/_asyncio.py", line 2592, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/anyio/_backends/_asyncio.py", line 1029, in run
+    result = context.run(func, *args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app_host/app/main.py", line 2778, in chat_completions
+    "created": int(datetime.datetime.utcnow().timestamp()),
+                   ^^^^^^^^
+UnboundLocalError: cannot access local variable 'datetime' where it is not associated with a value
+2026-06-23 05:40:59,133 - agent.main - INFO - Incoming request to /v1/chat/completions. Resetting last_request_time.
+2026-06-23 05:41:00,870 - agent.main - INFO - Workflow Classifier: Mode=engineering
+2026-06-23 05:41:00,899 - agent.core - INFO - Search triggered for user query.
+2026-06-23 05:41:00,948 - agent.core - INFO - Search cache hit for: what is the latest updates on roblox luau syntax search on internet?
+2026-06-23 05:41:00,986 - agent.core - INFO - Hybrid search keywords: ['roblox', 'luau', 'syntax', 'search', 'internet']
+2026-06-23 05:41:02,229 - agent.core - INFO - Executing Vector-based Cosine Similarity scoring...
+2026-06-23 05:41:04,045 - agent.core - INFO - Retrieved 2 hybrid memory matches.
+2026-06-23 05:41:04,299 - agent.main - INFO - Dynamic Classifier: Lang=luau, ErrorDetected=False
+2026-06-23 05:41:04,369 - agent.main - INFO - Documentation Cache HIT for language: luau
+2026-06-23 05:41:09,289 - agent.main - INFO - Token Budget Controller: Starting adaptive allocation. Remaining budget: 1941 tokens.
+2026-06-23 05:41:09,293 - agent.core - INFO - Hybrid search keywords: ['roblox', 'luau', 'syntax', 'search', 'internet']
+2026-06-23 05:41:10,172 - agent.core - INFO - Executing Vector-based Cosine Similarity scoring...
+2026-06-23 05:41:11,663 - agent.core - INFO - Retrieved 3 hybrid memory matches.
+2026-06-23 05:41:11,687 - agent.main - INFO - Token Budget Controller: Injected pruned semantic context. New remaining: 1566 tokens.
+2026-06-23 05:41:11,693 - agent.core - INFO - Search triggered for user query.
+2026-06-23 05:41:11,701 - agent.core - INFO - Search cache hit for: what is the latest updates on roblox luau syntax search on internet?
+2026-06-23 05:41:11,711 - agent.main - INFO - Token Budget Controller: Injected pruned search context. New remaining: 1147 tokens.
+2026-06-23 05:41:11,744 - agent.main - INFO - Dynamic Temperature: Overridden to 0.1 (Explanation Mode for Question)
+2026-06-23 05:41:11,751 - agent.main - WARNING - LATENCY_WARNING: Request to /v1/chat/completions took 12596 ms (exceeds threshold 2000 ms)
+2026-06-23 12:41:18,383 - agent.main - INFO - Logging initialized. Writing shared logs to ./fastapi.log
+2026-06-23 12:41:18,397 - agent.main - INFO - Starting background sequential embedding worker...
+2026-06-23 12:41:18,435 - agent.main - INFO - Starting background self-learning worker...
+2026-06-23 12:41:19,449 - agent.main - WARNING - JSONSchema Validation failed: 'lines' is a required property. Attempting schema-guided repair...
+2026-06-23 12:41:19,449 - agent.main - INFO - Injected default for required field 'lines' of type 'integer'
+2026-06-23 12:41:19,453 - agent.main - INFO - JSONSchema Validation passed after auto-repair.
+2026-06-23 12:41:19,455 - agent.main - WARNING - Terminal Command blocked by supervisor: 'rm -rf /'. Reason: Dangerous recursive deletion command detected.
+2026-06-23 12:41:25,334 - agent.main - INFO - Logging initialized. Writing shared logs to ./fastapi.log
+2026-06-23 12:41:25,335 - agent.main - INFO - Starting background sequential embedding worker...
+2026-06-23 12:41:25,336 - agent.main - INFO - Starting background self-learning worker...
+2026-06-23 12:41:25,446 - agent.main - INFO - Self-upgrade: Memulai pemeriksaan evaluasi kode otonom...
+2026-06-23 12:41:25,452 - agent.main - INFO - Self-upgrade: Rencana peningkatan berhasil dirancang oleh AI. Mengirim ke jembatan .NET Core...
+2026-06-23 12:41:25,453 - agent.main - INFO - Self-upgrade: Jembatan .NET Core berhasil melakukan evolusi dan memperbarui file FastAPI di disk!
+2026-06-23 12:41:31,247 - agent.main - INFO - Logging initialized. Writing shared logs to ./fastapi.log
+2026-06-23 12:41:31,248 - agent.main - INFO - Starting background sequential embedding worker...
+2026-06-23 12:41:31,248 - agent.main - INFO - Starting background self-learning worker...
+2026-06-23 12:41:31,324 - agent.db - INFO - Database connection attempt 1/15...
+2026-06-23 12:41:31,328 - agent.db - INFO - Database connection established successfully.
+2026-06-23 12:41:33,468 - agent.main - INFO - RAG Brain: Auto-extracted and indexed solution 'Mock JWT Setup in Python' from chat.
+2026-06-23 12:41:33,504 - agent.main - INFO - RAG Brain: Saved new documentation for 'rust' in KnowledgeBase.
+2026-06-23 12:41:39,774 - agent.main - INFO - Logging initialized. Writing shared logs to ./fastapi.log
+2026-06-23 12:41:39,787 - agent.main - INFO - Starting background sequential embedding worker...
+2026-06-23 12:41:39,790 - agent.main - INFO - Starting background self-learning worker...
+2026-06-23 12:41:46,257 - agent.main - INFO - Logging initialized. Writing shared logs to ./fastapi.log
+2026-06-23 12:41:46,267 - agent.main - INFO - Starting background sequential embedding worker...
+2026-06-23 12:41:46,274 - agent.main - INFO - Starting background self-learning worker...
+2026-06-23 12:41:46,474 - agent.main - INFO - Analyzing workspace languages in directory: .
+2026-06-23 12:41:46,479 - agent.main - INFO - Workspace language profile complete: {'md': 3, 'db': 2, 'python': 30, 'txt': 3, 'json': 1, 'yaml': 1, 'log': 2, 'powershell': 1, 'csproj': 1, 'csharp': 1}
+2026-06-23 12:41:46,481 - agent.core - INFO - Hybrid search keywords: ['validasi', 'bearer', 'token', 'fastapi', 'authorization', 'header']
+2026-06-23 12:41:46,489 - agent.core - WARNING - Vector embedding unavailable. Falling back entirely to Keyword-based search.
+2026-06-23 12:41:46,490 - agent.core - INFO - Retrieved 2 hybrid memory matches.
+2026-06-23 12:41:46,491 - agent.core - INFO - Hybrid search keywords: ['fastapi', 'authorization', 'token']
+2026-06-23 12:41:46,494 - agent.core - WARNING - Vector embedding unavailable. Falling back entirely to Keyword-based search.
+2026-06-23 12:41:46,495 - agent.core - INFO - Retrieved 1 hybrid memory matches.
+2026-06-23 12:41:46,496 - agent.core - INFO - Hybrid search keywords: ['fastapi', 'authorization', 'token']
+2026-06-23 12:41:46,498 - agent.core - INFO - Executing Vector-based Cosine Similarity scoring...
+2026-06-23 12:41:46,843 - agent.core - INFO - Retrieved 1 hybrid memory matches.
+2026-06-23 12:41:46,844 - agent.core - INFO - Semantic Cache HIT (sim: 1.0000) for query: 'How do I setup routing in Vue?...' against 'How do I setup routing in Vue?...'
+2026-06-23 12:41:46,891 - agent.core - INFO - Hybrid search keywords: ['matching', 'guide']
+2026-06-23 12:41:46,894 - agent.core - INFO - Executing Vector-based Cosine Similarity scoring...
+2026-06-23 12:41:46,895 - agent.core - INFO - Retrieved 3 hybrid memory matches.
+2026-06-23 12:41:46,897 - agent.core - INFO - Hybrid search keywords: ['matching', 'guide']
+2026-06-23 12:41:46,903 - agent.core - INFO - Executing Vector-based Cosine Similarity scoring...
+2026-06-23 12:41:46,904 - agent.core - INFO - Retrieved 3 hybrid memory matches.
+2026-06-23 12:41:58,211 - agent.main - INFO - Logging initialized. Writing shared logs to ./fastapi.log
+2026-06-23 12:41:58,212 - agent.main - INFO - Starting background sequential embedding worker...
+2026-06-23 12:41:58,214 - agent.main - INFO - Starting background self-learning worker...
+2026-06-23 12:41:58,791 - agent.core - INFO - Successfully applied exact SEARCH-REPLACE block.
+2026-06-23 12:41:58,795 - agent.core - INFO - Successfully applied exact SEARCH-REPLACE block.
+2026-06-23 12:41:58,796 - agent.main - INFO - Diff successfully pre-applied. Converted tool call to write_to_file for path: dummy_test_diff.py
+2026-06-23 12:42:01,091 - agent.main - WARNING - Failed to generate history summary: HTTPConnectionPool(host='ollama', port=11434): Max retries exceeded with url: /api/chat (Caused by NameResolutionError("HTTPConnection(host='ollama', port=11434): Failed to resolve 'ollama' ([Errno 11001] getaddrinfo failed)"))
+2026-06-23 12:42:01,092 - agent.main - WARNING - Failed to generate history summary: simulated Ollama outage
+2026-06-23 12:42:05,816 - agent.main - INFO - Logging initialized. Writing shared logs to ./fastapi.log
+2026-06-23 12:42:05,817 - agent.main - INFO - Starting background sequential embedding worker...
+2026-06-23 12:42:05,818 - agent.main - INFO - Starting background self-learning worker...
+2026-06-23 12:42:05,901 - agent.main - WARNING - Terminal Command blocked by supervisor: 'rm -rf /'. Reason: Dangerous recursive deletion command detected.
+2026-06-23 12:42:05,902 - agent.core - ERROR - Error calling Ollama stream: simulated connection failure
+2026-06-23 12:42:05,902 - agent.main - INFO - Analyzing workspace languages in directory: .
+2026-06-23 12:42:05,909 - agent.main - INFO - Workspace language profile complete: {'md': 3, 'db': 2, 'python': 30, 'txt': 3, 'json': 1, 'yaml': 1, 'log': 2, 'powershell': 1, 'csproj': 1, 'csharp': 1}
+2026-06-23 12:42:05,910 - agent.main - INFO - Dynamic Seeding: Adding new language guidelines for 'rust' to DB...
+2026-06-23 12:42:05,927 - agent.main - INFO - Dynamic Seeding: Successfully saved guidelines for 'rust' in DB.
+2026-06-23 12:42:10,524 - agent.main - INFO - Logging initialized. Writing shared logs to ./fastapi.log
+2026-06-23 12:42:10,530 - agent.main - INFO - Starting background sequential embedding worker...
+2026-06-23 12:42:10,531 - agent.main - INFO - Starting background self-learning worker...
+2026-06-23 12:42:10,665 - agent.db - INFO - Database connection attempt 1/15...
+2026-06-23 12:42:10,685 - agent.db - INFO - Database connection established successfully.
+2026-06-23 12:42:10,757 - agent.main - INFO - Documentation Cache MISS for language: php. Fetching...
+2026-06-23 12:42:10,779 - agent.main - INFO - Documentation Cache: Successfully saved synthesized guide for 'php' to DB.
+2026-06-23 12:42:10,800 - agent.main - INFO - RAG Brain: Saved new documentation for 'php' in KnowledgeBase.
+2026-06-23 12:42:10,804 - agent.main - INFO - Documentation Cache HIT for language: php
+2026-06-23 12:42:10,819 - agent.main - INFO - Documentation Cache EXPIRED for language: php. Triggering refresh...
+2026-06-23 12:42:10,821 - agent.main - INFO - Documentation Cache: Successfully saved synthesized guide for 'php' to DB.
+2026-06-23 12:42:10,827 - agent.main - INFO - RAG Brain: Updated documentation for 'php' in KnowledgeBase.
+2026-06-23 12:42:10,851 - agent.main - INFO - Self-learning: Selected target topic 'luau' to learn.
+2026-06-23 12:42:10,875 - agent.main - INFO - Self-learning: Successfully learned and cached documentation for 'luau'.
+2026-06-23 12:42:10,888 - agent.main - INFO - RAG Brain: Saved new documentation for 'luau' in KnowledgeBase.
+2026-06-23 12:42:10,904 - agent.main - INFO - Self-learning: Selected target topic 'luau' to learn.
+2026-06-23 12:42:10,905 - agent.main - INFO - Self-learning: Interrupted before searching. Holding...
+2026-06-23 12:42:15,687 - agent.main - INFO - Logging initialized. Writing shared logs to ./fastapi.log
+2026-06-23 12:42:15,688 - agent.main - INFO - Starting background sequential embedding worker...
+2026-06-23 12:42:15,689 - agent.main - INFO - Starting background self-learning worker...
+2026-06-23 12:42:15,773 - agent.db - INFO - Database connection attempt 1/15...
+2026-06-23 12:42:15,779 - agent.db - INFO - Database connection established successfully.
+2026-06-23 12:42:16,054 - agent.core - INFO - Semantic Cache HIT (sim: 1.0000) for query: 'How to configure JWT authentic...' against 'How to configure JWT authentic...'
+2026-06-23 12:42:16,058 - agent.main - INFO - Semantic Cache: Intercepted message with cached response.
+2026-06-23 12:42:22,230 - agent.main - INFO - Logging initialized. Writing shared logs to ./fastapi.log
+2026-06-23 12:42:22,235 - agent.main - INFO - Starting background sequential embedding worker...
+2026-06-23 12:42:22,236 - agent.main - INFO - Starting background self-learning worker...

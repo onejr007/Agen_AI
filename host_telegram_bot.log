@@ -123,3 +123,83 @@ STDERR:
 [2026-06-23 12:08:42] [DIRECT OLLAMA] Reply received (eval=53.8s, total=95.7s)
 [2026-06-23 12:08:42] Sending final reply to Telegram chat 904266983.
 [2026-06-23 12:09:57] [Host Telegram Bot] User BagasJr clicked feedback unlike on msg 49
+[2026-06-23 12:13:41] [Host Telegram Bot] Initializing host-side polling for token: 8919960980:A...
+[2026-06-23 12:15:42] [Host Telegram Bot] Received message from chat 904266983: 'ramalan cuaca hari ini dikota saya'
+[2026-06-23 12:15:46] [Enrichment] Data fetched for query: ramalan cuaca hari ini dikota 
+[2026-06-23 12:15:46] [DIRECT OLLAMA] Sending request (Iteration 0, 2 msgs)
+[2026-06-23 12:16:19] [DIRECT OLLAMA] Reply received (eval=7.3s, total=32.7s)
+[2026-06-23 12:16:19] Developer tool call detected: run_command with {'CommandLine': 'curl -s https://api.openweathermap.org/data/2.5/weather?q=Jakarta&appid=YOUR_API_KEY'}
+[2026-06-23 12:16:21] Local tool output: Exit Code: 1
+STDOUT:
+{"cod":401, "message": "Invalid API key. Please see https://openweathermap.org/faq#error401 for more info."}
+STDERR:
+'appid' is not recognized as an internal or external command,
+...
+[2026-06-23 12:16:21] [DIRECT OLLAMA] Sending request (Iteration 1, 4 msgs)
+[2026-06-23 12:16:38] [DIRECT OLLAMA] Reply received (eval=11.2s, total=17.6s)
+[2026-06-23 12:16:38] Warning: Model is repeating tool call run_command with same arguments. Breaking loop.
+[2026-06-23 12:17:08] Sending final reply to Telegram chat 904266983.
+[2026-06-23 12:17:55] [Host Telegram Bot] Initializing host-side polling for token: 8919960980:A...
+[2026-06-23 12:18:17] [Host Telegram Bot] User BagasJr clicked feedback unlike on msg 51
+[2026-06-23 12:19:02] [Host Telegram Bot] Received message from chat 904266983: 'ramalan cuaca hari ini dikota saya'
+[2026-06-23 12:19:04] [Enrichment] Data fetched for query: ramalan cuaca hari ini dikota 
+[2026-06-23 12:19:04] [DIRECT OLLAMA] Sending request (Iteration 0, 2 msgs)
+[2026-06-23 12:21:04] [DIRECT OLLAMA] Failed (Direct Ollama returned status 0). Falling back to FastAPI...
+[2026-06-23 12:21:04] [FALLBACK] Sending request to FastAPI: http://localhost:8000/v1/chat/completions
+[2026-06-23 12:24:28] [FALLBACK] FastAPI reply received.
+[2026-06-23 12:24:28] Sending final reply to Telegram chat 904266983.
+[2026-06-23 12:25:27] [Host Telegram Bot] User BagasJr clicked feedback unlike on msg 53
+[2026-06-23 12:26:02] [Host Telegram Bot] Initializing host-side polling for token: 8919960980:A...
+[2026-06-23 12:28:34] [Host Telegram Bot] Received message from chat 904266983: 'hi'
+[2026-06-23 12:28:34] [Host Telegram Bot] Guideline load error: No module named 'mysql'
+[2026-06-23 12:28:34] [DIRECT OLLAMA] Sending request (Iteration 0, 2 msgs)
+[2026-06-23 12:28:45] [DIRECT OLLAMA] Reply received (eval=1.0s, total=10.5s)
+[2026-06-23 12:28:45] Sending final reply to Telegram chat 904266983.
+[2026-06-23 12:28:49] [Host Telegram Bot] User BagasJr clicked feedback like on msg 55
+[2026-06-23 12:31:49] [Host Telegram Bot] Received message from chat 904266983: 'ramalan cuaca hari ini dikota saya'
+[2026-06-23 12:31:51] [Enrichment] Weather API error for hari ini dikota: HTTP Error 500: Internal Server Error
+[2026-06-23 12:31:51] [Host Telegram Bot] Guideline load error: No module named 'mysql'
+[2026-06-23 12:31:51] [Host Telegram Bot] KB load error: No module named 'mysql'
+[2026-06-23 12:31:51] [DIRECT OLLAMA] Sending request (Iteration 0, 4 msgs)
+[2026-06-23 12:32:11] [DIRECT OLLAMA] Reply received (eval=8.2s, total=19.9s)
+[2026-06-23 12:32:11] Sending final reply to Telegram chat 904266983.
+[2026-06-23 12:32:37] [Host Telegram Bot] User BagasJr clicked feedback unlike on msg 57
+[2026-06-23 12:35:49] [Host Telegram Bot] Received message from chat 904266983: 'ramalan cuaca hari ini dikota saya'
+[2026-06-23 12:35:50] [Enrichment] Weather API error for hari ini dikota: HTTP Error 500: Internal Server Error
+[2026-06-23 12:35:50] [Host Telegram Bot] Guideline load error: No module named 'mysql'
+[2026-06-23 12:35:50] [Host Telegram Bot] KB load error: No module named 'mysql'
+[2026-06-23 12:35:50] [DIRECT OLLAMA] Sending request (Iteration 0, 6 msgs)
+[2026-06-23 12:37:50] [DIRECT OLLAMA] Failed (Direct Ollama returned status 0). Falling back to FastAPI...
+[2026-06-23 12:37:50] [FALLBACK] Sending request to FastAPI: http://localhost:8000/v1/chat/completions
+[2026-06-23 12:40:14] [FALLBACK] FastAPI reply received.
+[2026-06-23 12:40:14] Sending final reply to Telegram chat 904266983.
+[2026-06-23 12:43:04] [Host Telegram Bot] Received message from chat 904266983: 'ramalan cuaca hari ini dikota saya'
+[2026-06-23 12:43:05] [Enrichment] Weather API error for hari ini dikota: HTTP Error 500: Internal Server Error
+[2026-06-23 12:43:05] [Host Telegram Bot] Guideline load error: No module named 'mysql'
+[2026-06-23 12:43:05] [Host Telegram Bot] KB load error: No module named 'mysql'
+[2026-06-23 12:43:05] [DIRECT OLLAMA] Sending request (Iteration 0, 8 msgs)
+[2026-06-23 12:43:49] [DIRECT OLLAMA] Reply received (eval=23.2s, total=44.0s)
+[2026-06-23 12:43:49] Developer tool call detected: run_command with {'CommandLine': 'curl -s https://api.openweathermap.org/data/2.5/weather?q=YOUR_LOCATION&appid=YOUR_API_KEY'}
+[2026-06-23 12:43:50] Local tool output: Exit Code: 1
+STDOUT:
+{"cod":401, "message": "Invalid API key. Please see https://openweathermap.org/faq#error401 for more info."}
+STDERR:
+'appid' is not recognized as an internal or external command,
+...
+[2026-06-23 12:43:50] [DIRECT OLLAMA] Sending request (Iteration 1, 10 msgs)
+[2026-06-23 12:44:22] [DIRECT OLLAMA] Reply received (eval=27.3s, total=31.2s)
+[2026-06-23 12:44:22] Warning: Model is repeating tool call run_command with same arguments. Breaking loop.
+[2026-06-23 12:44:49] Sending final reply to Telegram chat 904266983.
+[2026-06-23 12:47:30] [Host Telegram Bot] User BagasJr clicked feedback unlike on msg 59
+[2026-06-23 12:47:37] [Host Telegram Bot] User BagasJr clicked feedback unlike on msg 61
+[2026-06-23 12:48:41] [Host Telegram Bot] Initializing host-side polling for token: 8919960980:A...
+[2026-06-23 12:49:04] [Host Telegram Bot] Received message from chat 904266983: 'ramalan cuaca hari ini dikota saya'
+[2026-06-23 12:49:08] [Enrichment] Data fetched for query: ramalan cuaca hari ini dikota 
+[2026-06-23 12:49:08] [DIRECT OLLAMA] Sending request (Iteration 0, 6 msgs)
+[2026-06-23 12:50:25] [DIRECT OLLAMA] Reply received (eval=26.4s, total=77.2s)
+[2026-06-23 12:50:25] Sending final reply to Telegram chat 904266983.
+[2026-06-23 12:53:08] [Host Telegram Bot] HTTP 0 on getUpdates: The read operation timed out
+[2026-06-23 13:02:59] [Host Telegram Bot] User BagasJr clicked feedback like on msg 63
+[2026-06-23 13:05:37] [Host Telegram Bot] Received message from chat 904266983: 'lakukan Self Improving khususnya pada si'
+[2026-06-23 13:05:38] [Enrichment] Data fetched for query: lakukan Self Improving khususn
+[2026-06-23 13:05:38] [DIRECT OLLAMA] Sending request (Iteration 0, 8 msgs)

@@ -2798,7 +2798,6 @@ def chat_completions(
     # Calculate local_time early for Telegram mode context injection
     local_time = None
     if workflow_mode == "telegram":
-        import datetime
         now = datetime.datetime.now()
         local_time = now.strftime("%A, %d %B %Y, %H:%M:%S")
 
