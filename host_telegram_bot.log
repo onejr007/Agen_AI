@@ -203,3 +203,44 @@ STDERR:
 [2026-06-23 13:05:37] [Host Telegram Bot] Received message from chat 904266983: 'lakukan Self Improving khususnya pada si'
 [2026-06-23 13:05:38] [Enrichment] Data fetched for query: lakukan Self Improving khususn
 [2026-06-23 13:05:38] [DIRECT OLLAMA] Sending request (Iteration 0, 8 msgs)
+[2026-06-23 13:07:38] [DIRECT OLLAMA] Failed (Direct Ollama returned status 0). Falling back to FastAPI...
+[2026-06-23 13:07:38] [FALLBACK] Sending request to FastAPI: http://localhost:8000/v1/chat/completions
+[2026-06-23 13:10:22] [FALLBACK] FastAPI reply received.
+[2026-06-23 13:10:22] Sending final reply to Telegram chat 904266983.
+[2026-06-23 14:29:14] [Host Telegram Bot] HTTP 0 on getUpdates: The read operation timed out
+[2026-06-23 15:04:49] [Host Telegram Bot] HTTP 0 on getUpdates: The read operation timed out
+[2026-06-23 15:09:11] [Host Telegram Bot] HTTP 0 on getUpdates: _ssl.c:1063: The handshake operation timed out
+[2026-06-23 16:57:52] [Host Telegram Bot] HTTP 0 on getUpdates: The read operation timed out
+[2026-06-23 18:11:17] [Host Telegram Bot] HTTP 0 on getUpdates: The read operation timed out
+[2026-06-23 18:54:56] [Host Telegram Bot] HTTP 0 on getUpdates: _ssl.c:1063: The handshake operation timed out
+[2026-06-23 19:08:16] [Host Telegram Bot] HTTP 0 on getUpdates: The read operation timed out
+[2026-06-23 19:09:00] [Host Telegram Bot] HTTP 0 on getUpdates: The read operation timed out
+[2026-06-23 19:38:40] [Host Telegram Bot] HTTP 0 on getUpdates: The read operation timed out
+[2026-06-23 19:49:08] [Host Telegram Bot] HTTP 0 on getUpdates: _ssl.c:1063: The handshake operation timed out
+[2026-06-23 19:53:45] [Host Telegram Bot] HTTP 0 on getUpdates: The read operation timed out
+[2026-06-23 19:54:49] [Host Telegram Bot] HTTP 0 on getUpdates: The read operation timed out
+[2026-06-23 20:03:13] [Host Telegram Bot] HTTP 0 on getUpdates: _ssl.c:1063: The handshake operation timed out
+[2026-06-23 20:09:59] [Host Telegram Bot] HTTP 0 on getUpdates: The read operation timed out
+[2026-06-23 20:13:04] [Host Telegram Bot] HTTP 0 on getUpdates: The read operation timed out
+[2026-06-23 20:13:32] [Host Telegram Bot] HTTP 0 on getUpdates: The read operation timed out
+[2026-06-23 20:27:06] [Host Telegram Bot] HTTP 0 on getUpdates: The read operation timed out
+[2026-06-23 20:36:59] [Host Telegram Bot] HTTP 0 on getUpdates: The read operation timed out
+[2026-06-23 20:38:50] [Host Telegram Bot] HTTP 0 on getUpdates: _ssl.c:1063: The handshake operation timed out
+[2026-06-23 20:39:50] [Host Telegram Bot] HTTP 0 on getUpdates: The read operation timed out
+[2026-06-23 20:45:32] [Host Telegram Bot] HTTP 0 on getUpdates: The read operation timed out
+[2026-06-23 20:52:53] [Host Telegram Bot] HTTP 0 on getUpdates: The read operation timed out
+[2026-06-23 21:04:55] [Host Telegram Bot] HTTP 0 on getUpdates: _ssl.c:1063: The handshake operation timed out
+[2026-06-23 21:14:48] [Host Telegram Bot] HTTP 0 on getUpdates: The read operation timed out
+[2026-06-23 21:17:29] [Host Telegram Bot] HTTP 0 on getUpdates: [Errno 11001] getaddrinfo failed
+[2026-06-23 21:22:53] [Host Telegram Bot] HTTP 0 on getUpdates: The read operation timed out
+[2026-06-23 21:25:51] [Host Telegram Bot] HTTP 0 on getUpdates: _ssl.c:1063: The handshake operation timed out
+[2026-06-23 21:40:01] [Host Telegram Bot] HTTP 0 on getUpdates: _ssl.c:1063: The handshake operation timed out
+[2026-06-23 21:41:27] [Host Telegram Bot] HTTP 0 on getUpdates: The read operation timed out
+[2026-06-23 21:46:32] [Host Telegram Bot] HTTP 0 on getUpdates: The read operation timed out
+[2026-06-23 21:49:33] [Host Telegram Bot] HTTP 0 on getUpdates: _ssl.c:1063: The handshake operation timed out
+[2026-06-23 21:57:20] [Host Telegram Bot] HTTP 0 on getUpdates: The read operation timed out
+[2026-06-23 22:09:35] [Host Telegram Bot] HTTP 0 on getUpdates: The read operation timed out
+[2026-06-23 22:10:04] [Host Telegram Bot] HTTP 0 on getUpdates: The read operation timed out
+[2026-06-23 22:26:23] [Host Telegram Bot] HTTP 0 on getUpdates: [WinError 10054] An existing connection was forcibly closed by the remote host
+[2026-06-23 22:26:50] [Host Telegram Bot] HTTP 0 on getUpdates: _ssl.c:1063: The handshake operation timed out
+[2026-06-24 00:00:50] [Host Telegram Bot] HTTP 0 on getUpdates: The read operation timed out
