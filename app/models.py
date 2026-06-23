@@ -71,3 +71,12 @@ class LanguageDocumentation(Base):
     documentation_content = Column(Text, nullable=False)
     updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
+
+class DiscoveredTopic(Base):
+    __tablename__ = "discovered_topics"
+
+    id = Column(Integer, primary_key=True, index=True)
+    topic_name = Column(String(255), unique=True, index=True, nullable=False)
+    topic_type = Column(String(50), default="api")
+    is_learned = Column(Boolean, default=False)
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)

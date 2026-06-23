@@ -1,0 +1,125 @@
+[2026-06-23 10:41:16] [Host Telegram Bot] Initializing host-side polling for token: 8919960980:A...
+[2026-06-23 10:41:23] [Host Telegram Bot] HTTP 409 on getUpdates: {"ok":false,"error_code":409,"description":"Conflict: terminated by other getUpdates request; make sure that only one bot instance is running"}
+[2026-06-23 10:41:34] [Host Telegram Bot] HTTP 409 on getUpdates: {"ok":false,"error_code":409,"description":"Conflict: terminated by other getUpdates request; make sure that only one bot instance is running"}
+[2026-06-23 10:41:45] [Host Telegram Bot] HTTP 409 on getUpdates: {"ok":false,"error_code":409,"description":"Conflict: terminated by other getUpdates request; make sure that only one bot instance is running"}
+[2026-06-23 10:41:52] [Host Telegram Bot] Initializing host-side polling for token: 8919960980:A...
+[2026-06-23 10:47:57] [Host Telegram Bot] Initializing host-side polling for token: 8919960980:A...
+[2026-06-23 10:48:35] [Host Telegram Bot] Received message from chat 904266983: 'test'
+[2026-06-23 10:48:36] Sending completion request to primary FastAPI: http://localhost:8000/v1/chat/completions (Iteration 0)
+[2026-06-23 10:50:50] Primary server reply received successfully.
+[2026-06-23 10:50:50] Developer tool call detected: run_command with {'CommandLine': 'date /t'}
+[2026-06-23 10:50:51] Local tool output: Exit Code: 0
+STDOUT:
+Tue 06/23/2026 
+
+STDERR:
+...
+[2026-06-23 10:50:51] Sending completion request to primary FastAPI: http://localhost:8000/v1/chat/completions (Iteration 1)
+[2026-06-23 10:51:34] Primary server reply received successfully.
+[2026-06-23 10:51:34] Warning: Model is repeating tool call run_command with same arguments. Breaking loop.
+[2026-06-23 10:53:34] Sending final reply to Telegram chat 904266983.
+[2026-06-23 10:54:26] [Host Telegram Bot] Initializing host-side polling for token: 8919960980:A...
+[2026-06-23 10:55:51] [Host Telegram Bot] Received message from chat 904266983: 'test'
+[2026-06-23 10:55:52] Sending completion request to primary FastAPI: http://localhost:8000/v1/chat/completions (Iteration 0)
+[2026-06-23 10:57:46] Primary server reply received successfully.
+[2026-06-23 10:57:46] Developer tool call detected: run_command with {'CommandLine': 'date /t'}
+[2026-06-23 10:57:47] Local tool output: Exit Code: 0
+STDOUT:
+Tue 06/23/2026 
+
+STDERR:
+...
+[2026-06-23 10:57:47] Sending completion request to primary FastAPI: http://localhost:8000/v1/chat/completions (Iteration 1)
+[2026-06-23 10:58:49] Primary server reply received successfully.
+[2026-06-23 10:58:49] Warning: Model is repeating tool call run_command with same arguments. Breaking loop.
+[2026-06-23 10:59:38] Sending final reply to Telegram chat 904266983.
+[2026-06-23 11:00:08] [Host Telegram Bot] Received message from chat 904266983: 'halo'
+[2026-06-23 11:00:09] Sending completion request to primary FastAPI: http://localhost:8000/v1/chat/completions (Iteration 0)
+[2026-06-23 11:02:02] Primary server reply received successfully.
+[2026-06-23 11:02:02] Developer tool call detected: run_command with {'CommandLine': 'date /t'}
+[2026-06-23 11:02:03] Local tool output: Exit Code: 0
+STDOUT:
+Tue 06/23/2026 
+
+STDERR:
+...
+[2026-06-23 11:02:03] Sending completion request to primary FastAPI: http://localhost:8000/v1/chat/completions (Iteration 1)
+[2026-06-23 11:03:48] Primary server reply received successfully.
+[2026-06-23 11:03:48] Warning: Model is repeating tool call run_command with same arguments. Breaking loop.
+[2026-06-23 11:04:52] [Host Telegram Bot] Initializing host-side polling for token: 8919960980:A...
+[2026-06-23 11:10:10] [Host Telegram Bot] Received message from chat 904266983: 'halo'
+[2026-06-23 11:10:12] Sending completion request to primary FastAPI: http://localhost:8000/v1/chat/completions (Iteration 0)
+[2026-06-23 11:12:03] Primary server reply received successfully.
+[2026-06-23 11:12:03] Developer tool call detected: run_command with {'CommandLine': 'date /t'}
+[2026-06-23 11:12:30] [Host Telegram Bot] Initializing host-side polling for token: 8919960980:A...
+[2026-06-23 11:14:50] [Host Telegram Bot] Received message from chat 904266983: 'hi'
+[2026-06-23 11:14:51] [DIRECT OLLAMA] Sending request (Iteration 0, 3 msgs)
+[2026-06-23 11:15:15] [DIRECT OLLAMA] Reply received (eval=2.4s, total=23.9s)
+[2026-06-23 11:15:15] Sending final reply to Telegram chat 904266983.
+[2026-06-23 11:15:22] [Host Telegram Bot] User BagasJr clicked feedback like on msg 27
+[2026-06-23 11:15:34] [Host Telegram Bot] Received message from chat 904266983: 'siapa kamu?'
+[2026-06-23 11:15:35] [DIRECT OLLAMA] Sending request (Iteration 0, 5 msgs)
+[2026-06-23 11:17:35] [DIRECT OLLAMA] Failed (Direct Ollama returned status 0). Falling back to FastAPI...
+[2026-06-23 11:17:35] [FALLBACK] Sending request to FastAPI: http://localhost:8000/v1/chat/completions
+[2026-06-23 11:19:00] [FALLBACK] FastAPI reply received.
+[2026-06-23 11:19:00] Sending final reply to Telegram chat 904266983.
+[2026-06-23 11:28:20] [Host Telegram Bot] Initializing host-side polling for token: 8919960980:A...
+[2026-06-23 11:28:22] [Host Telegram Bot] HTTP 409 on getUpdates: {"ok":false,"error_code":409,"description":"Conflict: terminated by other getUpdates request; make sure that only one bot instance is running"}
+[2026-06-23 11:28:27] [Host Telegram Bot] HTTP 409 on getUpdates: {"ok":false,"error_code":409,"description":"Conflict: terminated by other getUpdates request; make sure that only one bot instance is running"}
+[2026-06-23 11:28:33] [Host Telegram Bot] HTTP 409 on getUpdates: {"ok":false,"error_code":409,"description":"Conflict: terminated by other getUpdates request; make sure that only one bot instance is running"}
+[2026-06-23 11:29:46] [Host Telegram Bot] Initializing host-side polling for token: 8919960980:A...
+[2026-06-23 11:31:04] [Host Telegram Bot] Received message from chat 904266983: 'hi'
+[2026-06-23 11:31:05] [DIRECT OLLAMA] Sending request (Iteration 0, 2 msgs)
+[2026-06-23 11:31:24] [DIRECT OLLAMA] Reply received (eval=1.6s, total=19.0s)
+[2026-06-23 11:31:24] Sending final reply to Telegram chat 904266983.
+[2026-06-23 11:31:33] [Host Telegram Bot] User BagasJr clicked feedback like on msg 31
+[2026-06-23 11:31:46] [Host Telegram Bot] Received message from chat 904266983: 'tolong gunakan bahasa indonesia seperti '
+[2026-06-23 11:31:47] [DIRECT OLLAMA] Sending request (Iteration 0, 4 msgs)
+[2026-06-23 11:31:56] [DIRECT OLLAMA] Reply received (eval=2.6s, total=9.8s)
+[2026-06-23 11:31:56] Sending final reply to Telegram chat 904266983.
+[2026-06-23 11:32:13] [Host Telegram Bot] User BagasJr clicked feedback like on msg 33
+[2026-06-23 11:32:22] [Host Telegram Bot] Received message from chat 904266983: 'berapa banyak bahasa yang anda bisa?'
+[2026-06-23 11:32:23] [DIRECT OLLAMA] Sending request (Iteration 0, 6 msgs)
+[2026-06-23 11:32:36] [DIRECT OLLAMA] Reply received (eval=2.7s, total=12.9s)
+[2026-06-23 11:32:36] Sending final reply to Telegram chat 904266983.
+[2026-06-23 11:33:09] [Host Telegram Bot] User BagasJr clicked feedback like on msg 35
+[2026-06-23 11:33:23] [Host Telegram Bot] Received message from chat 904266983: 'anda kenal saya?'
+[2026-06-23 11:33:24] [DIRECT OLLAMA] Sending request (Iteration 0, 8 msgs)
+[2026-06-23 11:33:38] [DIRECT OLLAMA] Reply received (eval=4.1s, total=13.6s)
+[2026-06-23 11:33:38] Sending final reply to Telegram chat 904266983.
+[2026-06-23 11:33:58] [Host Telegram Bot] User BagasJr clicked feedback like on msg 37
+[2026-06-23 11:34:16] [Host Telegram Bot] Received message from chat 904266983: 'Anda punya kemampuan untuk searching?'
+[2026-06-23 11:34:17] [DIRECT OLLAMA] Sending request (Iteration 0, 10 msgs)
+[2026-06-23 11:34:34] [DIRECT OLLAMA] Reply received (eval=5.0s, total=17.0s)
+[2026-06-23 11:34:34] Sending final reply to Telegram chat 904266983.
+[2026-06-23 11:41:01] [Host Telegram Bot] Initializing host-side polling for token: 8919960980:A...
+[2026-06-23 11:42:03] [Host Telegram Bot] Received message from chat 904266983: 'Anda punya kemampuan untuk searching?'
+[2026-06-23 11:42:04] [DIRECT OLLAMA] Sending request (Iteration 0, 2 msgs)
+[2026-06-23 11:42:28] [DIRECT OLLAMA] Reply received (eval=2.9s, total=23.7s)
+[2026-06-23 11:42:28] Sending final reply to Telegram chat 904266983.
+[2026-06-23 11:42:44] [Host Telegram Bot] User BagasJr clicked feedback like on msg 41
+[2026-06-23 11:42:52] [Host Telegram Bot] Received message from chat 904266983: 'maksud saya adalah pencarian di internet'
+[2026-06-23 11:42:55] [DIRECT OLLAMA] Sending request (Iteration 0, 4 msgs)
+[2026-06-23 11:43:09] [DIRECT OLLAMA] Reply received (eval=6.2s, total=14.6s)
+[2026-06-23 11:43:09] Sending final reply to Telegram chat 904266983.
+[2026-06-23 11:43:46] [Host Telegram Bot] User BagasJr clicked feedback like on msg 43
+[2026-06-23 11:44:12] [Host Telegram Bot] Received message from chat 904266983: 'coba cari ini, berapa curs dolar IDR saa'
+[2026-06-23 11:44:13] [DIRECT OLLAMA] Sending request (Iteration 0, 6 msgs)
+[2026-06-23 11:44:39] [DIRECT OLLAMA] Reply received (eval=13.5s, total=25.9s)
+[2026-06-23 11:44:39] Sending final reply to Telegram chat 904266983.
+[2026-06-23 11:45:00] [Host Telegram Bot] User BagasJr clicked feedback unlike on msg 45
+[2026-06-23 11:48:05] [Host Telegram Bot] Initializing host-side polling for token: 8919960980:A...
+[2026-06-23 11:54:20] [Host Telegram Bot] Initializing host-side polling for token: 8919960980:A...
+[2026-06-23 12:00:33] [Host Telegram Bot] HTTP 0 on getUpdates: The read operation timed out
+[2026-06-23 12:05:01] [Host Telegram Bot] Received message from chat 904266983: 'coba cari ini, berapa curs dolar IDR saa'
+[2026-06-23 12:05:03] [Enrichment] Data fetched for query: coba cari ini, berapa curs dol
+[2026-06-23 12:05:03] [DIRECT OLLAMA] Sending request (Iteration 0, 2 msgs)
+[2026-06-23 12:06:29] [DIRECT OLLAMA] Reply received (eval=50.0s, total=85.7s)
+[2026-06-23 12:06:29] Sending final reply to Telegram chat 904266983.
+[2026-06-23 12:06:42] [Host Telegram Bot] User BagasJr clicked feedback like on msg 47
+[2026-06-23 12:07:04] [Host Telegram Bot] Received message from chat 904266983: 'ramalan cuaca hari ini dikota saya'
+[2026-06-23 12:07:06] [Enrichment] Data fetched for query: ramalan cuaca hari ini dikota 
+[2026-06-23 12:07:06] [DIRECT OLLAMA] Sending request (Iteration 0, 4 msgs)
+[2026-06-23 12:08:42] [DIRECT OLLAMA] Reply received (eval=53.8s, total=95.7s)
+[2026-06-23 12:08:42] Sending final reply to Telegram chat 904266983.
+[2026-06-23 12:09:57] [Host Telegram Bot] User BagasJr clicked feedback unlike on msg 49

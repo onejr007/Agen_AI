@@ -14,7 +14,7 @@ var app = builder.Build();
 InitializeDatabase();
 
 // Start the Doctor background self-learning and log watcher thread
-Task.Run(async () => {
+_ = Task.Run(async () => {
     await Task.Delay(10000); // Wait for the main container to settle
     await StartDoctorEngineAsync();
 });
@@ -70,7 +70,7 @@ app.MapPost("/analyze-and-upgrade", async ([FromBody] AnalyzeRequest request) =>
 
     Console.WriteLine($"[Doctor] Manual optimization requested for: {targetFile}");
     try {
-        bool success = await RunDarwinianMutationCycleAsync(rootDir, backupsDir, targetFile, request.CustomPrompt);
+        bool success = await RunDarwinianMutationCycleAsync(rootDir, backupsDir, targetFile, request.CustomPrompt ?? "Optimize performance, reduce latency, and ensure strict PEP8 guidelines.");
         return Results.Json(new UpgradeResponse { Success = success, Error = success ? "" : "Optimization failed or shadow sandbox rejected mutation." });
     } catch (Exception ex) {
         return Results.Json(new UpgradeResponse { Success = false, Error = ex.Message });
@@ -155,6 +155,13 @@ void InitializeDatabase()
                 ram_excess_mb FLOAT NOT NULL DEFAULT 0,
                 storage_free_gb FLOAT NOT NULL DEFAULT 0,
                 punishment_message TEXT NOT NULL,
+                timestamp DATETIME NOT NULL
+            );
+            CREATE TABLE IF NOT EXISTS doctor_lifecycle_logs (
+                id VARCHAR(50) PRIMARY KEY,
+                cycle_id VARCHAR(50) NOT NULL,
+                event_type VARCHAR(50) NOT NULL,
+                details TEXT NOT NULL,
                 timestamp DATETIME NOT NULL
             );"; 
         cmd.ExecuteNonQuery();
@@ -316,8 +323,10 @@ async Task StartDoctorEngineAsync()
                     }
                 }
 
+                string errorCycleId = Guid.NewGuid().ToString();
+                SaveLifecycleLog(errorCycleId, "ErrorRepairTriggered", $"Urgent repair triggered due to FastAPI log errors:\n{errorBlock}");
                 string repairInstruction = BuildErrorRepairPrompt(errorBlock);
-                bool repaired = await RunDarwinianMutationCycleAsync(rootDir, backupsDir, Path.Combine(rootDir, "app/main.py"), repairInstruction, redisDb);
+                bool repaired = await RunDarwinianMutationCycleAsync(rootDir, backupsDir, Path.Combine(rootDir, "app/main.py"), repairInstruction, redisDb, errorCycleId);
 
                 if (redisDb != null)
                     await redisDb.KeyDeleteAsync("system_status"); // Release lock after repair
@@ -339,8 +348,11 @@ async Task StartDoctorEngineAsync()
                     Console.WriteLine("[Doctor] 📥 Found queued error repair from user session. Executing now...");
                     await redisDb.KeyDeleteAsync("queued_error_repair");
                     await redisDb.StringSetAsync("system_status", "ERROR_REPAIR", TimeSpan.FromMinutes(10));
+                    
+                    string queuedCycleId = Guid.NewGuid().ToString();
+                    SaveLifecycleLog(queuedCycleId, "ErrorRepairTriggered", $"Queued error repair triggered from previous user session errors:\n{queuedError}");
                     string queuedInstruction = BuildErrorRepairPrompt(queuedError.ToString());
-                    await RunDarwinianMutationCycleAsync(rootDir, backupsDir, Path.Combine(rootDir, "app/main.py"), queuedInstruction, redisDb);
+                    await RunDarwinianMutationCycleAsync(rootDir, backupsDir, Path.Combine(rootDir, "app/main.py"), queuedInstruction, redisDb, queuedCycleId);
                     await redisDb.KeyDeleteAsync("system_status");
                     goto SkipIdleCheck;
                 }
@@ -367,13 +379,20 @@ async Task StartDoctorEngineAsync()
                     // Check if we have a paused checkpoint to continue
                     var checkpoint = GetLatestCheckpoint();
                     string baseInstruction = "Optimize performance, reduce latency, and ensure strict PEP8 guidelines.";
+                    string selfLearningCycleId = Guid.NewGuid().ToString();
+                    
                     if (checkpoint != null)
                     {
+                        SaveLifecycleLog(selfLearningCycleId, "CycleContinued", $"Resuming paused self-learning checkpoint. Last task: {checkpoint.TaskDescription}");
                         Console.WriteLine($"[Doctor Checkpoint] Resuming paused self-learning checkpoint: {checkpoint.TaskDescription}");
                         baseInstruction = $"Continue our optimization. Last task details: {checkpoint.TaskDescription}";
                     }
+                    else
+                    {
+                        SaveLifecycleLog(selfLearningCycleId, "CycleStart", "Triggering new idle self-learning cycle.");
+                    }
                     
-                    bool mutationFinished = await RunDarwinianMutationCycleAsync(rootDir, backupsDir, Path.Combine(rootDir, "app/main.py"), baseInstruction, redisDb);
+                    bool mutationFinished = await RunDarwinianMutationCycleAsync(rootDir, backupsDir, Path.Combine(rootDir, "app/main.py"), baseInstruction, redisDb, selfLearningCycleId);
                     
                     if (mutationFinished)
                     {
@@ -396,8 +415,11 @@ async Task StartDoctorEngineAsync()
                     Console.WriteLine("[Doctor Engine] System is IDLE (5+ minutes). Triggering fallback self-learning cycle...");
                     var fallbackSnapshot = GetResourceSnapshot();
                     Console.WriteLine($"[Doctor Resource] 🧠 RAM: {fallbackSnapshot.RamUsedMb:F0}MB ({fallbackSnapshot.RamStatus}) | 💾 Storage: {fallbackSnapshot.StorageFreeGb:F1}GB free ({fallbackSnapshot.StorageStatus})");
-                    await RunDarwinianMutationCycleAsync(rootDir, backupsDir, Path.Combine(rootDir, "app/main.py"), "Optimize app/main.py performance and reduce memory footprint.");
-                    lastUserActivity = DateTime.UtcNow; // reset
+                    
+                    string fallbackCycleId = Guid.NewGuid().ToString();
+                    SaveLifecycleLog(fallbackCycleId, "CycleStart", "Triggering fallback self-learning cycle (Redis down).");
+                    await RunDarwinianMutationCycleAsync(rootDir, backupsDir, Path.Combine(rootDir, "app/main.py"), "Optimize app/main.py performance and reduce memory footprint.", null, fallbackCycleId);
+                    lastUserActivity = DateTime.UtcNow;
                 }
             }
 
@@ -411,15 +433,15 @@ async Task StartDoctorEngineAsync()
 }
 
 // Darwinian Mutation Cycle: Optimize, Sandbox, Survival Test, deploy or punish
-async Task<bool> RunDarwinianMutationCycleAsync(string rootDir, string backupsDir, string targetFilePath, string promptContext, IDatabase? redisDb = null)
+async Task<bool> RunDarwinianMutationCycleAsync(string rootDir, string backupsDir, string targetFilePath, string promptContext, IDatabase? redisDb = null, string? cycleId = null)
 {
+    string activeCycleId = cycleId ?? Guid.NewGuid().ToString();
     string targetRelativePath = Path.GetRelativePath(rootDir, targetFilePath).Replace("\\", "/");
     string mutatedFilePath = Path.Combine(rootDir, "app/main_mutated.py");
     
     // Ensure we start clean
     if (File.Exists(mutatedFilePath)) File.Delete(mutatedFilePath);
 
-    Console.WriteLine($"[Darwinian Engine] Starting mutation cycle on: {targetRelativePath}");
     try
     {
         string currentCode = File.ReadAllText(targetFilePath);
@@ -428,6 +450,10 @@ async Task<bool> RunDarwinianMutationCycleAsync(string rootDir, string backupsDi
         // Resource Constraints monitoring: full RAM + Storage snapshot
         var snapshot = GetResourceSnapshot();
         double baselineRamMb = snapshot.RamUsedMb; // Capture baseline BEFORE launching shadow container
+        
+        // Log start of cycle
+        SaveLifecycleLog(activeCycleId, "CycleStart", $"Starting mutation cycle on file '{targetRelativePath}'. Target file size: {currentCode.Length} chars. Baseline RAM: {snapshot.RamUsedMb:F0}MB/{(snapshot.RamLimitMb > 0 ? snapshot.RamLimitMb.ToString("F0") + "MB" : "unlimited")}. Storage Free: {snapshot.StorageFreeGb:F1}GB.");
+        Console.WriteLine($"[Darwinian Engine] Starting mutation cycle on: {targetRelativePath}");
         Console.WriteLine($"[Darwinian Engine] 📊 Resource Snapshot — RAM: {snapshot.RamUsedMb:F0}MB/{(snapshot.RamLimitMb > 0 ? snapshot.RamLimitMb.ToString("F0") : "?")}MB ({snapshot.RamStatus}) | Storage: {snapshot.StorageFreeGb:F1}GB free ({snapshot.StorageStatus})");
 
         // Retrieve last punishment message to teach AI from past mistakes
@@ -453,7 +479,7 @@ async Task<bool> RunDarwinianMutationCycleAsync(string rootDir, string backupsDi
         using (var cts = new CancellationTokenSource())
         using (var client = new HttpClient())
         {
-            client.Timeout = TimeSpan.FromSeconds(300);
+            client.Timeout = TimeSpan.FromSeconds(600);
             var payload = new
             {
                 model = ollamaModel,
@@ -467,6 +493,9 @@ async Task<bool> RunDarwinianMutationCycleAsync(string rootDir, string backupsDi
             };
 
             var httpContent = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
+            
+            // Log Ollama Query Start
+            SaveLifecycleLog(activeCycleId, "OllamaQueryStart", $"Requesting code improvement/upgrade from Ollama model '{ollamaModel}' with instruction context: '{promptContext}'.");
             
             // Start HttpClient call to Ollama
             var ollamaTask = client.PostAsync($"{ollamaBaseUrl}/api/chat", httpContent, cts.Token);
@@ -483,7 +512,8 @@ async Task<bool> RunDarwinianMutationCycleAsync(string rootDir, string backupsDi
                         Console.WriteLine("[Darwinian Engine] USER INTERRUPT DETECTED! Aborting Ollama query instantly to free VRAM...");
                         cts.Cancel(); // Force cancel connection
                         
-                        // Save checkpoint
+                        // Save checkpoint and log pause
+                        SaveLifecycleLog(activeCycleId, "OllamaQueryPaused", $"User interrupt detected! Aborting Ollama query to release VRAM. Saved checkpoint for resume.");
                         SaveCheckpoint(promptContext, "Paused");
                         return false; // Interrupted
                     }
@@ -517,19 +547,22 @@ async Task<bool> RunDarwinianMutationCycleAsync(string rootDir, string backupsDi
                 catch (Exception jsonEx)
                 {
                     Console.WriteLine($"[Darwinian Engine] Failed to parse Ollama JSON: {jsonEx.Message}. Response was: {rawReply}");
+                    SaveLifecycleLog(activeCycleId, "CycleFailed", $"Failed to parse Ollama output JSON: {jsonEx.Message}. Raw reply: {rawReply}");
                     SaveEvolutionLog(targetRelativePath, "unknown", "mutated", "Ollama output json parsing failed", 0, 0, "Gagal", jsonEx.Message);
                     return true;
                 }
 
                 if (mutationReq != null && !string.IsNullOrEmpty(mutationReq.Content))
                 {
+                    // Log Ollama Query Success
+                    SaveLifecycleLog(activeCycleId, "OllamaQuerySuccess", $"Ollama returned code mutation response. Code length: {mutationReq.Content.Length} characters.");
                     Console.WriteLine("[Darwinian Sandbox] Mutated code generated. Running quarantine survival testing...");
                     
                     // Write to mutated temporary file
                     File.WriteAllText(mutatedFilePath, mutationReq.Content);
                     
                     // Run survival testing in shadow container sandbox with baseline RAM for Punishment Protocol
-                    var survivalResult = await RunQuarantineSandboxTestsAsync(rootDir, mutatedFilePath, baselineRamMb);
+                    var survivalResult = await RunQuarantineSandboxTestsAsync(rootDir, mutatedFilePath, baselineRamMb, activeCycleId);
                     
                     if (survivalResult.Lulus)
                     {
@@ -542,7 +575,8 @@ async Task<bool> RunDarwinianMutationCycleAsync(string rootDir, string backupsDi
                         // Deploy: overwrite the main app file
                         File.WriteAllText(targetFilePath, mutationReq.Content);
                         
-                        // Log success
+                        // Log success to evolution logs & lifecycle logs
+                        SaveLifecycleLog(activeCycleId, "CycleCompleted", $"Mutation tests passed. Deployed code changes to '{targetRelativePath}' successfully.");
                         SaveEvolutionLog(targetRelativePath, "v_old", "v_new", mutationReq.Content, survivalResult.LatencyDeltaMs, survivalResult.RamUsageBytes, "Lulus", "");
                         
                         // Delete temp file
@@ -553,7 +587,8 @@ async Task<bool> RunDarwinianMutationCycleAsync(string rootDir, string backupsDi
                     {
                         Console.WriteLine($"[Darwinian Sandbox] FAILED: Mutation rejected by sandbox. Reason: {survivalResult.Reason}");
                         
-                        // Feed failure log back to Ollama next cycle
+                        // Log failure to lifecycle logs & evolution logs
+                        SaveLifecycleLog(activeCycleId, "CycleFailed", $"Mutation rejected by sandbox tests. Reason: {survivalResult.Reason}");
                         SaveEvolutionLog(targetRelativePath, "v_old", "v_new", mutationReq.Content, 0, 0, "Gagal", survivalResult.Reason);
                         
                         if (File.Exists(mutatedFilePath)) File.Delete(mutatedFilePath);
@@ -561,23 +596,31 @@ async Task<bool> RunDarwinianMutationCycleAsync(string rootDir, string backupsDi
                     }
                 }
             }
+            else
+            {
+                SaveLifecycleLog(activeCycleId, "CycleFailed", $"Ollama chat query failed with status code: {response.StatusCode}");
+            }
         }
     }
     catch (Exception ex)
     {
+        SaveLifecycleLog(activeCycleId, "CycleFailed", $"Mutation cycle encountered an error: {ex.Message}");
         Console.WriteLine($"[Darwinian Engine Error] Mutation cycle exception: {ex.Message}");
     }
     return false;
 }
 
 // Spin up shadow container, measure latency/RAM, check validity
-async Task<SandboxTestResult> RunQuarantineSandboxTestsAsync(string rootDir, string mutatedFilePath, double baselineRamMb = 0)
+async Task<SandboxTestResult> RunQuarantineSandboxTestsAsync(string rootDir, string mutatedFilePath, double baselineRamMb = 0, string cycleId = "unknown")
 {
     Console.WriteLine("[Darwinian Sandbox] Launching shadow API container...");
     string containerName = "agent-shadow-api";
     
     // Ensure no existing shadow container is running
     ExecuteTerminalCommand($"docker rm -f {containerName}");
+
+    // Log Sandbox Start
+    SaveLifecycleLog(cycleId, "SandboxStart", $"Launching shadow API container '{containerName}' for quarantine verification testing.");
 
     // Start shadow container in default compose network, mapping the shared volume
     // Uvicorn runs app.main_mutated:app inside the container
@@ -586,8 +629,12 @@ async Task<SandboxTestResult> RunQuarantineSandboxTestsAsync(string rootDir, str
     
     if (string.IsNullOrEmpty(startOutput) || startOutput.Contains("Error"))
     {
+        SaveLifecycleLog(cycleId, "CompilationFailed", $"Stage 1 failed: Shadow container startup command failed. Output: {startOutput}");
         return new SandboxTestResult(false, $"Shadow container startup command failed: {startOutput}", 0, 0);
     }
+
+    // Log Stage 1: Compilation Check
+    SaveLifecycleLog(cycleId, "CompilationCheck", "Stage 1: Verifying compilation and service start health check on shadow container (port 8080).");
 
     // Wait for the container port 8080 to respond (Uji Kompilasi)
     bool isAlive = false;
@@ -614,14 +661,22 @@ async Task<SandboxTestResult> RunQuarantineSandboxTestsAsync(string rootDir, str
     {
         string containerLogs = ExecuteTerminalCommand($"docker logs {containerName}");
         ExecuteTerminalCommand($"docker rm -f {containerName}");
+        
+        SaveLifecycleLog(cycleId, "CompilationFailed", $"Stage 1 failed. Shadow container did not respond to /health in 15 seconds. Startup logs:\n{containerLogs}");
         return new SandboxTestResult(false, $"Uji Kompilasi GAGAL: Container did not become healthy in 15s. Logs:\n{containerLogs}", 0, 0);
     }
+
+    // Log Stage 1 Success
+    SaveLifecycleLog(cycleId, "CompilationSuccess", "Stage 1 passed. Shadow container compiled successfully and is responding on port 8080.");
 
     // Uji Latensi: Send 100 requests to shadow container and calculate average response time
     int totalRequests = 100;
     long totalMs = 0;
     int successCount = 0;
     
+    // Log Stage 2: Stress Test
+    SaveLifecycleLog(cycleId, "StressTestStart", $"Stage 2: Initiating stress test and latency check by sending {totalRequests} HTTP requests to shadow container.");
+
     using (var client = new HttpClient())
     {
         client.Timeout = TimeSpan.FromMilliseconds(500);
@@ -648,10 +703,17 @@ async Task<SandboxTestResult> RunQuarantineSandboxTestsAsync(string rootDir, str
     if (successCount < 95)
     {
         ExecuteTerminalCommand($"docker rm -f {containerName}");
+        SaveLifecycleLog(cycleId, "StressTestFailed", $"Stage 2 failed. Request success rate was only {successCount}% (required: 95%).");
         return new SandboxTestResult(false, $"Uji Validitas GAGAL: Success rate was only {successCount}% under stress test.", 0, 0);
     }
 
     long avgLatencyMs = totalMs / successCount;
+    
+    // Log Stage 2 Success
+    SaveLifecycleLog(cycleId, "StressTestSuccess", $"Stage 2 passed. Stress test completed with success rate: {successCount}%. Average latency: {avgLatencyMs} ms.");
+
+    // Log Stage 3: RAM Check
+    SaveLifecycleLog(cycleId, "RamCheckStart", "Stage 3: Analyzing RAM consumption of shadow container using docker stats.");
 
     // Uji RAM: Read resource usage using docker stats
     long ramUsageBytes = 0;
@@ -682,10 +744,15 @@ async Task<SandboxTestResult> RunQuarantineSandboxTestsAsync(string rootDir, str
                                $"Batas toleransi yang dilanggar: {toleranceMb:F1}MB (baseline + 10%).\n" +
                                $"Pemborosan: +{excessMb:F1}MB ({(baselineRamMb > 0 ? wastePercent.ToString("F0") : "?")}%) lebih boros dari versi produksi saat ini.\n" +
                                $"Pada siklus berikutnya, kamu WAJIB mengurangi konsumsi memori, bukan menambahnya.";
+        
         SavePunishmentLog(baselineRamMb, mutantRamMb, excessMb, 0, punishmentMsg);
+        SaveLifecycleLog(cycleId, "RamCheckFailed", $"Stage 3 failed (Punished). RAM usage: {mutantRamMb:F1}MB exceeds limit: {toleranceMb:F1}MB (baseline: {(baselineRamMb > 0 ? baselineRamMb.ToString("F1") : "?")}MB + 10%).");
         Console.WriteLine($"[Darwinian Sandbox] 🚨 PUNISHMENT PROTOCOL: {punishmentMsg}");
         return new SandboxTestResult(false, $"Uji RAM GAGAL (Punishment Protocol): {punishmentMsg}", latencyDeltaMs, ramUsageBytes);
     }
+
+    // Log Stage 3 Success
+    SaveLifecycleLog(cycleId, "RamCheckSuccess", $"Stage 3 passed. RAM usage: {mutantRamMb:F1}MB is within safe limit: {toleranceMb:F1}MB (baseline: {(baselineRamMb > 0 ? baselineRamMb.ToString("F1") : "?")}MB + 10%).");
 
     return new SandboxTestResult(true, "Lulus Semua Uji Kelayakan", latencyDeltaMs, ramUsageBytes);
 }
@@ -842,6 +909,9 @@ string BuildSurvivalPrompt(ResourceSnapshot snapshot, string lastPunishment, str
     string ramLimitStr = snapshot.RamLimitMb > 0 ? $"{snapshot.RamLimitMb:F0}MB" : "tidak dibatasi";
     double maxAllowedMb = snapshot.RamUsedMb * 1.10;
 
+    string evolutionHistory = GetRecentEvolutionHistory();
+    string historyBlock = $"\n\n📜 RIWAYAT EVOLUSI TERKINI (PELAJARI SIKLUS SEBELUMNYA AGAR LEBIH PINTAR):\n{evolutionHistory}";
+
     return $"Sistem saat ini idle. Ini adalah kode FastAPI terkini milikmu. Evaluasi dan optimalkan.\n\n" +
            $"📊 KONDISI SUMBER DAYA REAL-TIME:\n" +
            $"- RAM Terpakai: {snapshot.RamUsedMb:F0}MB / {ramLimitStr} ({snapshot.RamUsagePct:F0}% — Status: {snapshot.RamStatus})\n" +
@@ -850,7 +920,8 @@ string BuildSurvivalPrompt(ResourceSnapshot snapshot, string lastPunishment, str
            $"🎯 MANDATMU berdasarkan kondisi sumber daya di atas:\n" +
            $"{mandate}{storageMandate}\n" +
            $"- 🚫 BATASAN MUTASI: Kode barumu TIDAK BOLEH menggunakan RAM melebihi {snapshot.RamUsedMb:F0}MB + toleransi 10% = {maxAllowedMb:F0}MB." +
-           $"{punishmentBlock}\n\n" +
+           $"{punishmentBlock}" +
+           $"{historyBlock}\n\n" +
            $"📋 INSTRUKSI SPESIFIK: {baseInstruction}\n\n" +
            $"Berikut adalah kode Python yang perlu kamu optimalkan (file: {filePath}):\n\n```python\n{codeSnippet}\n```";
 }
@@ -913,6 +984,56 @@ string GetLastPunishmentMessage()
     }
 }
 
+// Get the last 5 evolution cycles to teach the AI what worked and what failed
+string GetRecentEvolutionHistory()
+{
+    try
+    {
+        var connStr = GetMySqlConnectionString();
+        using var conn = new MySqlConnection(connStr);
+        conn.Open();
+
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = "SELECT timestamp, status, latency_change_ms, ram_usage_bytes, failure_reason FROM evolution_logs ORDER BY timestamp DESC LIMIT 5";
+
+        var sb = new System.Text.StringBuilder();
+        using var reader = cmd.ExecuteReader();
+        int count = 1;
+        while (reader.Read())
+        {
+            var ts = reader.GetDateTime(0);
+            var status = reader.GetString(1);
+            var latency = reader.GetInt32(2);
+            var ramBytes = reader.GetInt64(3);
+            var reason = reader.IsDBNull(4) ? "" : reader.GetString(4);
+
+            double ramMb = ramBytes / (1024.0 * 1024.0);
+
+            sb.AppendLine($"  {count}. [{ts:yyyy-MM-dd HH:mm:ss}] Status: {status}");
+            if (status == "Lulus")
+            {
+                sb.AppendLine($"     Perubahan Latensi: {latency}ms | RAM Mutan: {ramMb:F1}MB");
+            }
+            else
+            {
+                sb.AppendLine($"     Penyebab Gagal: {reason}");
+            }
+            count++;
+        }
+
+        if (sb.Length == 0)
+        {
+            return "Belum ada riwayat evolusi sebelumnya.";
+        }
+        return sb.ToString();
+    }
+    catch (Exception ex)
+    {
+        return $"Gagal mengambil riwayat evolusi: {ex.Message}";
+    }
+}
+
+
 // Build a targeted error-repair prompt for Ollama based on actual FastAPI ERROR log lines
 string BuildErrorRepairPrompt(string errorBlock)
 {
@@ -920,6 +1041,9 @@ string BuildErrorRepairPrompt(string errorBlock)
     string lastPunishment = GetLastPunishmentMessage();
     string punishmentBlock = string.IsNullOrEmpty(lastPunishment) ? "" :
         $"\n\n⚠️ CATATAN: Pada siklus mutasi sebelumnya kamu dihukum karena:\n{lastPunishment}\nJangan ulangi kesalahan yang sama.";
+
+    string evolutionHistory = GetRecentEvolutionHistory();
+    string historyBlock = $"\n\n📜 RIWAYAT EVOLUSI TERKINI (PELAJARI SIKLUS SEBELUMNYA AGAR LEBIH PINTAR):\n{evolutionHistory}";
 
     return $"🚨 DARURAT: FastAPI mengalami ERROR aktif yang perlu segera diperbaiki.\n\n" +
            $"📋 LOG ERROR DARI FASTAPI:\n```\n{errorBlock}\n```\n\n" +
@@ -931,7 +1055,8 @@ string BuildErrorRepairPrompt(string errorBlock)
            $"3. Tambahkan error handling yang lebih baik agar error serupa tidak terulang.\n" +
            $"4. JANGAN ubah logika bisnis utama — hanya perbaiki bagian yang error.\n" +
            $"5. Pastikan kode hasil perbaikan TIDAK meningkatkan konsumsi RAM lebih dari {snapshot.RamUsedMb * 1.10:F0}MB." +
-           punishmentBlock;
+           $"{punishmentBlock}" +
+           $"{historyBlock}";
 }
 
 // MySQL code backups
@@ -1118,6 +1243,36 @@ void SaveEvolutionLog(string filePath, string fromVersion, string toVersion, str
     catch (Exception ex)
     {
         Console.WriteLine($"[Doctor DB Error] Failed to log evolution: {ex.Message}");
+    }
+}
+
+// MySQL lifecycle event logging
+void SaveLifecycleLog(string cycleId, string eventType, string details)
+{
+    try
+    {
+        var connStr = GetMySqlConnectionString();
+        using var conn = new MySqlConnection(connStr);
+        conn.Open();
+        
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = @"INSERT INTO doctor_lifecycle_logs 
+            (id, cycle_id, event_type, details, timestamp) 
+            VALUES 
+            (@id, @cycle_id, @event_type, @details, @timestamp)";
+            
+        cmd.Parameters.AddWithValue("@id", Guid.NewGuid().ToString());
+        cmd.Parameters.AddWithValue("@cycle_id", cycleId);
+        cmd.Parameters.AddWithValue("@event_type", eventType);
+        cmd.Parameters.AddWithValue("@details", details);
+        cmd.Parameters.AddWithValue("@timestamp", DateTime.UtcNow);
+        
+        cmd.ExecuteNonQuery();
+        Console.WriteLine($"[Doctor Lifecycle] [{DateTime.UtcNow:yyyy-MM-dd HH:mm:ss}] {eventType}: {details}");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"[Doctor Lifecycle Error] Failed to log lifecycle event: {ex.Message}");
     }
 }
 

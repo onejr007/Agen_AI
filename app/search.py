@@ -4,6 +4,7 @@ from duckduckgo_search import DDGS
 import logging
 import json
 import re
+from app.config import settings
 
 logger = logging.getLogger("agent.search")
 
@@ -82,6 +83,40 @@ def search_internet(query: str, max_results: int = 2) -> list:
         clean_query = query
         
     logger.info(f"Cleaned query: {clean_query}")
+
+    # Method 0: Local Whoogle search (if configured)
+    if settings.WHOOGLE_URL:
+        import urllib.parse
+        whoogle_url = f"{settings.WHOOGLE_URL}/search?q={urllib.parse.quote_plus(clean_query)}&format=json"
+        logger.info(f"Trying local Whoogle search: {whoogle_url}")
+        try:
+            r = requests.get(whoogle_url, timeout=30)
+            if r.status_code == 200:
+                data = r.json()
+                raw_results = data.get("results", [])
+                for item in raw_results[:max_results]:
+                    url = item.get("href", "")
+                    title = item.get("text", "No Title")
+                    snippet = item.get("text", "")
+                    
+                    if not url:
+                        continue
+                        
+                    # Scrape content from the link
+                    logger.info(f"Scraping content from Whoogle result: {url}")
+                    scraped_content = scrape_url(url)
+                    
+                    results.append({
+                        "title": title,
+                        "url": url,
+                        "snippet": snippet,
+                        "content": scraped_content if scraped_content else snippet
+                    })
+                if results:
+                    logger.info(f"Whoogle search succeeded with {len(results)} results.")
+                    return results
+        except Exception as e:
+            logger.warning(f"Local Whoogle search failed: {str(e)}. Falling back to DuckDuckGo.")
 
     # Method 1: Direct HTML scraping
     try:

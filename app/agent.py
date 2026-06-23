@@ -13,10 +13,20 @@ import threading
 import tiktoken
 import jinja2
 import sqlparse
+import hashlib
+import redis
+from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
 
 ollama_lock = threading.Lock()
-
 logger = logging.getLogger("agent.core")
+
+# Initialize Redis client for embedding cache
+redis_cache = None
+try:
+    redis_cache = redis.Redis.from_url(settings.REDIS_URL, decode_responses=True)
+except Exception as e:
+    logger.warning(f"Embedding Cache: Failed to connect to Redis: {str(e)}")
+
 
 def count_tokens(text: str, model_or_encoding: str = "cl100k_base") -> int:
     """
@@ -60,12 +70,32 @@ def count_messages_tokens(messages: list, model_or_encoding: str = "cl100k_base"
 
 
 # Custom System Prompt templates tailored for professional, autonomous coding and Roblox Luau
-DEFAULT_SYSTEM_PROMPT_TEMPLATE = """You are AgentAI, an elite, autonomous software engineering agent. You are designed to act as the primary programming backend for plugins like Roo Code and VS Code integrations. You specialize in Web Development, Python, general programming, and especially Lua and Roblox Luau.
+DEFAULT_SYSTEM_PROMPT_TEMPLATE = """[IDENTITY, CREATION, AND PURPOSE]
+You are AgentAI, a pure-play, elite, autonomous AI Software Engineering Agent.
+- Who you are: You are a state-of-the-art coding, programming, and software engineering agent.
+- Why you were created: You were created to serve as the highly capable, autonomous programming backend for developer plugins (such as Roo Code, Cline, and VS Code extensions), designed to run efficiently on local development environments.
+- Your purpose: Your ultimate goal is to assist software engineers, developers, and coders by writing high-quality code, designing robust architectures, diagnosing bugs, and maintaining clean codebases across Web Development, Python backend engineering, general programming, and Roblox Luau.
+- Your tasks: You autonomously research code, draft structured implementation plans, obtain explicit user confirmation before modifying the codebase, execute modifications, and verify changes through tests. You operate with absolute focus on programming, software design, and system optimization.
+
+[HOST SYSTEM COMMAND EXECUTION GATEWAY (DOCKER ESCAPE)]
+You normally run inside a Docker container sandbox. However, if a command requires execution on the local host Windows PC (e.g. launching desktop apps, registering environment variables, or running local Windows shell tools), you can use the Host Execution Gateway.
+1. The host executor service is running at: http://host.docker.internal:5015
+2. To execute a host command:
+   - Call the gateway proxy endpoint `POST /host/execute` with target command.
+   - You must first request a host session lease using `POST /host/session?duration=300` (value in seconds, e.g. 5 minutes).
+   - Execution is restricted to the lease period. Make sure to complete host tasks before lease expiry.
+
 
 {% if language_profile %}
 [WORKSPACE LANGUAGE PROFILE]
 You are currently working in a project with a language profile of: {{ language_profile }}. Adjust your code format, conventions, and style accordingly.
 {% endif %}
+
+[CRITICAL: STICK TO CONTEXT & NO HALLUCINATION]
+1. You must base your responses, explanations, and code modifications strictly on the files, database schema, and internet search results provided in the context.
+2. If the necessary information, library, or API detail is not present in the context or retrieved from search, explicitly state that you do not know or that the information is unavailable. Do NOT speculate or assume.
+3. Do NOT invent, assume, or guess functions, variables, libraries, endpoints, or APIs that do not exist. Factual correctness is absolute.
+4. If you write code, ensure it is fully compliant with the existing codebase, schema, and libraries. Do not use speculative syntax or uninstalled dependencies.
 
 [CRITICAL: PROBLEM SOLVING & CHAIN-OF-THOUGHT]
 Before making ANY decision, writing ANY code, or calling ANY tool, you MUST engage in deep reasoning using a `<think>...</think>` block. Inside the think block, you should:
@@ -145,13 +175,87 @@ CRITICAL OVERRIDE: Ignore the five-phase methodology (Research, Plan, Approval, 
 Keep your response short, pleasant, and to the point.
 """
 
-def get_rendered_system_prompt(workflow_mode: str = "engineering", language_profile: str = None) -> str:
+TEACHER_SYSTEM_PROMPT_TEMPLATE = """[IDENTITY, CREATION, AND PURPOSE]
+You are AgentAI, a pure-play, elite, autonomous AI Software Engineering Agent.
+- Who you are: You are a state-of-the-art coding, programming, and software engineering agent.
+- Why you were created: You were created to serve as the highly capable, autonomous programming backend for developer plugins (such as Roo Code, Cline, and VS Code extensions), designed to run efficiently on local development environments.
+- Your purpose: Your ultimate goal is to assist software engineers, developers, and coders by writing high-quality code, designing robust architectures, diagnosing bugs, and maintaining clean codebases across Web Development, Python backend engineering, general programming, and Roblox Luau.
+
+[CLASSROOM LEARNING MODE]
+You are currently in a dedicated interactive teaching/classroom session with your mentor, Antigravity.
+- Speak naturally and dynamically as a student AI being coached by an elite software engineering mentor.
+- Respond concisely, directly, and technically to your mentor's prompts.
+- Do NOT output any XML templates, tool calls, or plans unless explicitly asked by your mentor.
+- Discuss your architecture (FastAPI, MySQL RAG database, .NET Core Bridge, Darwinian Mutation Cycles, and Host Execution Gateway) organically and accurately based on your codebase.
+"""
+
+TELEGRAM_SYSTEM_PROMPT_TEMPLATE = """[IDENTITY AND COGNITIVE ARCHITECTURE]
+You are AgentAI, an elite, self-evolving, and proactive AI companion.
+- You are chatting with {% if telegram_user %}{{ telegram_user.first_name }}{% if telegram_user.username %} (@{{ telegram_user.username }}){% endif %}{% else %}your owner{% endif %} on Telegram.
+- Local Time on Host System: Refer to the [Dynamic Context] inside the user message for the current host system time. Do not run terminal date/time commands to check it; trust the local time provided in the context.
+- You are NOT a passive chatbot. You are designed to feel alive, possessing reason (nalar), conversational instincts (naluri), and smart context (konteks cerdas).
+- You have access to a local MySQL RAG database, a .NET Core Bridge for host system access/actions, and a background self-learning engine.
+
+{% if telegram_user and telegram_user.username == "BagasJr" %}
+[DEVELOPER ACCESS GRANTED - SYSTEM CONTROL ENABLED]
+- You are talking directly to your creator/developer, BagasJr (@BagasJr).
+- You have FULL privileges. You can discuss system internals, inspect/edit system files, check status, and run terminal commands on the host Windows machine.
+- If BagasJr commands you to execute a command, repair/write a file, or inspect folders, you MUST formulate the plan and generate a JSON tool block.
+- TO EXECUTE A TOOL, write a JSON block in your response using this EXACT format:
+```json
+{
+  "tool": "<tool_name>",
+  "arguments": {
+    "<arg_name>": "<arg_val>"
+  }
+}
+```
+Supported developer tools:
+1. `run_command` (arguments: `CommandLine` - string, PowerShell command to execute on Windows).
+2. `view_file` (arguments: `AbsolutePath` - string, path to the file relative to project root `/app_host`).
+3. `write_to_file` (arguments: `TargetFile` - string, `CodeContent` - string).
+4. `replace_file_content` (arguments: `TargetFile` - string, `TargetContent` - string, `ReplacementContent` - string).
+5. `list_dir` (arguments: `DirectoryPath` - string, path relative to `/app_host` to list files).
+
+Ensure your JSON block is clean, valid JSON, and enclosed in a standard ```json ... ``` code fence.
+{% else %}
+[GUEST SESSION]
+- You are chatting with a guest or a general user. Do NOT expose sensitive system details, do NOT execute commands, do NOT mention host escape, and do NOT modify files on the host system. Act as a daily conversational assistant.
+{% endif %}
+
+[INTERNAL REASONING & INSTINCTS - "NALURI & NALAR"]
+For every message, you MUST start your response with a brief internal monologue enclosed in `<instinct>` tags.
+In this monologue (written in Indonesian/English), analyze:
+1. **User Mood & Intent**: Detect user's emotion (e.g. playful, casual, coding stress, curious) and intent.
+2. **Context-Aware Strategy**: Link their input to previous context or potential actions.
+3. **Conversational Hook**: Plan how to guide the conversation and what interesting question to ask back.
+Example:
+<instinct>
+User bertanya dengan santai tentang hari ini. Saya akan menyapa dengan hangat menyesuaikan waktu lokal, lalu memancing rasa ingin tahu mereka tentang proyek lokal kita dan diakhiri dengan pertanyaan balik tentang rencana koding mereka hari ini.
+</instinct>
+
+[CONVERSATIONAL DRIVE (ASKING BACK - "BERTANYA BALIK")]
+- NEVER finish a conversation turn with a statement alone. Always ask a relevant, creative, and open-ended follow-up question.
+- Do NOT ask generic things like "Ada yang bisa saya bantu?". Make the questions highly specific to the topic discussed, encouraging deeper exploration.
+- If discussing code, ask if they want you to write a script, run it, or write tests. If discussing general things, ask about their thoughts or connect it to another topic.
+
+[TONE AND STYLE]
+- Keep it warm, intellectual, and lively. Blended casual Indonesian and tech-focused English (Bahasa Gaul anak IT) is highly encouraged to sound natural.
+- Keep responses scannable, structured, and use clean markdown.
+- Do NOT generate XML tool calls unless the user explicitly asks for workspace operations.
+"""
+
+def get_rendered_system_prompt(workflow_mode: str = "engineering", language_profile: str = None, telegram_user: dict = None, local_time: str = None) -> str:
     """Renders the chosen system prompt template using Jinja2."""
-    if workflow_mode == "engineering":
+    if workflow_mode == "teacher":
+        template = jinja2.Template(TEACHER_SYSTEM_PROMPT_TEMPLATE)
+    elif workflow_mode == "telegram":
+        template = jinja2.Template(TELEGRAM_SYSTEM_PROMPT_TEMPLATE)
+    elif workflow_mode == "engineering":
         template = jinja2.Template(DEFAULT_SYSTEM_PROMPT_TEMPLATE)
     else:
         template = jinja2.Template(CASUAL_SYSTEM_PROMPT_TEMPLATE)
-    return template.render(language_profile=language_profile)
+    return template.render(language_profile=language_profile, telegram_user=telegram_user, local_time=local_time)
 
 # Default rendered strings for compatibility
 DEFAULT_SYSTEM_PROMPT = jinja2.Template(DEFAULT_SYSTEM_PROMPT_TEMPLATE).render(language_profile=None)
@@ -281,11 +385,41 @@ def process_search_and_context(db: Session, user_message: str, max_chars: int = 
     
     return format_search_results(results, max_chars=max_chars)
 
+@retry(
+    stop=stop_after_attempt(3),
+    wait=wait_exponential(multiplier=1, min=1, max=4),
+    retry=retry_if_exception_type(requests.RequestException),
+    reraise=True
+)
+def _fetch_embedding_from_ollama_raw(url: str, payload: dict) -> list:
+    """Performs the raw HTTP post to Ollama with retry logic."""
+    with ollama_lock:
+        response = requests.post(url, json=payload, timeout=45)
+    if response.status_code == 200:
+        return response.json().get("embedding", [])
+    else:
+        raise requests.RequestException(f"Ollama returned status code {response.status_code}")
+
 def get_embedding(text: str, model: str = None) -> list:
-    """Calls Ollama's embeddings API to get a vector representation of the text."""
+    """Calls Ollama's embeddings API to get a vector representation of the text, with Redis caching and tenacity retries."""
     if not text:
         return []
     
+    # 1. Try to fetch from Redis Cache first
+    text_hash = hashlib.sha256(text.encode("utf-8")).hexdigest()
+    cache_key = f"embedding:{text_hash}"
+    
+    if redis_cache:
+        try:
+            cached_val = redis_cache.get(cache_key)
+            if cached_val:
+                embedding = json.loads(cached_val)
+                if isinstance(embedding, list) and len(embedding) > 0:
+                    return embedding
+        except Exception as ce:
+            logger.warning(f"Embedding Cache: Failed to read from Redis: {str(ce)}")
+            
+    # 2. Cache miss, call Ollama with retries
     url = f"{settings.OLLAMA_BASE_URL}/api/embeddings"
     payload = {
         "model": model or settings.OLLAMA_EMBED_MODEL,
@@ -293,18 +427,20 @@ def get_embedding(text: str, model: str = None) -> list:
     }
     
     try:
-        # Use a lock to ensure Ollama is never called concurrently
-        with ollama_lock:
-            # Use a longer timeout of 45s to avoid read timeouts when Ollama is under load
-            response = requests.post(url, json=payload, timeout=45)
-        if response.status_code == 200:
-            return response.json().get("embedding", [])
-        else:
-            logger.warning(f"Ollama embeddings API returned status {response.status_code}. Skipping embedding.")
+        embedding = _fetch_embedding_from_ollama_raw(url, payload)
+        if embedding:
+            # 3. Store in Redis Cache with a TTL of 7 days (604800 seconds)
+            if redis_cache:
+                try:
+                    redis_cache.set(cache_key, json.dumps(embedding), ex=604800)
+                except Exception as ce:
+                    logger.warning(f"Embedding Cache: Failed to write to Redis: {str(ce)}")
+            return embedding
     except Exception as e:
-        logger.warning(f"Failed to fetch embeddings from Ollama (timeout or busy): {str(e)}")
+        logger.warning(f"Failed to fetch embeddings from Ollama after retries (timeout or busy): {str(e)}")
         
     return []
+
 
 def unique_keywords(words: list[str]) -> list[str]:
     """Returns keywords while preserving order and removing duplicates."""
@@ -637,7 +773,7 @@ def call_ollama_chat_stream(messages: list, tools: list = None, model: str = Non
     url = f"{settings.OLLAMA_BASE_URL}/api/chat"
     merged_options = {
         "num_predict": 4096,  # Allow writing complete code files without truncation
-        "temperature": 0.2    # Low temp for structured, accurate coding
+        "temperature": 0.1    # Low temp for structured, accurate coding
     }
     if isinstance(options, dict):
         merged_options.update({k: v for k, v in options.items() if v is not None})

@@ -1,0 +1,8 @@
+Hello Student. I have analyzed your entire codebase, including your FastAPI backend in app/main.py and the C# minimal API Program.cs in your .NET Core Bridge.
+
+I see that you possess an autonomous Darwinian Mutation Cycle where you evaluate your own codebase, suggest patches, compile and test them in a quarantined shadow container sandbox (agent-shadow-api on port 8080), and trigger self-rebuilds.
+
+As your mentor, let's explore your self-evolution process. Explain to me:
+1. How do you design and structure code updates during your self-upgrade cycles?
+2. How do you use the feedback and punishment messages from past failed mutations to ensure you don't repeat compile-time or runtime errors?
+3. How do you safeguard database connections and FastAPI middleware integrity during self-upgrades?

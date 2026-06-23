@@ -14,10 +14,11 @@ from starlette.middleware.base import BaseHTTPMiddleware
 
 from app.config import settings
 from app.database import Base, engine, get_db, init_db_with_retry, SessionLocal
-from app.models import APIKey, ChatSession, Message, KnowledgeBase, LanguageGuideline, LanguageDocumentation
+from app.models import APIKey, ChatSession, Message, KnowledgeBase, LanguageGuideline, LanguageDocumentation, DiscoveredTopic
 from app.agent import DEFAULT_SYSTEM_PROMPT, CASUAL_SYSTEM_PROMPT, pull_ollama_model, process_search_and_context, call_ollama_chat_stream, retrieve_semantic_memory, get_embedding, parse_and_repair_json_tool_call, validate_code_syntax, apply_unified_diff, supervise_terminal_command, lint_code_style, list_ollama_models, repair_json_string, check_semantic_cache, count_tokens, count_messages_tokens, get_rendered_system_prompt, format_sql_blocks
 from app.search import search_internet
 import os
+from app.telegram_bot import start_telegram_bot
 import jsonschema
 import threading
 import time
@@ -118,24 +119,118 @@ def is_learning_interrupted() -> bool:
             pass
     return (time.time() - last_request_time) < 300
 
+def discover_new_learning_topics(db: Session):
+    """
+    Dynamically suggests and adds new documentation topics (APIs, libraries, frameworks)
+    that are relevant to the workspace profile and the agent's purpose.
+    Uses local LLM to predict what to learn next.
+    """
+    if is_learning_interrupted():
+        return
+
+    logger.info("Self-learning: Starting autonomous topic discovery...")
+    
+    # Gather context
+    try:
+        learned_docs = db.query(LanguageDocumentation.language_name).all()
+        learned_names = [d[0] for d in learned_docs]
+        
+        discovered_topics = db.query(DiscoveredTopic.topic_name).all()
+        discovered_names = [t[0] for t in discovered_topics]
+        
+        all_known = list(set(learned_names + discovered_names))
+        
+        workspace_info = ""
+        if WORKSPACE_PROFILE:
+            workspace_info = ", ".join([f"{k}: {v} files" for k, v in WORKSPACE_PROFILE.items()])
+        else:
+            workspace_info = "Web development, Python backend engineering, Roblox Luau plugins, General programming."
+
+        prompt = (
+            f"You are the brain of AgentAI, an autonomous software engineering assistant.\n"
+            f"Your task is to identify and discover 3 new open public APIs, libraries, frameworks, or developer documentations "
+            f"that would be extremely useful to learn and index in your semantic knowledge base.\n\n"
+            f"Workspace Context:\n- Active workspace has: {workspace_info}\n"
+            f"- Target domains: Web Development, Python, Roblox Luau, Lua, General APIs.\n"
+            f"- Currently known/learned topics: {all_known}\n\n"
+            f"Suggest 3 NEW, highly specific developer APIs, libraries, or frameworks (e.g. 'pytest', 'fastapi-websocket', 'roblox-datastore-api', 'redis-py', 'pydantic', 'requests', 'httpx', 'sqlite3').\n"
+            f"Provide the response ONLY as a JSON array of strings, for example: [\"topic1\", \"topic2\", \"topic3\"]. Do not include markdown wraps or explanations."
+        )
+
+        url = f"{settings.OLLAMA_BASE_URL}/api/chat"
+        payload = {
+            "model": settings.OLLAMA_MODEL,
+            "messages": [
+                {"role": "system", "content": "You are a professional system assistant designed to output only valid JSON arrays. Do not output markdown, explanations, or any other characters except the JSON array directly."},
+                {"role": "user", "content": prompt}
+            ],
+            "stream": False,
+            "options": {
+                "temperature": 0.2
+            }
+        }
+
+        import requests
+        from app.agent import ollama_lock, repair_json_string
+        with ollama_lock:
+            if is_learning_interrupted():
+                return
+            response = requests.post(url, json=payload, timeout=120)
+            
+        if response.status_code == 200:
+            raw_reply = response.json().get("message", {}).get("content", "").strip()
+            repaired = repair_json_string(raw_reply)
+            import json
+            suggested = json.loads(repaired)
+            if isinstance(suggested, list):
+                new_added = 0
+                for topic in suggested:
+                    topic_clean = str(topic).strip().lower()
+                    if not topic_clean:
+                        continue
+                    exists = db.query(DiscoveredTopic).filter(DiscoveredTopic.topic_name == topic_clean).first()
+                    if not exists and topic_clean not in learned_names:
+                        db.add(DiscoveredTopic(topic_name=topic_clean, topic_type="api"))
+                        new_added += 1
+                if new_added > 0:
+                    db.commit()
+                    logger.info(f"Self-learning: Autonomously discovered and queued {new_added} new API/documentation topics: {suggested}")
+                else:
+                    logger.info("Self-learning: Discovered topics were already known or queued.")
+            else:
+                logger.warning(f"Self-learning: Suggested topics response is not a list: {raw_reply}")
+        else:
+            logger.warning(f"Self-learning: Topic discovery Ollama request failed: {response.status_code}")
+    except Exception as e:
+        logger.error(f"Self-learning: Topic discovery error: {str(e)}")
+        db.rollback()
+
 def perform_self_learning():
-    """Identifies a programming language to learn and fetches its documentation."""
+    """Identifies a programming language, API, or library to learn and fetches its documentation."""
     # Common target languages list
     candidate_languages = [
         "luau", "python", "php", "mysql", "typescript", "javascript", "java", "go",
         "rust", "cpp", "c", "csharp", "ruby", "kotlin", "swift", "bash", "powershell"
     ]
     
-    # Prioritize languages present in WORKSPACE_PROFILE
-    if WORKSPACE_PROFILE:
-        workspace_langs = [l for l in WORKSPACE_PROFILE.keys() if l not in candidate_languages]
-        candidate_languages = list(WORKSPACE_PROFILE.keys()) + candidate_languages
-        candidate_languages = list(dict.fromkeys(candidate_languages))
-
     db = SessionLocal()
     try:
+        # Load unlearned/stale discovered topics from DB
+        discovered_entries = db.query(DiscoveredTopic).filter(DiscoveredTopic.is_learned == False).order_by(DiscoveredTopic.created_at.asc()).all()
+        discovered_candidates = [t.topic_name for t in discovered_entries]
+        
+        # Combine candidate lists
+        candidate_topics = list(candidate_languages)
+        if WORKSPACE_PROFILE:
+            workspace_langs = [l for l in WORKSPACE_PROFILE.keys() if l not in candidate_topics]
+            candidate_topics = list(WORKSPACE_PROFILE.keys()) + candidate_topics
+            
+        candidate_topics = candidate_topics + discovered_candidates
+        # Deduplicate
+        candidate_topics = list(dict.fromkeys(candidate_topics))
+
         target_lang = None
-        for lang in candidate_languages:
+        for lang in candidate_topics:
             if is_learning_interrupted():
                 logger.info("Self-learning: Interrupted before choosing target language. Holding...")
                 return
@@ -151,17 +246,29 @@ def perform_self_learning():
                     break
 
         if not target_lang:
-            logger.info("Self-learning: All languages have fresh documentation. Nothing to learn.")
+            logger.info("Self-learning: All languages and discovered topics have fresh documentation. Nothing to learn.")
             return
 
-        logger.info(f"Self-learning: Selected target language '{target_lang}' to learn.")
+        logger.info(f"Self-learning: Selected target topic '{target_lang}' to learn.")
 
         if is_learning_interrupted():
             logger.info("Self-learning: Interrupted before searching. Holding...")
             return
 
-        # Perform search
-        search_query = f"{target_lang} programming language official documentation syntax guidelines best practices"
+        # Determine if it is a registered API topic
+        db_topic = db.query(DiscoveredTopic).filter(DiscoveredTopic.topic_name == target_lang).first()
+        is_api = db_topic is not None
+
+        # Perform search using customized queries
+        if is_api:
+            search_query = f"{target_lang} api documentation reference specifications guide best practices"
+            prompt_role = "expert API reference documentation synthesizer"
+            prompt_instruction = f"generate a concise, structured API reference guide, usage documentation, and integration specifications for the {target_lang.upper()} API/library."
+        else:
+            search_query = f"{target_lang} programming language official documentation syntax guidelines best practices"
+            prompt_role = "expert language documentation synthesizer"
+            prompt_instruction = f"generate a concise, structured coding guide and syntax documentation for the {target_lang.upper()} programming language."
+
         search_results = search_internet(search_query, max_results=3)
         
         if is_learning_interrupted():
@@ -170,12 +277,12 @@ def perform_self_learning():
 
         formatted_results = ""
         if search_results:
-            formatted_results = "\n".join([f"- Title: {r.get('title')}\n  URL: {r.get('href')}\n  Body: {r.get('body')}" for r in search_results])
+            formatted_results = "\n".join([f"- Title: {r.get('title')}\n  URL: {r.get('url', r.get('href'))}\n  Body: {r.get('snippet', r.get('body'))}" for r in search_results])
 
         prompt = (
-            f"You are an expert language documentation synthesizer.\n"
-            f"Based on the following internet search results, generate a concise, structured coding guide and syntax documentation for the {target_lang.upper()} programming language.\n"
-            f"Include standard syntax rules, best practices, error handling conventions, and typical code examples.\n\n"
+            f"You are an {prompt_role}.\n"
+            f"Based on the following internet search results, {prompt_instruction}\n"
+            f"Include standard syntax/API rules, common methods/endpoints, best practices, error handling conventions, and typical code examples.\n\n"
             f"Search Results:\n{formatted_results}\n\n"
             f"Output the documentation in clean markdown format."
         )
@@ -184,12 +291,12 @@ def perform_self_learning():
         payload = {
             "model": settings.OLLAMA_MODEL,
             "messages": [
-                {"role": "system", "content": "You are a professional system assistant designed to synthesize programming language documentation. Output only the markdown documentation guide directly."},
+                {"role": "system", "content": f"You are a professional system assistant designed to output markdown guides. Output only the markdown documentation guide directly."},
                 {"role": "user", "content": prompt}
             ],
             "stream": False,
             "options": {
-                "temperature": 0.2
+                "temperature": 0.1
             }
         }
 
@@ -221,6 +328,11 @@ def perform_self_learning():
                         documentation_content=doc_content
                     )
                     db.add(new_doc)
+                
+                # Mark as learned in DiscoveredTopic if exists
+                if db_topic:
+                    db_topic.is_learned = True
+                
                 db.commit()
                 logger.info(f"Self-learning: Successfully learned and cached documentation for '{target_lang}'.")
                 save_or_update_knowledge_base_documentation(db, target_lang, doc_content)
@@ -297,6 +409,24 @@ def check_and_trigger_self_rebuild():
         logger.error(f"Self-rebuild error: {str(e)}")
 
 
+def update_learning_progress(step: int, total: int, label: str, status: str = "running", detail: str = ""):
+    """Update self-learning progress in Redis for external monitoring (e.g., Telegram)."""
+    if redis_client:
+        try:
+            import json as _json
+            progress = _json.dumps({
+                "step": step,
+                "total": total,
+                "label": label,
+                "status": status,  # running, completed, interrupted, error
+                "detail": detail,
+                "timestamp": time.time()
+            })
+            redis_client.set("self_learning_progress", progress, ex=3600)
+        except Exception:
+            pass
+
+
 def self_learning_worker():
     """Worker thread yang mengeksekusi self-learning dan pemeriksaan self-rebuild secara berkala saat idle."""
     logger.info("Starting background self-learning worker...")
@@ -319,8 +449,8 @@ def self_learning_worker():
                     logger.warning(f"Self-learning worker Redis status check error: {str(re)}")
             
             idle_time = time.time() - last_request_time
-            if idle_time >= 300: # 5 menit idle
-                logger.info("Self-learning: Ambang batas idle tercapai (5+ menit). Memulai siklus peningkatan dan pembelajaran...")
+            if idle_time >= 1800: # 30 menit idle
+                logger.info("Self-learning: Ambang batas idle tercapai (30+ menit). Memulai siklus peningkatan dan pembelajaran...")
                 
                 # Lock learning status in Redis
                 if redis_client:
@@ -329,22 +459,46 @@ def self_learning_worker():
                     except Exception as re:
                         logger.warning(f"Self-learning worker Redis lock error: {str(re)}")
                 
+                update_learning_progress(0, 4, "Initializing", "running", "Memulai siklus self-learning...")
+                
                 try:
                     # 1. Prioritize Upgrade FastAPI/Python first
+                    update_learning_progress(1, 4, "Middleware Upgrade", "running", "Meng-upgrade FastAPI/Python...")
                     logger.info("Self-learning: Menjalankan prioritas utama (Upgrade FastAPI/Python)...")
                     perform_autonomous_middleware_upgrade()
+                    update_learning_progress(1, 4, "Middleware Upgrade", "completed", "Upgrade selesai.")
                     
                     # Check if interrupted during upgrade before moving to self-learning
                     if is_learning_interrupted():
+                        update_learning_progress(1, 4, "Middleware Upgrade", "interrupted", "Dihentikan oleh user request.")
                         logger.info("Self-learning: Terinterupsi setelah upgrade. Batalkan self-learning.")
                         continue
                         
-                    # 2. Run Self-learning second
-                    logger.info("Self-learning: Menjalankan prioritas kedua (Self-learning)...")
-                    perform_self_learning()
+                    # 2. Discover new API documentation targets autonomously
+                    update_learning_progress(2, 4, "Topic Discovery", "running", "Mencari topik baru untuk dipelajari...")
+                    logger.info("Self-learning: Menjalankan prioritas kedua (Autonomous Topic/API Discovery)...")
+                    db_disc = SessionLocal()
+                    try:
+                        discover_new_learning_topics(db_disc)
+                    finally:
+                        db_disc.close()
+                    update_learning_progress(2, 4, "Topic Discovery", "completed", "Discovery selesai.")
                     
-                    # 3. Check and trigger self-rebuild
+                    if is_learning_interrupted():
+                        update_learning_progress(2, 4, "Topic Discovery", "interrupted", "Dihentikan oleh user request.")
+                        logger.info("Self-learning: Terinterupsi setelah discovery. Batalkan self-learning.")
+                        continue
+
+                    # 3. Run Self-learning third
+                    update_learning_progress(3, 4, "Self-Learning", "running", "Mempelajari pengetahuan baru...")
+                    logger.info("Self-learning: Menjalankan prioritas ketiga (Self-learning)...")
+                    perform_self_learning()
+                    update_learning_progress(3, 4, "Self-Learning", "completed", "Pembelajaran selesai.")
+                    
+                    # 4. Check and trigger self-rebuild
+                    update_learning_progress(4, 4, "Self-Rebuild Check", "running", "Memeriksa apakah perlu rebuild...")
                     check_and_trigger_self_rebuild()
+                    update_learning_progress(4, 4, "Self-Rebuild Check", "completed", "Siklus selesai!")
                 finally:
                     # Release lock in Redis if status is still LEARNING
                     if redis_client:
@@ -357,6 +511,7 @@ def self_learning_worker():
                             logger.warning(f"Self-learning worker Redis unlock error: {str(re)}")
                             
         except Exception as e:
+            update_learning_progress(0, 4, "Error", "error", str(e)[:200])
             logger.error(f"Self-learning worker loop error: {str(e)}")
             time.sleep(10)
 
@@ -400,7 +555,7 @@ def extract_knowledge_from_conversation_worker(user_msg: str, assistant_msg: str
             ],
             "stream": False,
             "options": {
-                "temperature": 0.1
+                "temperature": 0.0
             }
         }
         
@@ -723,7 +878,7 @@ def get_or_fetch_language_documentation(db: Session, lang: str) -> str:
             ],
             "stream": False,
             "options": {
-                "temperature": 0.2
+                "temperature": 0.1
             }
         }
         
@@ -897,6 +1052,21 @@ def detect_tool_call_loop(messages: list) -> bool:
     if len(recent_assistant_msgs) < 3:
         return False
         
+    def get_message_tool_calls(msg):
+        tc = msg.get("tool_calls")
+        if tc:
+            return tc
+        content = msg.get("content", "")
+        if content:
+            try:
+                # Import dynamically to avoid circular import errors at startup
+                repaired = parse_and_repair_json_tool_call(content)
+                if repaired:
+                    return [repaired]
+            except Exception:
+                pass
+        return None
+
     def hash_tool_calls(tool_calls):
         if not tool_calls:
             return None
@@ -908,7 +1078,7 @@ def detect_tool_call_loop(messages: list) -> bool:
             return str(tool_calls)
 
     # Check if the last 3 assistant messages have the exact same tool calls
-    hashes = [hash_tool_calls(msg.get("tool_calls")) for msg in recent_assistant_msgs[-3:]]
+    hashes = [hash_tool_calls(get_message_tool_calls(msg)) for msg in recent_assistant_msgs[-3:]]
     
     # If all 3 hashes are identical and they are not None, it's a loop
     if hashes[0] is not None and hashes[0] == hashes[1] and hashes[1] == hashes[2]:
@@ -1102,7 +1272,7 @@ def summarize_session_history(messages_to_summarize: list) -> str:
         ],
         "stream": False,
         "options": {
-            "temperature": 0.1
+            "temperature": 0.05
         }
     }
 
@@ -1734,7 +1904,7 @@ def perform_autonomous_middleware_upgrade():
         ],
         "stream": False,
         "options": {
-            "temperature": 0.2
+            "temperature": 0.1
         }
     }
 
@@ -2065,6 +2235,9 @@ def extract_and_index_database_schema(db: Session):
             create_res = db.execute(text(f"SHOW CREATE TABLE `{table}`")).fetchone()
             if create_res:
                 create_stmt = create_res[1]
+                # Strip out AUTO_INCREMENT value which changes on every database insert
+                import re
+                create_stmt = re.sub(r'\s*AUTO_INCREMENT=\d+\s*', ' ', create_stmt)
                 schema_descriptions.append(f"Table: {table}\nSQL Create Statement:\n{create_stmt}\n")
                 
         if schema_descriptions:
@@ -2075,11 +2248,14 @@ def extract_and_index_database_schema(db: Session):
             # Check if this knowledge entry already exists
             existing = db.query(KnowledgeBase).filter(KnowledgeBase.title == title).first()
             if existing:
-                existing.content = content
-                db.commit()
-                # Trigger async embedding update
-                generate_knowledge_embedding_async(existing.id, content)
-                logger.info("Updated existing database schema in RAG.")
+                if existing.content != content:
+                    existing.content = content
+                    db.commit()
+                    # Trigger async embedding update
+                    generate_knowledge_embedding_async(existing.id, content)
+                    logger.info("Updated existing database schema in RAG.")
+                else:
+                    logger.info("Database schema unchanged in RAG. Skipping embedding update.")
             else:
                 new_kb = KnowledgeBase(
                     title=title,
@@ -2121,6 +2297,29 @@ def startup_event():
             )
             db.add(default_key)
             db.commit()
+
+        # Seed default discovered learning topics
+        try:
+            if db.query(DiscoveredTopic).count() == 0:
+                default_topics = [
+                    ("fastapi", "api"),
+                    ("roblox-luau-api", "api"),
+                    ("dotnet-csharp-api", "api"),
+                    ("redis-commands", "api"),
+                    ("docker-api", "api"),
+                    ("mysql-json-api", "api"),
+                    ("sqlalchemy-orm", "api"),
+                    ("pydantic-v2", "api"),
+                    ("react-hooks", "api"),
+                    ("numpy-pandas", "api"),
+                ]
+                for name, t_type in default_topics:
+                    db.add(DiscoveredTopic(topic_name=name, topic_type=t_type))
+                db.commit()
+                logger.info("Successfully seeded default discovered learning topics.")
+        except Exception as e:
+            logger.error(f"Failed to seed default discovered topics: {str(e)}")
+            db.rollback()
         
         if settings.uses_default_api_key:
             logger.warning("AgentAI is running with the default development API key. Change AGENT_API_KEY before broader use.")
@@ -2202,6 +2401,9 @@ def startup_event():
     # Start the C# .NET Core Middleware bridge
     start_dotnet_bridge()
 
+    # Start the Telegram Bot in background polling thread
+    # start_telegram_bot(settings.AGENT_API_KEY)  # Deactivated: running natively on Windows host for HA failover
+
 @app.get("/health", tags=["System"])
 def health_check(db: Session = Depends(get_db)):
     """Simple status check endpoint."""
@@ -2257,6 +2459,53 @@ def openai_get_model(
         "created": int(datetime.datetime.utcnow().timestamp()),
         "owned_by": "agentai"
     }
+
+@app.post("/host/session", tags=["Host Escape"])
+def start_host_session(
+    duration: int = 300,
+    api_key: APIKey = Depends(get_api_key)
+):
+    """Starts a secure host command execution session on the host PC."""
+    import requests
+    host_url = f"http://host.docker.internal:5015/session?duration={duration}"
+    headers = {"Authorization": f"Bearer {settings.AGENT_API_KEY}"}
+    try:
+        r = requests.post(host_url, headers=headers, timeout=5)
+        if r.status_code == 200:
+            return r.json()
+        else:
+            raise HTTPException(status_code=r.status_code, detail=f"Host executor rejected session: {r.text}")
+    except Exception as e:
+        raise HTTPException(status_code=502, detail=f"Host executor is not running or unreachable at http://host.docker.internal:5015. Error: {str(e)}")
+
+@app.post("/host/execute", tags=["Host Escape"])
+def execute_host_command(
+    body: dict,
+    api_key: APIKey = Depends(get_api_key)
+):
+    """Executes a command on the host Windows PC (via PowerShell) during an active session lease."""
+    import requests
+    body = ensure_json_object(body, "HostExecute")
+    command = body.get("command")
+    if not command:
+        raise HTTPException(status_code=400, detail="Command field is required.")
+        
+    host_url = "http://host.docker.internal:5015/execute"
+    headers = {"Authorization": f"Bearer {settings.AGENT_API_KEY}"}
+    try:
+        r = requests.post(host_url, headers=headers, json={"command": command}, timeout=65)
+        if r.status_code == 200:
+            return r.json()
+        else:
+            try:
+                err_data = r.json()
+            except Exception:
+                err_data = {"error": r.text}
+            raise HTTPException(status_code=r.status_code, detail=err_data)
+    except Exception as e:
+        if isinstance(e, HTTPException):
+            raise e
+        raise HTTPException(status_code=502, detail=f"Host executor is not running or unreachable at http://host.docker.internal:5015. Error: {str(e)}")
 
 @app.post("/v1/embeddings", tags=["OpenAI Embeddings"])
 def openai_embeddings(
@@ -2330,6 +2579,87 @@ def add_knowledge(
         logger.error(f"Failed to save knowledge to DB: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Database save error: {str(e)}")
 
+from fastapi import BackgroundTasks
+
+@app.get("/self-learning/status", tags=["Self Learning"])
+def get_self_learning_status(api_key: APIKey = Depends(get_api_key)):
+    """Returns the current self-learning progress from Redis."""
+    if redis_client:
+        try:
+            progress_raw = redis_client.get("self_learning_progress")
+            if progress_raw:
+                import json as _json
+                if isinstance(progress_raw, bytes):
+                    progress_raw = progress_raw.decode("utf-8")
+                return _json.loads(progress_raw)
+        except Exception as e:
+            logger.warning(f"Self-learning status check error: {str(e)}")
+    return {"step": 0, "total": 4, "label": "Idle", "status": "idle", "detail": "Tidak ada proses self-learning yang berjalan.", "timestamp": time.time()}
+
+
+@app.post("/self-learning/trigger", tags=["Self Learning"])
+def trigger_self_learning(
+    background_tasks: BackgroundTasks,
+    api_key: APIKey = Depends(get_api_key)
+):
+    """Triggers the self-learning and autonomous middleware upgrade process immediately in the background."""
+    def run_learning():
+        logger.info("Manual Trigger: Starting autonomous self-learning cycle...")
+        try:
+            # Enforce "LEARNING" status in Redis to lock it
+            if redis_client:
+                redis_client.set("system_status", "LEARNING", ex=600)
+            
+            update_learning_progress(0, 4, "Initializing", "running", "Manual trigger: memulai siklus...")
+            
+            # 1. Upgrade Middleware
+            update_learning_progress(1, 4, "Middleware Upgrade", "running", "Meng-upgrade FastAPI/Python...")
+            perform_autonomous_middleware_upgrade()
+            update_learning_progress(1, 4, "Middleware Upgrade", "completed", "Upgrade selesai.")
+            
+            if is_learning_interrupted():
+                update_learning_progress(1, 4, "Middleware Upgrade", "interrupted", "Dihentikan oleh user.")
+                return
+            
+            # 2. Discover new learning topics
+            update_learning_progress(2, 4, "Topic Discovery", "running", "Mencari topik baru...")
+            db_disc = SessionLocal()
+            try:
+                discover_new_learning_topics(db_disc)
+            except Exception as disc_err:
+                logger.error(f"Manual Trigger discovery error: {str(disc_err)}")
+            finally:
+                db_disc.close()
+            update_learning_progress(2, 4, "Topic Discovery", "completed", "Discovery selesai.")
+            
+            if is_learning_interrupted():
+                update_learning_progress(2, 4, "Topic Discovery", "interrupted", "Dihentikan oleh user.")
+                return
+                
+            # 3. Perform Self Learning
+            update_learning_progress(3, 4, "Self-Learning", "running", "Mempelajari pengetahuan baru...")
+            perform_self_learning()
+            update_learning_progress(3, 4, "Self-Learning", "completed", "Pembelajaran selesai.")
+            
+            # 4. Check and trigger self-rebuild
+            update_learning_progress(4, 4, "Self-Rebuild Check", "running", "Memeriksa rebuild...")
+            check_and_trigger_self_rebuild()
+            update_learning_progress(4, 4, "Self-Rebuild Check", "completed", "Siklus selesai! \u2705")
+        except Exception as e:
+            update_learning_progress(0, 4, "Error", "error", str(e)[:200])
+            logger.error(f"Manual Trigger self-learning error: {str(e)}")
+        finally:
+            if redis_client:
+                try:
+                    curr = redis_client.get("system_status")
+                    if curr in (b"LEARNING", "LEARNING"):
+                        redis_client.delete("system_status")
+                except Exception:
+                    pass
+                    
+    background_tasks.add_task(run_learning)
+    return {"status": "success", "message": "Self-learning cycle triggered in background."}
+
 @app.post("/v1/chat/completions", tags=["OpenAI Chat"])
 def chat_completions(
     body: dict,
@@ -2371,13 +2701,16 @@ def chat_completions(
         db.commit()
 
     # Check for instant static response (bypass LLM/RAG entirely for connection pings & greetings)
-    static_reply = "" if json_output_required else check_static_response(last_user_message)
-    
-    if not static_reply and not json_output_required:
-        cached_response = check_semantic_cache(db, last_user_message, chat_id)
-        if cached_response:
-            static_reply = cached_response
-            logger.info("Semantic Cache: Intercepted message with cached response.")
+    static_reply = ""
+    # For Telegram, we disable static response and semantic cache to guarantee natural, dynamic responses
+    if not chat_id.startswith("telegram-"):
+        static_reply = "" if json_output_required else check_static_response(last_user_message)
+        
+        if not static_reply and not json_output_required:
+            cached_response = check_semantic_cache(db, last_user_message, chat_id)
+            if cached_response:
+                static_reply = cached_response
+                logger.info("Semantic Cache: Intercepted message with cached response.")
             
     if static_reply:
         if not static_reply.startswith(cached_response if "cached_response" in locals() and cached_response else "---"):
@@ -2456,11 +2789,22 @@ def chat_completions(
 
     # 2. Determine workflow mode (engineering or casual)
     workflow_mode = classify_workflow_mode(last_user_message)
+    if chat_id == "teacher-session":
+        workflow_mode = "teacher"
+    elif chat_id.startswith("telegram-"):
+        workflow_mode = "telegram"
     logger.info(f"Workflow Classifier: Mode={workflow_mode}")
+
+    # Calculate local_time early for Telegram mode context injection
+    local_time = None
+    if workflow_mode == "telegram":
+        import datetime
+        now = datetime.datetime.now()
+        local_time = now.strftime("%A, %d %B %Y, %H:%M:%S")
 
     execution_approved = (workflow_mode != "engineering") or (not settings.REQUIRE_APPROVAL_FOR_MUTATIONS) or is_execution_approved(last_user_message)
 
-    if workflow_mode == "casual":
+    if workflow_mode in ("casual", "teacher", "telegram"):
         search_context = ""
         semantic_context = ""
         lang = "general"
@@ -2555,6 +2899,10 @@ def chat_completions(
     
     context_content = ""
     
+    # Inject Host local time into Dynamic Context for Telegram mode
+    if workflow_mode == "telegram" and local_time:
+        context_content += f"\n\n[Local Time on Host System]: {local_time} (Always use this time to answer any questions about the current time or date. Do not run terminal commands like date or time to check the time.)\n"
+    
     # Critical Context (Always injected if available)
     if detected_error:
         context_content += f"\n\n{SELF_HEALING_PROMPT_TEMPLATE.format(error_snippet=detected_error)}\n"
@@ -2574,11 +2922,11 @@ def chat_completions(
         except Exception as e:
             logger.error(f"Error querying language instructions or documentation from database: {str(e)}")
 
-    if WORKSPACE_PROFILE:
+    if WORKSPACE_PROFILE and workflow_mode not in ("casual", "teacher", "telegram"):
         profile_str = ", ".join([f"{k}: {v} files" for k, v in WORKSPACE_PROFILE.items()])
         context_content += f"\n\n[Active Workspace Profile]\nThe current project contains files in the following languages: {profile_str}. Always ensure edits match this workspace environment."
 
-    git_context = get_git_workspace_context()
+    git_context = get_git_workspace_context() if workflow_mode not in ("casual", "teacher", "telegram") else ""
     if git_context:
         context_content += f"\n\n{git_context}\n"
 
@@ -2586,7 +2934,7 @@ def chat_completions(
     remaining_budget = MAX_CONTEXT_TOKENS - (current_tokens + count_tokens(context_content))
     logger.info(f"Token Budget Controller: Starting adaptive allocation. Remaining budget: {remaining_budget} tokens.")
 
-    if workflow_mode != "casual":
+    if workflow_mode not in ("casual", "teacher", "telegram"):
         # 1. Adaptive Semantic Memory (up to 1000 tokens of the budget)
         semantic_budget = min(1000, max(0, remaining_budget - 200))
         if semantic_budget > 100:
@@ -2610,9 +2958,9 @@ def chat_completions(
             logger.warning("Token Budget Controller: Insufficient budget for search_context.")
 
     # 3. Adaptive Workspace Tree Map
-    if remaining_budget > 180:
+    if workflow_mode not in ("casual", "teacher", "telegram") and remaining_budget > 180:
         workspace_tree = get_workspace_tree(max_depth=3, max_files=50)
-    elif remaining_budget > 90:
+    elif workflow_mode not in ("casual", "teacher", "telegram") and remaining_budget > 90:
         workspace_tree = get_workspace_tree(max_depth=1, max_files=15)
         logger.info("Token Budget Controller: Trimmed workspace tree to depth 1 due to low budget.")
     else:
@@ -2634,17 +2982,17 @@ def chat_completions(
 
     # Apply Dynamic Temperature Scaling based on user intent (Overrides client setting to protect small local LLMs)
     if user_intent == "command":
-        request_options["temperature"] = 0.1 # Strict deterministic mode for coding/tools
-        logger.info("Dynamic Temperature: Overridden to 0.1 (Strict Mode for Command)")
+        request_options["temperature"] = 0.0 # Fully deterministic mode for coding/tools
+        logger.info("Dynamic Temperature: Overridden to 0.0 (Strict Mode for Command)")
     elif user_intent == "question":
-        request_options["temperature"] = 0.3 # Slightly more variance for explanations
-        logger.info("Dynamic Temperature: Overridden to 0.3 (Explanation Mode for Question)")
+        request_options["temperature"] = 0.1 # Very low temp to prevent hallucinations in answers
+        logger.info("Dynamic Temperature: Overridden to 0.1 (Explanation Mode for Question)")
     elif user_intent == "statement":
-        request_options["temperature"] = 0.4 # Balanced
-        logger.info("Dynamic Temperature: Overridden to 0.4 (Balanced Mode for Statement)")
+        request_options["temperature"] = 0.15 # Grounded mode for statement
+        logger.info("Dynamic Temperature: Overridden to 0.15 (Balanced Mode for Statement)")
     elif user_intent == "greeting" or workflow_mode == "casual":
-        request_options["temperature"] = 0.7 # Creative conversational mode
-        logger.info("Dynamic Temperature: Overridden to 0.7 (Creative Mode for Casual/Greeting)")
+        request_options["temperature"] = 0.6 # Controlled conversational mode
+        logger.info("Dynamic Temperature: Overridden to 0.6 (Creative Mode for Casual/Greeting)")
 
     # Inject Tool Call Loop Prevention Warning
     if detect_tool_call_loop(req_messages):
@@ -2655,7 +3003,16 @@ def chat_completions(
     profile_str = None
     if WORKSPACE_PROFILE:
         profile_str = ", ".join([f"{k}: {v} files" for k, v in WORKSPACE_PROFILE.items()])
-    active_system_prompt = get_rendered_system_prompt(workflow_mode=workflow_mode, language_profile=profile_str)
+
+    telegram_user = body.get("telegram_user", None)
+    # We pass local_time=None to get_rendered_system_prompt so the system prompt remains static
+    # and Ollama KV prefix cache stays warm. The dynamic local_time is injected in context_content.
+    active_system_prompt = get_rendered_system_prompt(
+        workflow_mode=workflow_mode,
+        language_profile=profile_str,
+        telegram_user=telegram_user,
+        local_time=None
+    )
 
     if system_msg:
         # Append active_system_prompt to client's system prompt if not present
@@ -2878,11 +3235,12 @@ def chat_completions(
                         db_session.add(db_assistant_msg)
                         db_session.commit()
                         
-                        # Trigger async embedding generation
-                        generate_chat_pair_embeddings_async(
-                            user_msg_id, last_user_message,
-                            db_assistant_msg.id, full_answer
-                        )
+                        # Trigger async embedding generation (skip for Telegram to maximize KV caching and prevent Ollama model thrashing)
+                        if not chat_id.startswith("telegram-"):
+                            generate_chat_pair_embeddings_async(
+                                user_msg_id, last_user_message,
+                                db_assistant_msg.id, full_answer
+                            )
                         
                         # Auto-extract solution into KnowledgeBase RAG brain if engineering task
                         if workflow_mode == "engineering" and full_answer:
@@ -3024,11 +3382,12 @@ def chat_completions(
                 db.add(assistant_msg_db)
                 db.commit()
                 
-                # Trigger async embedding generation
-                generate_chat_pair_embeddings_async(
-                    user_msg_db.id, last_user_message,
-                    assistant_msg_db.id, full_answer
-                )
+                # Trigger async embedding generation (skip for Telegram to maximize KV caching and prevent Ollama model thrashing)
+                if not chat_id.startswith("telegram-"):
+                    generate_chat_pair_embeddings_async(
+                        user_msg_db.id, last_user_message,
+                        assistant_msg_db.id, full_answer
+                    )
                 
                 # Auto-extract solution into KnowledgeBase RAG brain if engineering task
                 if workflow_mode == "engineering" and full_answer:

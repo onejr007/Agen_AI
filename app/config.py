@@ -22,6 +22,8 @@ class Settings(BaseSettings):
     OLLAMA_EMBED_MODEL: str = os.getenv("OLLAMA_EMBED_MODEL", "nomic-embed-text")
     AGENT_API_KEY: str = os.getenv("AGENT_API_KEY", "local_developer_secret_key")
     AUTO_PULL_MODEL: bool = _parse_bool_env("AUTO_PULL_MODEL", "True")
+    TELEGRAM_BOT_TOKEN: str = os.getenv("TELEGRAM_BOT_TOKEN", "")
+    WHOOGLE_URL: str = os.getenv("WHOOGLE_URL", "")
     CORS_ALLOWED_ORIGINS: str = os.getenv(
         "CORS_ALLOWED_ORIGINS",
         "http://localhost,http://127.0.0.1,http://localhost:3000,http://127.0.0.1:3000"

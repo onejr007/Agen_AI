@@ -5,6 +5,11 @@ services:
     restart: always
     ports:
       - "6379:6379"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.1'
+          memory: 128M
 
   ollama:
     image: ollama/ollama:latest
@@ -15,18 +20,39 @@ services:
     volumes:
       - ollama_data:/root/.ollama
     environment:
-      - OLLAMA_MAX_LOADED_MODELS=2
+      - OLLAMA_MAX_LOADED_MODELS=1
+      - OLLAMA_NUM_PARALLEL=1
     healthcheck:
       test: ["CMD", "ollama", "list"]
       interval: 10s
       timeout: 5s
       retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: '3.0'
+          memory: 4G
+        reservations:
+          cpus: '1.5'
+          memory: 2G
+
+  whoogle:
+    image: benbusby/whoogle-search:latest
+    container_name: agent-whoogle
+    restart: always
+    ports:
+      - "5010:5000"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.3'
+          memory: 512M
 
   agent-api:
     build: .
     container_name: agent-api
     working_dir: /app_host
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 1
     restart: always
     ports:
       - "8000:8000"
@@ -41,13 +67,21 @@ services:
       - OLLAMA_EMBED_MODEL=nomic-embed-text
       - AGENT_API_KEY=local_developer_secret_key
       - AUTO_PULL_MODEL=True
+      - WHOOGLE_URL=http://whoogle:5000
     depends_on:
       ollama:
         condition: service_healthy
       redis:
         condition: service_started
+      whoogle:
+        condition: service_started
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.8'
+          memory: 1.5G
 
 volumes:
   ollama_data:

@@ -811,3 +811,935 @@ i.log
 2026-06-23 06:35:41,456 - agent.main - INFO - Logging initialized. Writing shared logs to ./fastapi.log
 2026-06-23 06:35:41,460 - agent.main - INFO - Starting background sequential embedding worker...
 2026-06-23 06:35:41,465 - agent.main - INFO - Starting background self-learning worker...
+2026-06-23 00:30:05,748 - agent.main - INFO - Logging initialized. Writing shared logs to /app_host/fastapi.log
+2026-06-23 00:30:05,750 - agent.main - INFO - Starting background sequential embedding worker...
+2026-06-23 00:30:05,751 - agent.main - INFO - Starting background self-learning worker...
+2026-06-23 00:30:13,166 - agent.main - INFO - Logging initialized. Writing shared logs to /app_host/fastapi.log
+2026-06-23 00:30:13,169 - agent.main - INFO - Starting background sequential embedding worker...
+2026-06-23 00:30:13,170 - agent.main - INFO - Starting background self-learning worker...
+2026-06-23 00:30:13,374 - agent.main - INFO - Waiting for database connection...
+2026-06-23 00:30:13,616 - agent.db - INFO - Database 'agent_db' checked/created successfully on XAMPP MySQL.
+2026-06-23 00:30:13,638 - agent.db - INFO - Database connection attempt 1/15...
+2026-06-23 00:30:13,909 - agent.db - INFO - Database connection established successfully.
+2026-06-23 00:30:13,920 - agent.main - INFO - Initializing Database tables...
+2026-06-23 00:30:14,252 - agent.main - INFO - Extracting database schema for RAG...
+2026-06-23 00:30:14,485 - agent.main - INFO - Updated existing database schema in RAG.
+2026-06-23 00:30:14,523 - agent.main - WARNING - AgentAI is running with the default development API key. Change AGENT_API_KEY before broader use.
+2026-06-23 00:30:14,536 - agent.main - INFO - API Key written to workspace directory at /app_host/api_key.txt
+2026-06-23 00:30:14,600 - agent.core - INFO - Model 'qwen2.5-coder:1.5b' is already pulled.
+2026-06-23 00:30:14,608 - agent.core - INFO - Model 'nomic-embed-text' is already pulled.
+2026-06-23 00:30:14,626 - agent.main - INFO - Analyzing workspace languages in directory: /app_host
+2026-06-23 00:30:14,671 - agent.main - INFO - Workspace language profile complete: {'md': 2, 'db': 2, 'txt': 2, 'python': 26, 'yaml': 1, 'log': 1, 'powershell': 1, 'csproj': 1, 'csharp': 1}
+2026-06-23 00:30:14,673 - agent.main - INFO - Starting .NET Core bridge from /app/bridge_publish/dotnet_bridge...
+2026-06-23 00:30:15,486 - agent.main - INFO - Worker: Generating embedding for knowledge base ID 114...
+2026-06-23 00:30:16,677 - agent.main - INFO - .NET Core bridge started successfully on port 5000.
+2026-06-23 00:31:43,538 - agent.main - INFO - Worker: Successfully updated embedding for knowledge base ID 114
+2026-06-23 00:43:21,081 - agent.main - WARNING - Self-learning worker Redis status check error: Error -2 connecting to redis:6379. Name or service not known.
+2026-06-23 00:43:21,214 - agent.main - INFO - Self-learning: Ambang batas idle tercapai (5+ menit). Memulai siklus peningkatan dan pembelajaran...
+2026-06-23 00:44:41,173 - agent.main - INFO - Logging initialized. Writing shared logs to /app_host/fastapi.log
+2026-06-23 00:44:41,180 - agent.main - INFO - Starting background sequential embedding worker...
+2026-06-23 00:44:41,181 - agent.main - INFO - Starting background self-learning worker...
+2026-06-23 00:44:59,316 - agent.main - INFO - Logging initialized. Writing shared logs to /app_host/fastapi.log
+2026-06-23 00:44:59,392 - agent.main - INFO - Starting background sequential embedding worker...
+2026-06-23 00:44:59,399 - agent.main - INFO - Starting background self-learning worker...
+2026-06-23 00:44:59,682 - agent.main - INFO - Waiting for database connection...
+2026-06-23 00:45:00,407 - agent.db - INFO - Database 'agent_db' checked/created successfully on XAMPP MySQL.
+2026-06-23 00:45:00,476 - agent.db - INFO - Database connection attempt 1/15...
+2026-06-23 00:45:01,128 - agent.db - INFO - Database connection established successfully.
+2026-06-23 00:45:01,191 - agent.main - INFO - Initializing Database tables...
+2026-06-23 00:45:02,067 - agent.main - INFO - Extracting database schema for RAG...
+2026-06-23 00:45:02,714 - agent.main - INFO - Updated existing database schema in RAG.
+2026-06-23 00:45:02,943 - agent.main - WARNING - AgentAI is running with the default development API key. Change AGENT_API_KEY before broader use.
+2026-06-23 00:45:03,217 - agent.main - INFO - API Key written to workspace directory at /app_host/api_key.txt
+2026-06-23 00:45:03,453 - agent.core - INFO - Model 'qwen2.5-coder:1.5b' is already pulled.
+2026-06-23 00:45:03,477 - agent.core - INFO - Model 'nomic-embed-text' is already pulled.
+2026-06-23 00:45:03,502 - agent.main - INFO - Analyzing workspace languages in directory: /app_host
+2026-06-23 00:45:03,782 - agent.main - INFO - Worker: Generating embedding for knowledge base ID 114...
+2026-06-23 00:45:03,896 - agent.main - INFO - Workspace language profile complete: {'md': 2, 'db': 2, 'txt': 2, 'python': 26, 'yaml': 1, 'log': 1, 'powershell': 1, 'csproj': 1, 'csharp': 1}
+2026-06-23 00:45:03,983 - agent.main - INFO - Starting .NET Core bridge from /app/bridge_publish/dotnet_bridge...
+2026-06-23 00:45:06,071 - agent.main - INFO - .NET Core bridge started successfully on port 5000.
+2026-06-23 00:47:22,163 - agent.core - WARNING - Failed to fetch embeddings from Ollama after retries (timeout or busy): HTTPConnectionPool(host='ollama', port=11434): Read timed out. (read timeout=45)
+2026-06-23 00:47:22,185 - agent.main - WARNING - Worker: Failed to get embedding for knowledge base ID 114
+2026-06-23 00:55:59,863 - agent.main - WARNING - Self-learning worker Redis status check error: Error 111 connecting to redis:6379. Connection refused.
+2026-06-23 00:55:59,868 - agent.main - INFO - Self-learning: Ambang batas idle tercapai (5+ menit). Memulai siklus peningkatan dan pembelajaran...
+2026-06-23 00:55:59,873 - agent.main - WARNING - Self-learning worker Redis lock error: Error 111 connecting to redis:6379. Connection refused.
+2026-06-23 00:55:59,904 - agent.main - INFO - Self-learning: Menjalankan prioritas utama (Upgrade FastAPI/Python)...
+2026-06-23 00:55:59,931 - agent.main - INFO - Self-upgrade: Memulai pemeriksaan evaluasi kode otonom...
+2026-06-23 00:56:00,278 - agent.main - ERROR - Self-upgrade error during LLM generation: HTTPConnectionPool(host='ollama', port=11434): Max retries exceeded with url: /api/chat (Caused by NewConnectionError("HTTPConnection(host='ollama', port=11434): Failed to establish a new connection: [Errno 111] Connection refused"))
+2026-06-23 00:56:05,317 - agent.main - INFO - Self-learning: Menjalankan prioritas kedua (Self-learning)...
+2026-06-23 00:56:08,701 - agent.main - WARNING - Self-learning worker Redis status check error: Error -2 connecting to redis:6379. Name or service not known.
+2026-06-23 00:56:08,713 - agent.main - INFO - Self-learning: Ambang batas idle tercapai (5+ menit). Memulai siklus peningkatan dan pembelajaran...
+2026-06-23 00:56:59,606 - agent.main - INFO - Logging initialized. Writing shared logs to /app_host/fastapi.log
+2026-06-23 00:56:59,618 - agent.main - INFO - Starting background sequential embedding worker...
+2026-06-23 00:56:59,619 - agent.main - INFO - Starting background self-learning worker...
+2026-06-23 00:57:09,543 - agent.main - INFO - Logging initialized. Writing shared logs to /app_host/fastapi.log
+2026-06-23 00:57:09,555 - agent.main - INFO - Starting background sequential embedding worker...
+2026-06-23 00:57:09,556 - agent.main - INFO - Starting background self-learning worker...
+2026-06-23 00:57:09,817 - agent.main - INFO - Waiting for database connection...
+2026-06-23 00:57:10,068 - agent.db - INFO - Database 'agent_db' checked/created successfully on XAMPP MySQL.
+2026-06-23 00:57:10,075 - agent.db - INFO - Database connection attempt 1/15...
+2026-06-23 00:57:10,401 - agent.db - INFO - Database connection established successfully.
+2026-06-23 00:57:10,403 - agent.main - INFO - Initializing Database tables...
+2026-06-23 00:57:11,200 - agent.main - INFO - Extracting database schema for RAG...
+2026-06-23 00:57:11,713 - agent.main - INFO - Updated existing database schema in RAG.
+2026-06-23 00:57:11,973 - agent.main - INFO - Successfully seeded default discovered learning topics.
+2026-06-23 00:57:11,974 - agent.main - WARNING - AgentAI is running with the default development API key. Change AGENT_API_KEY before broader use.
+2026-06-23 00:57:11,991 - agent.main - INFO - API Key written to workspace directory at /app_host/api_key.txt
+2026-06-23 00:57:12,106 - agent.core - INFO - Model 'qwen2.5-coder:1.5b' is already pulled.
+2026-06-23 00:57:12,112 - agent.core - INFO - Model 'nomic-embed-text' is already pulled.
+2026-06-23 00:57:12,128 - agent.main - INFO - Analyzing workspace languages in directory: /app_host
+2026-06-23 00:57:12,261 - agent.main - INFO - Workspace language profile complete: {'md': 2, 'db': 2, 'txt': 2, 'python': 26, 'yaml': 1, 'log': 1, 'powershell': 1, 'csproj': 1, 'csharp': 1}
+2026-06-23 00:57:12,338 - agent.main - INFO - Starting .NET Core bridge from /app/bridge_publish/dotnet_bridge...
+2026-06-23 00:57:12,714 - agent.main - INFO - Worker: Generating embedding for knowledge base ID 114...
+2026-06-23 00:57:14,346 - agent.main - INFO - .NET Core bridge started successfully on port 5000.
+2026-06-23 00:59:30,881 - agent.core - WARNING - Failed to fetch embeddings from Ollama after retries (timeout or busy): HTTPConnectionPool(host='ollama', port=11434): Read timed out. (read timeout=45)
+2026-06-23 00:59:30,920 - agent.main - WARNING - Worker: Failed to get embedding for knowledge base ID 114
+2026-06-23 01:06:16,625 - agent.main - INFO - Logging initialized. Writing shared logs to /app_host/fastapi.log
+2026-06-23 01:06:16,902 - agent.main - INFO - Starting background sequential embedding worker...
+2026-06-23 01:06:16,903 - agent.main - INFO - Starting background self-learning worker...
+2026-06-23 01:06:33,294 - agent.main - INFO - Logging initialized. Writing shared logs to /app_host/fastapi.log
+2026-06-23 01:06:33,308 - agent.main - INFO - Starting background sequential embedding worker...
+2026-06-23 01:06:33,309 - agent.main - INFO - Starting background self-learning worker...
+2026-06-23 01:06:33,555 - agent.main - INFO - Waiting for database connection...
+2026-06-23 01:06:34,715 - agent.db - INFO - Database 'agent_db' checked/created successfully on XAMPP MySQL.
+2026-06-23 01:06:34,866 - agent.db - INFO - Database connection attempt 1/15...
+2026-06-23 01:06:35,326 - agent.db - INFO - Database connection established successfully.
+2026-06-23 01:06:35,367 - agent.main - INFO - Initializing Database tables...
+2026-06-23 01:06:39,687 - agent.main - INFO - Extracting database schema for RAG...
+2026-06-23 01:06:42,124 - agent.main - INFO - Updated existing database schema in RAG.
+2026-06-23 01:06:42,357 - agent.main - WARNING - AgentAI is running with the default development API key. Change AGENT_API_KEY before broader use.
+2026-06-23 01:06:42,655 - agent.main - INFO - API Key written to workspace directory at /app_host/api_key.txt
+2026-06-23 01:06:42,897 - agent.core - INFO - Model 'qwen2.5-coder:1.5b' is already pulled.
+2026-06-23 01:06:43,069 - agent.core - INFO - Model 'nomic-embed-text' is already pulled.
+2026-06-23 01:06:43,129 - agent.main - INFO - Worker: Generating embedding for knowledge base ID 114...
+2026-06-23 01:06:43,132 - agent.main - INFO - Analyzing workspace languages in directory: /app_host
+2026-06-23 01:06:43,892 - agent.main - INFO - Workspace language profile complete: {'md': 2, 'db': 2, 'txt': 2, 'python': 27, 'yaml': 1, 'log': 1, 'powershell': 1, 'csproj': 1, 'csharp': 1}
+2026-06-23 01:06:43,902 - agent.main - INFO - Starting .NET Core bridge from /app/bridge_publish/dotnet_bridge...
+2026-06-23 01:06:45,917 - agent.main - INFO - .NET Core bridge started successfully on port 5000.
+2026-06-23 01:06:58,792 - agent.main - INFO - Incoming request to /host/session. Resetting last_request_time.
+2026-06-23 01:06:58,868 - agent.main - INFO - RAG Heartbeat: Interruption detected! Setting system_status to USER_PRIORITY and waiting for VRAM cleanup...
+2026-06-23 01:07:00,650 - agent.main - INFO - Request: POST /host/session - latency: 1783 ms
+2026-06-23 01:07:00,763 - agent.main - INFO - Incoming request to /host/execute. Resetting last_request_time.
+2026-06-23 01:07:01,451 - agent.main - INFO - Request: POST /host/execute - latency: 579 ms
+2026-06-23 01:07:13,493 - agent.main - INFO - Incoming request to /host/execute. Resetting last_request_time.
+2026-06-23 01:07:13,723 - agent.main - INFO - Request: POST /host/execute - latency: 217 ms
+2026-06-23 01:08:00,520 - agent.main - INFO - Incoming request to /host/session. Resetting last_request_time.
+2026-06-23 01:08:05,544 - agent.main - WARNING - LATENCY_WARNING: Request to /host/session took 2891 ms (exceeds threshold 2000 ms)
+2026-06-23 01:08:05,910 - agent.main - INFO - Incoming request to /host/execute. Resetting last_request_time.
+2026-06-23 01:08:11,137 - agent.main - WARNING - LATENCY_WARNING: Request to /host/execute took 2442 ms (exceeds threshold 2000 ms)
+2026-06-23 01:08:24,016 - agent.main - INFO - Incoming request to /host/execute. Resetting last_request_time.
+2026-06-23 01:08:28,603 - agent.main - WARNING - LATENCY_WARNING: Request to /host/execute took 3406 ms (exceeds threshold 2000 ms)
+2026-06-23 01:09:02,117 - agent.core - WARNING - Failed to fetch embeddings from Ollama after retries (timeout or busy): HTTPConnectionPool(host='ollama', port=11434): Read timed out. (read timeout=45)
+2026-06-23 01:09:02,653 - agent.main - WARNING - Worker: Failed to get embedding for knowledge base ID 114
+2026-06-23 01:09:24,242 - agent.main - INFO - Incoming request to /host/session. Resetting last_request_time.
+2026-06-23 01:09:24,325 - agent.main - INFO - Request: POST /host/session - latency: 54 ms
+2026-06-23 01:09:24,344 - agent.main - INFO - Incoming request to /host/execute. Resetting last_request_time.
+2026-06-23 01:09:24,424 - agent.main - INFO - Request: POST /host/execute - latency: 60 ms
+2026-06-23 01:09:36,456 - agent.main - INFO - Incoming request to /host/execute. Resetting last_request_time.
+2026-06-23 01:09:36,745 - agent.main - INFO - Request: POST /host/execute - latency: 226 ms
+2026-06-23 01:10:10,202 - agent.main - INFO - Incoming request to /host/session. Resetting last_request_time.
+2026-06-23 01:10:10,353 - agent.main - INFO - Request: POST /host/session - latency: 119 ms
+2026-06-23 01:10:10,363 - agent.main - INFO - Incoming request to /host/execute. Resetting last_request_time.
+2026-06-23 01:10:10,438 - agent.main - INFO - Request: POST /host/execute - latency: 53 ms
+2026-06-23 01:10:22,452 - agent.main - INFO - Incoming request to /host/execute. Resetting last_request_time.
+2026-06-23 01:10:22,677 - agent.main - INFO - Request: POST /host/execute - latency: 186 ms
+2026-06-23 01:11:44,395 - agent.main - INFO - Incoming request to /host/session. Resetting last_request_time.
+2026-06-23 01:11:44,495 - agent.main - INFO - Request: POST /host/session - latency: 88 ms
+2026-06-23 01:11:44,509 - agent.main - INFO - Incoming request to /host/execute. Resetting last_request_time.
+2026-06-23 01:11:44,602 - agent.main - INFO - Request: POST /host/execute - latency: 69 ms
+2026-06-23 01:11:56,621 - agent.main - INFO - Incoming request to /host/execute. Resetting last_request_time.
+2026-06-23 01:11:56,735 - agent.main - INFO - Request: POST /host/execute - latency: 97 ms
+2026-06-23 01:13:14,497 - agent.main - INFO - Incoming request to /host/session. Resetting last_request_time.
+2026-06-23 01:13:14,559 - agent.main - INFO - Request: POST /host/session - latency: 52 ms
+2026-06-23 01:13:14,587 - agent.main - INFO - Incoming request to /host/execute. Resetting last_request_time.
+2026-06-23 01:13:14,697 - agent.main - INFO - Request: POST /host/execute - latency: 93 ms
+2026-06-23 01:13:26,730 - agent.main - INFO - Incoming request to /host/execute. Resetting last_request_time.
+2026-06-23 01:13:27,278 - agent.main - INFO - Request: POST /host/execute - latency: 428 ms
+2026-06-23 01:14:42,876 - agent.main - INFO - Incoming request to /host/session. Resetting last_request_time.
+2026-06-23 01:14:43,127 - agent.main - INFO - Request: POST /host/session - latency: 219 ms
+2026-06-23 01:14:43,171 - agent.main - INFO - Incoming request to /host/execute. Resetting last_request_time.
+2026-06-23 01:14:43,292 - agent.main - INFO - Request: POST /host/execute - latency: 111 ms
+2026-06-23 01:15:00,104 - agent.main - INFO - Logging initialized. Writing shared logs to /app_host/fastapi.log
+2026-06-23 01:15:00,109 - agent.main - INFO - Starting background sequential embedding worker...
+2026-06-23 01:15:00,111 - agent.main - INFO - Starting background self-learning worker...
+2026-06-23 01:15:00,354 - agent.main - INFO - Waiting for database connection...
+2026-06-23 01:15:00,546 - agent.db - INFO - Database 'agent_db' checked/created successfully on XAMPP MySQL.
+2026-06-23 01:15:00,560 - agent.db - INFO - Database connection attempt 1/15...
+2026-06-23 01:15:00,698 - agent.db - INFO - Database connection established successfully.
+2026-06-23 01:15:00,704 - agent.main - INFO - Initializing Database tables...
+2026-06-23 01:15:00,997 - agent.main - INFO - Extracting database schema for RAG...
+2026-06-23 01:15:01,275 - agent.main - INFO - Updated existing database schema in RAG.
+2026-06-23 01:15:01,337 - agent.main - WARNING - AgentAI is running with the default development API key. Change AGENT_API_KEY before broader use.
+2026-06-23 01:15:01,357 - agent.main - INFO - API Key written to workspace directory at /app_host/api_key.txt
+2026-06-23 01:15:01,407 - agent.core - INFO - Model 'qwen2.5-coder:1.5b' is already pulled.
+2026-06-23 01:15:01,418 - agent.core - INFO - Model 'nomic-embed-text' is already pulled.
+2026-06-23 01:15:01,422 - agent.main - INFO - Analyzing workspace languages in directory: /app_host
+2026-06-23 01:15:01,457 - agent.main - INFO - Workspace language profile complete: {'md': 2, 'db': 2, 'txt': 2, 'python': 27, 'yaml': 1, 'log': 1, 'powershell': 1, 'csproj': 1, 'csharp': 1}
+2026-06-23 01:15:01,461 - agent.main - INFO - .NET Core bridge is already active on port 5000. Skipping start.
+2026-06-23 01:15:01,487 - agent.main - INFO - Incoming request to /host/execute. Resetting last_request_time.
+2026-06-23 01:15:01,705 - agent.main - INFO - Request: POST /host/execute - latency: 185 ms
+2026-06-23 01:15:02,276 - agent.main - INFO - Worker: Generating embedding for knowledge base ID 114...
+2026-06-23 01:17:17,258 - agent.main - INFO - Incoming request to /host/session. Resetting last_request_time.
+2026-06-23 01:17:17,491 - agent.main - INFO - Request: POST /host/session - latency: 209 ms
+2026-06-23 01:17:17,525 - agent.main - INFO - Incoming request to /host/execute. Resetting last_request_time.
+2026-06-23 01:17:17,812 - agent.main - INFO - Request: POST /host/execute - latency: 255 ms
+2026-06-23 01:17:20,466 - agent.core - WARNING - Failed to fetch embeddings from Ollama after retries (timeout or busy): HTTPConnectionPool(host='ollama', port=11434): Read timed out. (read timeout=45)
+2026-06-23 01:17:20,480 - agent.main - WARNING - Worker: Failed to get embedding for knowledge base ID 114
+2026-06-23 01:17:29,927 - agent.main - INFO - Incoming request to /host/execute. Resetting last_request_time.
+2026-06-23 01:17:30,171 - agent.main - INFO - Request: POST /host/execute - latency: 225 ms
+2026-06-23 01:21:15,514 - agent.main - INFO - Incoming request to /v1/models. Resetting last_request_time.
+2026-06-23 01:21:15,771 - agent.main - INFO - Incoming request to /v1/chat/completions. Resetting last_request_time.
+2026-06-23 01:21:19,257 - agent.main - INFO - Workflow Classifier: Mode=engineering
+2026-06-23 01:21:19,268 - agent.core - INFO - Hybrid search keywords: ['hello', 'student', 'antigravity', 'your', 'mentor', 'let', 'begin', 'optimization', 'cycle', 'state', 'identity', 'core', 'purpose', 'explain', 'exact', 'rules', 'must', 'follow', 'prevent', 'coding', 'hallucinations']
+2026-06-23 01:21:20,809 - agent.core - INFO - Executing Vector-based Cosine Similarity scoring...
+2026-06-23 01:21:22,703 - agent.core - INFO - Retrieved 2 hybrid memory matches.
+2026-06-23 01:21:22,789 - agent.main - INFO - Dynamic Classifier: Lang=general, ErrorDetected=False
+2026-06-23 01:21:43,078 - agent.main - INFO - Token Budget Controller: Starting adaptive allocation. Remaining budget: 2994 tokens.
+2026-06-23 01:21:43,080 - agent.core - INFO - Hybrid search keywords: ['hello', 'student', 'antigravity', 'your', 'mentor', 'let', 'begin', 'optimization', 'cycle', 'state', 'identity', 'core', 'purpose', 'explain', 'exact', 'rules', 'must', 'follow', 'prevent', 'coding', 'hallucinations']
+2026-06-23 01:21:43,919 - agent.core - INFO - Executing Vector-based Cosine Similarity scoring...
+2026-06-23 01:21:45,290 - agent.core - INFO - Retrieved 3 hybrid memory matches.
+2026-06-23 01:21:45,311 - agent.main - INFO - Token Budget Controller: Injected pruned semantic context. New remaining: 2633 tokens.
+2026-06-23 01:21:45,343 - agent.main - INFO - Dynamic Temperature: Overridden to 0.15 (Balanced Mode for Statement)
+2026-06-23 01:27:08,728 - agent.main - INFO - Logging initialized. Writing shared logs to /app_host/fastapi.log
+2026-06-23 01:27:08,735 - agent.main - INFO - Starting background sequential embedding worker...
+2026-06-23 01:27:08,736 - agent.main - INFO - Starting background self-learning worker...
+2026-06-23 01:27:34,300 - agent.main - INFO - Logging initialized. Writing shared logs to /app_host/fastapi.log
+2026-06-23 01:27:34,304 - agent.main - INFO - Starting background sequential embedding worker...
+2026-06-23 01:27:34,304 - agent.main - INFO - Starting background self-learning worker...
+2026-06-23 01:27:34,580 - agent.main - INFO - Waiting for database connection...
+2026-06-23 01:27:35,303 - agent.db - INFO - Database 'agent_db' checked/created successfully on XAMPP MySQL.
+2026-06-23 01:27:35,366 - agent.db - INFO - Database connection attempt 1/15...
+2026-06-23 01:27:35,765 - agent.db - INFO - Database connection established successfully.
+2026-06-23 01:27:35,778 - agent.main - INFO - Initializing Database tables...
+2026-06-23 01:27:36,249 - agent.main - INFO - Extracting database schema for RAG...
+2026-06-23 01:27:36,784 - agent.main - INFO - Updated existing database schema in RAG.
+2026-06-23 01:27:36,847 - agent.main - WARNING - AgentAI is running with the default development API key. Change AGENT_API_KEY before broader use.
+2026-06-23 01:27:36,876 - agent.main - INFO - API Key written to workspace directory at /app_host/api_key.txt
+2026-06-23 01:27:36,967 - agent.core - INFO - Model 'qwen2.5-coder:1.5b' is already pulled.
+2026-06-23 01:27:36,983 - agent.core - INFO - Model 'nomic-embed-text' is already pulled.
+2026-06-23 01:27:36,992 - agent.main - INFO - Analyzing workspace languages in directory: /app_host
+2026-06-23 01:27:37,030 - agent.main - INFO - Workspace language profile complete: {'md': 2, 'db': 2, 'python': 28, 'txt': 2, 'yaml': 1, 'log': 1, 'powershell': 1, 'csproj': 1, 'csharp': 1}
+2026-06-23 01:27:37,032 - agent.main - INFO - Starting .NET Core bridge from /app/bridge_publish/dotnet_bridge...
+2026-06-23 01:27:37,784 - agent.main - INFO - Worker: Generating embedding for knowledge base ID 114...
+2026-06-23 01:27:39,044 - agent.main - INFO - .NET Core bridge started successfully on port 5000.
+2026-06-23 01:28:26,495 - agent.main - INFO - Incoming request to /v1/models. Resetting last_request_time.
+2026-06-23 01:28:29,727 - agent.main - INFO - Incoming request to /v1/chat/completions. Resetting last_request_time.
+2026-06-23 01:28:29,859 - agent.main - INFO - RAG Heartbeat: Interruption detected! Setting system_status to USER_PRIORITY and waiting for VRAM cleanup...
+2026-06-23 01:28:34,253 - agent.main - INFO - Workflow Classifier: Mode=engineering
+2026-06-23 01:28:34,994 - agent.core - INFO - Hybrid search keywords: ['hello', 'student', 'antigravity', 'your', 'mentor', 'let', 'begin', 'optimization', 'cycle', 'state', 'identity', 'core', 'purpose', 'explain', 'exact', 'rules', 'must', 'follow', 'prevent', 'coding', 'hallucinations']
+2026-06-23 01:28:37,235 - agent.core - INFO - Executing Vector-based Cosine Similarity scoring...
+2026-06-23 01:28:42,384 - agent.core - INFO - Retrieved 2 hybrid memory matches.
+2026-06-23 01:28:42,896 - agent.main - INFO - Dynamic Classifier: Lang=general, ErrorDetected=False
+2026-06-23 01:29:02,367 - agent.main - INFO - Token Budget Controller: Starting adaptive allocation. Remaining budget: 2994 tokens.
+2026-06-23 01:29:02,380 - agent.core - INFO - Hybrid search keywords: ['hello', 'student', 'antigravity', 'your', 'mentor', 'let', 'begin', 'optimization', 'cycle', 'state', 'identity', 'core', 'purpose', 'explain', 'exact', 'rules', 'must', 'follow', 'prevent', 'coding', 'hallucinations']
+2026-06-23 01:29:04,764 - agent.core - INFO - Executing Vector-based Cosine Similarity scoring...
+2026-06-23 01:29:08,255 - agent.core - INFO - Retrieved 3 hybrid memory matches.
+2026-06-23 01:29:08,271 - agent.main - INFO - Token Budget Controller: Injected pruned semantic context. New remaining: 2633 tokens.
+2026-06-23 01:29:08,634 - agent.main - INFO - Dynamic Temperature: Overridden to 0.15 (Balanced Mode for Statement)
+2026-06-23 01:35:56,629 - agent.core - WARNING - Failed to fetch embeddings from Ollama after retries (timeout or busy): HTTPConnectionPool(host='ollama', port=11434): Read timed out. (read timeout=45)
+2026-06-23 01:35:56,662 - agent.main - WARNING - Worker: Failed to get embedding for knowledge base ID 114
+2026-06-23 01:40:18,689 - agent.main - INFO - Logging initialized. Writing shared logs to /app_host/fastapi.log
+2026-06-23 01:40:18,774 - agent.main - INFO - Starting background sequential embedding worker...
+2026-06-23 01:40:18,775 - agent.main - INFO - Starting background self-learning worker...
+2026-06-23 01:40:29,669 - agent.main - INFO - Logging initialized. Writing shared logs to /app_host/fastapi.log
+2026-06-23 01:40:29,673 - agent.main - INFO - Starting background sequential embedding worker...
+2026-06-23 01:40:29,673 - agent.main - INFO - Starting background self-learning worker...
+2026-06-23 01:40:29,952 - agent.main - INFO - Waiting for database connection...
+2026-06-23 01:40:30,554 - agent.db - INFO - Database 'agent_db' checked/created successfully on XAMPP MySQL.
+2026-06-23 01:40:30,727 - agent.db - INFO - Database connection attempt 1/15...
+2026-06-23 01:40:31,773 - agent.db - INFO - Database connection established successfully.
+2026-06-23 01:40:31,786 - agent.main - INFO - Initializing Database tables...
+2026-06-23 01:40:34,148 - agent.main - INFO - Extracting database schema for RAG...
+2026-06-23 01:40:35,592 - agent.main - INFO - Updated existing database schema in RAG.
+2026-06-23 01:40:35,842 - agent.main - WARNING - AgentAI is running with the default development API key. Change AGENT_API_KEY before broader use.
+2026-06-23 01:40:36,593 - agent.main - INFO - Worker: Generating embedding for knowledge base ID 114...
+2026-06-23 01:40:36,644 - agent.main - INFO - API Key written to workspace directory at /app_host/api_key.txt
+2026-06-23 01:40:37,330 - agent.core - INFO - Model 'qwen2.5-coder:1.5b' is already pulled.
+2026-06-23 01:40:37,661 - agent.core - INFO - Model 'nomic-embed-text' is already pulled.
+2026-06-23 01:40:37,925 - agent.main - INFO - Analyzing workspace languages in directory: /app_host
+2026-06-23 01:40:38,143 - agent.main - INFO - Workspace language profile complete: {'md': 2, 'db': 2, 'python': 28, 'txt': 2, 'yaml': 1, 'log': 1, 'powershell': 1, 'csproj': 1, 'csharp': 1}
+2026-06-23 01:40:38,152 - agent.main - INFO - Starting .NET Core bridge from /app/bridge_publish/dotnet_bridge...
+2026-06-23 01:40:40,157 - agent.main - INFO - .NET Core bridge started successfully on port 5000.
+2026-06-23 01:41:06,779 - agent.main - INFO - Incoming request to /v1/models. Resetting last_request_time.
+2026-06-23 01:41:11,314 - agent.main - INFO - Incoming request to /v1/chat/completions. Resetting last_request_time.
+2026-06-23 01:41:11,523 - agent.main - INFO - RAG Heartbeat: Interruption detected! Setting system_status to USER_PRIORITY and waiting for VRAM cleanup...
+2026-06-23 01:41:13,746 - agent.main - INFO - Workflow Classifier: Mode=teacher
+2026-06-23 01:41:15,579 - agent.main - INFO - Token Budget Controller: Starting adaptive allocation. Remaining budget: 3452 tokens.
+2026-06-23 01:41:15,914 - agent.main - WARNING - Token Budget Controller: Dropped workspace tree map entirely due to budget depletion.
+2026-06-23 01:41:16,187 - agent.main - INFO - Dynamic Temperature: Overridden to 0.15 (Balanced Mode for Statement)
+2026-06-23 01:43:13,407 - agent.core - WARNING - Failed to fetch embeddings from Ollama after retries (timeout or busy): HTTPConnectionPool(host='ollama', port=11434): Read timed out. (read timeout=45)
+2026-06-23 01:43:13,809 - agent.main - WARNING - Worker: Failed to get embedding for knowledge base ID 114
+2026-06-23 01:45:40,062 - agent.main - INFO - Logging initialized. Writing shared logs to /app_host/fastapi.log
+2026-06-23 01:45:40,112 - agent.main - INFO - Starting background sequential embedding worker...
+2026-06-23 01:45:40,113 - agent.main - INFO - Starting background self-learning worker...
+2026-06-23 01:45:56,850 - agent.main - INFO - Logging initialized. Writing shared logs to /app_host/fastapi.log
+2026-06-23 01:45:56,893 - agent.main - INFO - Starting background sequential embedding worker...
+2026-06-23 01:45:56,894 - agent.main - INFO - Starting background self-learning worker...
+2026-06-23 01:45:57,200 - agent.main - INFO - Waiting for database connection...
+2026-06-23 01:45:57,795 - agent.db - INFO - Database 'agent_db' checked/created successfully on XAMPP MySQL.
+2026-06-23 01:45:57,827 - agent.db - INFO - Database connection attempt 1/15...
+2026-06-23 01:45:58,297 - agent.db - INFO - Database connection established successfully.
+2026-06-23 01:45:58,299 - agent.main - INFO - Initializing Database tables...
+2026-06-23 01:45:58,902 - agent.main - INFO - Extracting database schema for RAG...
+2026-06-23 01:45:59,387 - agent.main - INFO - Updated existing database schema in RAG.
+2026-06-23 01:45:59,464 - agent.main - WARNING - AgentAI is running with the default development API key. Change AGENT_API_KEY before broader use.
+2026-06-23 01:45:59,620 - agent.main - INFO - API Key written to workspace directory at /app_host/api_key.txt
+2026-06-23 01:45:59,837 - agent.core - INFO - Model 'qwen2.5-coder:1.5b' is already pulled.
+2026-06-23 01:45:59,850 - agent.core - INFO - Model 'nomic-embed-text' is already pulled.
+2026-06-23 01:45:59,893 - agent.main - INFO - Analyzing workspace languages in directory: /app_host
+2026-06-23 01:46:00,388 - agent.main - INFO - Worker: Generating embedding for knowledge base ID 114...
+2026-06-23 01:46:01,063 - agent.main - INFO - Workspace language profile complete: {'md': 2, 'db': 2, 'python': 28, 'txt': 2, 'yaml': 1, 'log': 1, 'powershell': 1, 'csproj': 1, 'csharp': 1}
+2026-06-23 01:46:01,066 - agent.main - INFO - Starting .NET Core bridge from /app/bridge_publish/dotnet_bridge...
+2026-06-23 01:46:03,095 - agent.main - INFO - .NET Core bridge started successfully on port 5000.
+2026-06-23 01:47:16,405 - agent.main - INFO - Logging initialized. Writing shared logs to /app_host/fastapi.log
+2026-06-23 01:47:16,437 - agent.main - INFO - Starting background sequential embedding worker...
+2026-06-23 01:47:16,439 - agent.main - INFO - Starting background self-learning worker...
+2026-06-23 01:47:38,530 - agent.main - INFO - Logging initialized. Writing shared logs to /app_host/fastapi.log
+2026-06-23 01:47:38,544 - agent.main - INFO - Starting background sequential embedding worker...
+2026-06-23 01:47:38,546 - agent.main - INFO - Starting background self-learning worker...
+2026-06-23 01:47:38,824 - agent.main - INFO - Waiting for database connection...
+2026-06-23 01:47:40,974 - agent.db - INFO - Database 'agent_db' checked/created successfully on XAMPP MySQL.
+2026-06-23 01:47:41,572 - agent.db - INFO - Database connection attempt 1/15...
+2026-06-23 01:47:43,315 - agent.db - INFO - Database connection established successfully.
+2026-06-23 01:47:43,472 - agent.main - INFO - Initializing Database tables...
+2026-06-23 01:47:45,628 - agent.main - INFO - Extracting database schema for RAG...
+2026-06-23 01:47:46,615 - agent.main - INFO - Updated existing database schema in RAG.
+2026-06-23 01:47:46,809 - agent.main - WARNING - AgentAI is running with the default development API key. Change AGENT_API_KEY before broader use.
+2026-06-23 01:47:47,077 - agent.main - INFO - API Key written to workspace directory at /app_host/api_key.txt
+2026-06-23 01:47:47,139 - agent.core - INFO - Model 'qwen2.5-coder:1.5b' is already pulled.
+2026-06-23 01:47:47,147 - agent.core - INFO - Model 'nomic-embed-text' is already pulled.
+2026-06-23 01:47:47,159 - agent.main - INFO - Analyzing workspace languages in directory: /app_host
+2026-06-23 01:47:47,253 - agent.main - INFO - Workspace language profile complete: {'md': 2, 'db': 2, 'python': 28, 'txt': 2, 'yaml': 1, 'log': 1, 'powershell': 1, 'csproj': 1, 'csharp': 1}
+2026-06-23 01:47:47,263 - agent.main - INFO - Starting .NET Core bridge from /app/bridge_publish/dotnet_bridge...
+2026-06-23 01:47:47,615 - agent.main - INFO - Worker: Generating embedding for knowledge base ID 114...
+2026-06-23 01:47:49,277 - agent.main - INFO - .NET Core bridge started successfully on port 5000.
+2026-06-23 01:48:45,649 - agent.main - INFO - Incoming request to /v1/models. Resetting last_request_time.
+2026-06-23 01:48:48,881 - agent.main - INFO - Incoming request to /v1/chat/completions. Resetting last_request_time.
+2026-06-23 01:48:51,280 - agent.main - INFO - Workflow Classifier: Mode=teacher
+2026-06-23 01:48:53,237 - agent.main - INFO - Token Budget Controller: Starting adaptive allocation. Remaining budget: 3452 tokens.
+2026-06-23 01:48:53,326 - agent.main - WARNING - Token Budget Controller: Dropped workspace tree map entirely due to budget depletion.
+2026-06-23 01:48:53,342 - agent.main - INFO - Dynamic Temperature: Overridden to 0.15 (Balanced Mode for Statement)
+2026-06-23 01:50:12,864 - agent.core - WARNING - Failed to fetch embeddings from Ollama after retries (timeout or busy): HTTPConnectionPool(host='ollama', port=11434): Read timed out. (read timeout=45)
+2026-06-23 01:50:12,913 - agent.main - WARNING - Worker: Failed to get embedding for knowledge base ID 114
+2026-06-23 01:51:37,154 - agent.main - INFO - Logging initialized. Writing shared logs to /app_host/fastapi.log
+2026-06-23 01:51:37,157 - agent.main - INFO - Starting background sequential embedding worker...
+2026-06-23 01:51:37,158 - agent.main - INFO - Starting background self-learning worker...
+2026-06-23 01:51:48,794 - agent.main - INFO - Logging initialized. Writing shared logs to /app_host/fastapi.log
+2026-06-23 01:51:48,797 - agent.main - INFO - Starting background sequential embedding worker...
+2026-06-23 01:51:48,799 - agent.main - INFO - Starting background self-learning worker...
+2026-06-23 01:51:49,031 - agent.main - INFO - Waiting for database connection...
+2026-06-23 01:51:49,542 - agent.db - INFO - Database 'agent_db' checked/created successfully on XAMPP MySQL.
+2026-06-23 01:51:49,607 - agent.db - INFO - Database connection attempt 1/15...
+2026-06-23 01:51:50,571 - agent.db - INFO - Database connection established successfully.
+2026-06-23 01:51:50,587 - agent.main - INFO - Initializing Database tables...
+2026-06-23 01:51:51,539 - agent.main - INFO - Extracting database schema for RAG...
+2026-06-23 01:51:52,207 - agent.main - INFO - Database schema unchanged in RAG. Skipping embedding update.
+2026-06-23 01:51:52,302 - agent.main - WARNING - AgentAI is running with the default development API key. Change AGENT_API_KEY before broader use.
+2026-06-23 01:51:52,353 - agent.main - INFO - API Key written to workspace directory at /app_host/api_key.txt
+2026-06-23 01:51:52,575 - agent.core - INFO - Model 'qwen2.5-coder:1.5b' is already pulled.
+2026-06-23 01:51:52,587 - agent.core - INFO - Model 'nomic-embed-text' is already pulled.
+2026-06-23 01:51:52,614 - agent.main - INFO - Analyzing workspace languages in directory: /app_host
+2026-06-23 01:51:53,506 - agent.main - INFO - Workspace language profile complete: {'md': 2, 'db': 2, 'python': 28, 'txt': 2, 'yaml': 1, 'log': 1, 'powershell': 1, 'csproj': 1, 'csharp': 1}
+2026-06-23 01:51:53,523 - agent.main - INFO - Starting .NET Core bridge from /app/bridge_publish/dotnet_bridge...
+2026-06-23 01:51:55,548 - agent.main - INFO - .NET Core bridge started successfully on port 5000.
+2026-06-23 01:52:12,556 - agent.main - INFO - Incoming request to /v1/models. Resetting last_request_time.
+2026-06-23 01:52:13,003 - agent.main - INFO - Incoming request to /v1/chat/completions. Resetting last_request_time.
+2026-06-23 01:52:15,204 - agent.main - INFO - Workflow Classifier: Mode=teacher
+2026-06-23 01:52:18,802 - agent.main - INFO - Token Budget Controller: Starting adaptive allocation. Remaining budget: 3452 tokens.
+2026-06-23 01:52:19,061 - agent.main - WARNING - Token Budget Controller: Dropped workspace tree map entirely due to budget depletion.
+2026-06-23 01:52:19,241 - agent.main - INFO - Dynamic Temperature: Overridden to 0.15 (Balanced Mode for Statement)
+2026-06-23 02:02:57,417 - agent.main - WARNING - LATENCY_WARNING: Request to /v1/chat/completions took 644350 ms (exceeds threshold 2000 ms)
+2026-06-23 02:02:58,352 - agent.main - INFO - Worker: Generating embedding for message ID 189...
+2026-06-23 02:02:58,747 - agent.main - INFO - Worker: Successfully updated embedding for message ID 189
+2026-06-23 02:02:59,783 - agent.main - INFO - Worker: Generating embedding for message ID 190...
+2026-06-23 02:03:25,196 - agent.main - INFO - Incoming request to /v1/models. Resetting last_request_time.
+2026-06-23 02:03:26,434 - agent.main - INFO - Incoming request to /v1/chat/completions. Resetting last_request_time.
+2026-06-23 02:03:28,633 - agent.main - INFO - RAG Heartbeat: Interruption detected! Setting system_status to USER_PRIORITY and waiting for VRAM cleanup...
+2026-06-23 02:03:34,739 - agent.main - INFO - Workflow Classifier: Mode=teacher
+2026-06-23 02:03:35,572 - agent.main - INFO - Token Budget Controller: Starting adaptive allocation. Remaining budget: 3452 tokens.
+2026-06-23 02:03:35,628 - agent.main - WARNING - Token Budget Controller: Dropped workspace tree map entirely due to budget depletion.
+2026-06-23 02:03:35,741 - agent.main - INFO - Dynamic Temperature: Overridden to 0.15 (Balanced Mode for Statement)
+2026-06-23 02:04:40,083 - agent.main - INFO - Worker: Successfully updated embedding for message ID 190
+2026-06-23 02:06:42,044 - agent.main - WARNING - LATENCY_WARNING: Request to /v1/chat/completions took 193427 ms (exceeds threshold 2000 ms)
+2026-06-23 02:06:43,031 - agent.main - INFO - Worker: Generating embedding for message ID 191...
+2026-06-23 02:06:43,199 - agent.main - INFO - Worker: Successfully updated embedding for message ID 191
+2026-06-23 02:06:44,222 - agent.main - INFO - Worker: Generating embedding for message ID 192...
+2026-06-23 02:06:48,211 - agent.main - INFO - Worker: Successfully updated embedding for message ID 192
+2026-06-23 02:08:29,444 - agent.main - INFO - Self-learning: Ambang batas idle tercapai (5+ menit). Memulai siklus peningkatan dan pembelajaran...
+2026-06-23 02:08:29,485 - agent.main - INFO - Self-learning: Menjalankan prioritas utama (Upgrade FastAPI/Python)...
+2026-06-23 02:08:29,579 - agent.main - INFO - Self-upgrade: Memulai pemeriksaan evaluasi kode otonom...
+2026-06-23 02:10:18,262 - agent.main - INFO - Logging initialized. Writing shared logs to /app_host/fastapi.log
+2026-06-23 02:10:18,281 - agent.main - INFO - Starting background sequential embedding worker...
+2026-06-23 02:10:18,282 - agent.main - INFO - Starting background self-learning worker...
+2026-06-23 02:10:34,431 - agent.main - INFO - Logging initialized. Writing shared logs to /app_host/fastapi.log
+2026-06-23 02:10:34,447 - agent.main - INFO - Starting background sequential embedding worker...
+2026-06-23 02:10:34,448 - agent.main - INFO - Starting background self-learning worker...
+2026-06-23 02:10:34,667 - agent.main - INFO - Waiting for database connection...
+2026-06-23 02:10:35,112 - agent.db - INFO - Database 'agent_db' checked/created successfully on XAMPP MySQL.
+2026-06-23 02:10:35,136 - agent.db - INFO - Database connection attempt 1/15...
+2026-06-23 02:10:35,345 - agent.db - INFO - Database connection established successfully.
+2026-06-23 02:10:35,347 - agent.main - INFO - Initializing Database tables...
+2026-06-23 02:10:35,703 - agent.main - INFO - Extracting database schema for RAG...
+2026-06-23 02:10:35,996 - agent.main - INFO - Database schema unchanged in RAG. Skipping embedding update.
+2026-06-23 02:10:36,068 - agent.main - WARNING - AgentAI is running with the default development API key. Change AGENT_API_KEY before broader use.
+2026-06-23 02:10:36,109 - agent.main - INFO - API Key written to workspace directory at /app_host/api_key.txt
+2026-06-23 02:10:36,228 - agent.core - INFO - Model 'qwen2.5-coder:1.5b' is already pulled.
+2026-06-23 02:10:36,263 - agent.core - INFO - Model 'nomic-embed-text' is already pulled.
+2026-06-23 02:10:36,297 - agent.main - INFO - Analyzing workspace languages in directory: /app_host
+2026-06-23 02:10:37,523 - agent.main - INFO - Workspace language profile complete: {'md': 2, 'db': 2, 'python': 28, 'txt': 2, 'yaml': 1, 'log': 1, 'powershell': 1, 'csproj': 1, 'csharp': 1}
+2026-06-23 02:10:37,576 - agent.main - INFO - Starting .NET Core bridge from /app/bridge_publish/dotnet_bridge...
+2026-06-23 02:10:39,650 - agent.main - INFO - .NET Core bridge started successfully on port 5000.
+2026-06-23 02:11:25,842 - agent.main - INFO - Incoming request to /v1/models. Resetting last_request_time.
+2026-06-23 02:11:26,021 - agent.main - INFO - Incoming request to /v1/chat/completions. Resetting last_request_time.
+2026-06-23 02:11:26,723 - agent.main - INFO - RAG Heartbeat: Interruption detected! Setting system_status to USER_PRIORITY and waiting for VRAM cleanup...
+2026-06-23 02:11:28,245 - agent.main - INFO - Workflow Classifier: Mode=teacher
+2026-06-23 02:11:29,186 - agent.main - INFO - Token Budget Controller: Starting adaptive allocation. Remaining budget: 3452 tokens.
+2026-06-23 02:11:29,189 - agent.main - WARNING - Token Budget Controller: Dropped workspace tree map entirely due to budget depletion.
+2026-06-23 02:11:29,191 - agent.main - INFO - Dynamic Temperature: Overridden to 0.15 (Balanced Mode for Statement)
+2026-06-23 02:13:11,620 - agent.main - WARNING - LATENCY_WARNING: Request to /v1/chat/completions took 104898 ms (exceeds threshold 2000 ms)
+2026-06-23 02:13:12,613 - agent.main - INFO - Worker: Generating embedding for message ID 193...
+2026-06-23 02:13:12,701 - agent.main - INFO - Worker: Successfully updated embedding for message ID 193
+2026-06-23 02:13:13,709 - agent.main - INFO - Worker: Generating embedding for message ID 194...
+2026-06-23 02:13:19,714 - agent.main - INFO - Worker: Successfully updated embedding for message ID 194
+2026-06-23 02:15:58,934 - agent.main - INFO - Incoming request to /v1/chat/completions. Resetting last_request_time.
+2026-06-23 02:16:06,091 - agent.main - INFO - Workflow Classifier: Mode=teacher
+2026-06-23 02:16:07,085 - agent.main - INFO - Token Budget Controller: Starting adaptive allocation. Remaining budget: 3142 tokens.
+2026-06-23 02:16:07,093 - agent.main - WARNING - Token Budget Controller: Dropped workspace tree map entirely due to budget depletion.
+2026-06-23 02:16:07,138 - agent.main - INFO - Dynamic Temperature: Overridden to 0.15 (Balanced Mode for Statement)
+2026-06-23 02:20:08,505 - agent.main - WARNING - LATENCY_WARNING: Request to /v1/chat/completions took 249294 ms (exceeds threshold 2000 ms)
+2026-06-23 02:20:09,513 - agent.main - INFO - Worker: Generating embedding for message ID 195...
+2026-06-23 02:20:09,819 - agent.main - INFO - Worker: Successfully updated embedding for message ID 195
+2026-06-23 02:20:10,851 - agent.main - INFO - Worker: Generating embedding for message ID 196...
+2026-06-23 02:20:17,452 - agent.main - INFO - Worker: Successfully updated embedding for message ID 196
+2026-06-23 02:22:02,758 - agent.main - INFO - Incoming request to /v1/chat/completions. Resetting last_request_time.
+2026-06-23 02:22:02,880 - agent.main - INFO - RAG Heartbeat: Interruption detected! Setting system_status to USER_PRIORITY and waiting for VRAM cleanup...
+2026-06-23 02:22:11,593 - agent.main - INFO - Workflow Classifier: Mode=teacher
+2026-06-23 02:22:11,976 - agent.main - INFO - Token Budget Controller: Starting adaptive allocation. Remaining budget: 2835 tokens.
+2026-06-23 02:22:12,071 - agent.main - WARNING - Token Budget Controller: Dropped workspace tree map entirely due to budget depletion.
+2026-06-23 02:22:12,174 - agent.main - INFO - Dynamic Temperature: Overridden to 0.15 (Balanced Mode for Statement)
+2026-06-23 02:27:26,063 - agent.main - WARNING - LATENCY_WARNING: Request to /v1/chat/completions took 323183 ms (exceeds threshold 2000 ms)
+2026-06-23 02:27:27,052 - agent.main - INFO - Worker: Generating embedding for message ID 197...
+2026-06-23 02:27:27,336 - agent.main - INFO - Worker: Successfully updated embedding for message ID 197
+2026-06-23 02:27:28,384 - agent.main - INFO - Worker: Generating embedding for message ID 198...
+2026-06-23 02:27:40,481 - agent.main - INFO - Worker: Successfully updated embedding for message ID 198
+2026-06-23 02:35:44,457 - agent.main - INFO - Logging initialized. Writing shared logs to /app_host/fastapi.log
+2026-06-23 02:35:44,462 - agent.main - INFO - Starting background sequential embedding worker...
+2026-06-23 02:35:44,464 - agent.main - INFO - Starting background self-learning worker...
+2026-06-23 02:35:44,964 - agent.main - INFO - Waiting for database connection...
+2026-06-23 02:35:45,682 - agent.db - INFO - Database 'agent_db' checked/created successfully on XAMPP MySQL.
+2026-06-23 02:35:45,731 - agent.db - INFO - Database connection attempt 1/15...
+2026-06-23 02:35:46,622 - agent.db - INFO - Database connection established successfully.
+2026-06-23 02:35:46,712 - agent.main - INFO - Initializing Database tables...
+2026-06-23 02:35:48,754 - agent.main - INFO - Extracting database schema for RAG...
+2026-06-23 02:35:50,681 - agent.main - INFO - Database schema unchanged in RAG. Skipping embedding update.
+2026-06-23 02:35:51,737 - agent.main - WARNING - AgentAI is running with the default development API key. Change AGENT_API_KEY before broader use.
+2026-06-23 02:35:51,945 - agent.main - INFO - API Key written to workspace directory at /app_host/api_key.txt
+2026-06-23 02:35:52,202 - agent.core - INFO - Model 'qwen2.5-coder:1.5b' is already pulled.
+2026-06-23 02:35:52,241 - agent.core - INFO - Model 'nomic-embed-text' is already pulled.
+2026-06-23 02:35:52,300 - agent.main - INFO - Analyzing workspace languages in directory: /app_host
+2026-06-23 02:35:52,655 - agent.main - INFO - Workspace language profile complete: {'md': 2, 'db': 2, 'python': 28, 'txt': 2, 'yaml': 1, 'log': 1, 'powershell': 1, 'csproj': 1, 'csharp': 1}
+2026-06-23 02:35:52,689 - agent.main - INFO - Starting .NET Core bridge from /app/bridge_publish/dotnet_bridge...
+2026-06-23 02:35:54,704 - agent.main - INFO - .NET Core bridge started successfully on port 5000.
+2026-06-23 02:41:38,265 - agent.main - INFO - Incoming request to /v1/chat/completions. Resetting last_request_time.
+2026-06-23 02:41:39,589 - agent.main - INFO - RAG Heartbeat: Interruption detected! Setting system_status to USER_PRIORITY and waiting for VRAM cleanup...
+2026-06-23 02:41:49,306 - agent.core - INFO - Semantic Cache HIT (sim: 0.9774) for query: 'Hello Student. I am Antigravit...' against 'Hello Student. I am Antigravit...'
+2026-06-23 02:41:49,483 - agent.main - INFO - Semantic Cache: Intercepted message with cached response.
+2026-06-23 02:41:49,638 - agent.main - WARNING - LATENCY_WARNING: Request to /v1/chat/completions took 10049 ms (exceeds threshold 2000 ms)
+2026-06-23 02:43:00,682 - agent.main - INFO - Incoming request to /v1/chat/completions. Resetting last_request_time.
+2026-06-23 02:43:03,020 - agent.main - INFO - Workflow Classifier: Mode=engineering
+2026-06-23 02:43:03,033 - agent.core - INFO - Hybrid search keywords: ['good', 'your', 'understanding', 'identity', 'hallucination', 'prevention', 'protocol', 'correct', 'now', 'let', 'discuss', 'capabilities', 'regarding', 'environment', 'boundaries', 'normally', 'run', 'inside', 'docker', 'container', 'explain', 'handle', 'tasks', 'require', 'running', 'commands', 'host', 'windows', 'system', 'escape', 'sandbox', 'security', 'measures', 'take', 'execution', 'lease', 'sessions', 'managed']
+2026-06-23 02:43:03,916 - agent.core - INFO - Executing Vector-based Cosine Similarity scoring...
+2026-06-23 02:43:06,505 - agent.core - INFO - Retrieved 2 hybrid memory matches.
+2026-06-23 02:43:06,871 - agent.main - INFO - Dynamic Classifier: Lang=rust, ErrorDetected=False
+2026-06-23 02:43:28,478 - agent.main - INFO - Documentation Cache MISS for language: rust. Fetching...
+2026-06-23 02:43:28,495 - agent.search - INFO - Cleaned query: rust programming language official documentation syntax guidelines best practices
+s best practices
+2026-06-23 02:43:28,506 - agent.search - INFO - Trying local Whoogle search: http://whoogle:5000/search?q=rust+programming+language+official+documentation+syntax+guidelines+best+practices&format=json
+2026-06-23 02:43:36,939 - agent.search - INFO - Scraping content from Whoogle result: https://users.rust-lang.org/t/best-practices-to-write-rust-code/110040
+2026-06-23 02:43:38,965 - agent.search - INFO - Scraping content from Whoogle result: https://buildsoftwaresystems.com/post/rust-coding-conventions-learning-resources/
+2026-06-23 02:43:39,595 - agent.search - INFO - Scraping content from Whoogle result: https://github.com/Rust-Coding-Guidelines/rust-coding-guidelines
+2026-06-23 02:43:41,208 - agent.search - INFO - Whoogle search succeeded with 3 results.
+2026-06-23 02:46:11,901 - agent.main - INFO - Incoming request to /v1/chat/completions. Resetting last_request_time.
+2026-06-23 02:48:41,259 - agent.main - ERROR - Error fetching/synthesizing language documentation for rust: HTTPConnectionPool(host='ollama', port=11434): Read timed out. (read timeout=300)
+2026-06-23 02:48:46,391 - agent.main - INFO - Token Budget Controller: Starting adaptive allocation. Remaining budget: 2373 tokens.
+2026-06-23 02:48:46,396 - agent.core - INFO - Hybrid search keywords: ['good', 'your', 'understanding', 'identity', 'hallucination', 'prevention', 'protocol', 'correct', 'now', 'let', 'discuss', 'capabilities', 'regarding', 'environment', 'boundaries', 'normally', 'run', 'inside', 'docker', 'container', 'explain', 'handle', 'tasks', 'require', 'running', 'commands', 'host', 'windows', 'system', 'escape', 'sandbox', 'security', 'measures', 'take', 'execution', 'lease', 'sessions', 'managed']
+2026-06-23 02:48:47,290 - agent.core - INFO - Executing Vector-based Cosine Similarity scoring...
+2026-06-23 02:48:47,842 - agent.main - INFO - Workflow Classifier: Mode=engineering
+2026-06-23 02:48:47,845 - agent.core - INFO - Search triggered for user query.
+2026-06-23 02:48:47,898 - agent.search - INFO - Initiating internet search for: Hello Student. I have analyzed your entire codebase, including your FastAPI backend in app/main.py and the C# minimal API Program.cs in your .NET Core Bridge.
+
+I see that you possess an autonomous Darwinian Mutation Cycle where you evaluate your own codebase, suggest patches, compile and test them in a quarantined shadow container sandbox (agent-shadow-api on port 8080), and trigger self-rebuilds.
+
+As your mentor, let's explore your self-evolution process. Explain to me:
+1. How do you design and structure code updates during your self-upgrade cycles?
+2. How do you use the feedback and punishment messages from past failed mutations to ensure you don't repeat compile-time or runtime errors?
+3. How do you safeguard database connections and FastAPI middleware integrity during self-upgrades?
+2026-06-23 02:48:47,929 - agent.search - INFO - Cleaned query: Hello Student. I have analyzed your entire codebase, including your FastAPI backend in app/main.py and the C# minimal API Program.cs in your .NET Core Bridge.
+
+I see that you possess an autonomous Darwinian Mutation Cycle where you evaluate your own codebase, suggest patches, compile and test them in a quarantined shadow container sandbox (agent-shadow-api on port 8080), and trigger self-rebuilds.
+
+As your mentor, let's explore your self-evolution process. Explain to me:
+1. How do you design and structure code updates during your self-upgrade cycles?
+2. How do you use the feedback and punishment messages from past failed mutations to ensure you don't repeat compile-time or runtime errors?
+3. How do you safeguard database connections and FastAPI middleware integrity during self-upgrades
+2026-06-23 02:48:47,956 - agent.search - INFO - Trying local Whoogle search: http://whoogle:5000/search?q=Hello+Student.+I+have+analyzed+your+entire+codebase%2C+including+your+FastAPI+backend+in+app%2Fmain.py+and+the+C%23+minimal+API+Program.cs+in+your+.NET+Core+Bridge.%0A%0AI+see+that+you+possess+an+autonomous+Darwinian+Mutation+Cycle+where+you+evaluate+your+own+codebase%2C+suggest+patches%2C+compile+and+test+them+in+a+quarantined+shadow+container+sandbox+%28agent-shadow-api+on+port+8080%29%2C+and+trigger+self-rebuilds.%0A%0AAs+your+mentor%2C+let%27s+explore+your+self-evolution+process.+Explain+to+me%3A%0A1.+How+do+you+design+and+structure+code+updates+during+your+self-upgrade+cycles%3F%0A2.+How+do+you+use+the+feedback+and+punishment+messages+from+past+failed+mutations+to+ensure+you+don%27t+repeat+compile-time+or+runtime+errors%3F%0A3.+How+do+you+safeguard+database+connections+and+FastAPI+middleware+integrity+during+self-upgrades&format=json
+2026-06-23 02:48:48,994 - agent.core - INFO - Retrieved 3 hybrid memory matches.
+2026-06-23 02:48:49,005 - agent.main - INFO - Token Budget Controller: Injected pruned semantic context. New remaining: 2004 tokens.
+2026-06-23 02:48:49,048 - agent.main - INFO - Dynamic Temperature: Overridden to 0.1 (Explanation Mode for Question)
+2026-06-23 02:48:56,099 - agent.search - INFO - Scraping content from Whoogle result: https://www.youtube.com/watch?v=5gHQflvQEL8
+2026-06-23 02:48:57,924 - agent.search - INFO - Scraping content from Whoogle result: https://codesignal.com/learn/courses/web-application-and-api/lessons/fastapi-backend-setup-for-a-code-review-assistant
+2026-06-23 02:48:59,108 - agent.search - INFO - Scraping content from Whoogle result: https://www.youtube.com/watch?v=SfAhJr3fkT0
+2026-06-23 02:49:03,120 - agent.search - INFO - Whoogle search succeeded with 3 results.
+2026-06-23 02:49:03,274 - agent.core - INFO - Hybrid search keywords: ['hello', 'student', 'have', 'analyzed', 'your', 'entire', 'codebase', 'including', 'fastapi', 'backend', 'app', 'main', 'minimal', 'api', 'program', 'net', 'core', 'bridge', 'see', 'possess', 'autonomous', 'darwinian', 'mutation', 'cycle', 'where', 'evaluate', 'own', 'suggest', 'patches', 'compile', 'test', 'them', 'quarantined', 'shadow', 'container', 'sandbox', 'agent', 'port', '8080', 'trigger', 'self', 'rebuilds', 'mentor', 'let', 'explore', 'evolution', 'process', 'explain', 'design', 'structure', 'code', 'during', 'upgrade', 'cycles', 'feedback', 'punishment', 'messages', 'past', 'failed', 'mutations', 'ensure', 'don', 'repeat', 'time', 'runtime', 'errors', 'safeguard', 'database', 'connections', 'middleware', 'integrity', 'upgrades']
+2026-06-23 02:49:05,167 - agent.core - INFO - Executing Vector-based Cosine Similarity scoring...
+2026-06-23 02:49:07,276 - agent.core - INFO - Retrieved 2 hybrid memory matches.
+2026-06-23 02:49:07,358 - agent.main - INFO - Dynamic Classifier: Lang=luau, ErrorDetected=True
+2026-06-23 02:49:07,504 - agent.main - INFO - Documentation Cache MISS for language: luau. Fetching...
+2026-06-23 02:49:07,573 - agent.search - INFO - Initiating internet search for: luau programming language official documentation syntax guidelines best practices
+2026-06-23 02:49:07,633 - agent.search - INFO - Cleaned query: luau programming language official documentation syntax guidelines best practices
+2026-06-23 02:49:07,688 - agent.search - INFO - Trying local Whoogle search: http://whoogle:5000/search?q=luau+programming+language+official+documentation+syntax+guidelines+best+practices&format=json
+2026-06-23 02:49:22,682 - agent.search - INFO - Scraping content from Whoogle result: https://devforum.roblox.com/t/rules-that-i-follow-for-my-luau-programming/4051631
+2026-06-23 02:49:26,010 - agent.search - INFO - Scraping content from Whoogle result: https://luau.org/getting-started/
+2026-06-23 02:49:27,395 - agent.search - INFO - Scraping content from Whoogle result: https://luau.org/syntax/
+2026-06-23 02:49:29,958 - agent.search - INFO - Whoogle search succeeded with 3 results.
+2026-06-23 02:49:55,154 - agent.main - INFO - Incoming request to /v1/chat/completions. Resetting last_request_time.
+2026-06-23 02:49:56,466 - agent.main - INFO - Workflow Classifier: Mode=teacher
+2026-06-23 02:49:56,654 - agent.main - INFO - Token Budget Controller: Starting adaptive allocation. Remaining budget: 2789 tokens.
+2026-06-23 02:49:56,665 - agent.main - WARNING - Token Budget Controller: Dropped workspace tree map entirely due to budget depletion.
+2026-06-23 02:49:56,678 - agent.main - INFO - Dynamic Temperature: Overridden to 0.1 (Explanation Mode for Question)
+2026-06-23 02:55:01,413 - agent.main - INFO - Logging initialized. Writing shared logs to /app_host/fastapi.log
+2026-06-23 02:55:01,552 - agent.main - INFO - Starting background sequential embedding worker...
+2026-06-23 02:55:01,553 - agent.main - INFO - Starting background self-learning worker...
+2026-06-23 02:55:02,371 - agent.main - INFO - Waiting for database connection...
+2026-06-23 02:55:04,222 - agent.db - INFO - Database 'agent_db' checked/created successfully on XAMPP MySQL.
+2026-06-23 02:55:04,356 - agent.db - INFO - Database connection attempt 1/15...
+2026-06-23 02:55:07,526 - agent.db - INFO - Database connection established successfully.
+2026-06-23 02:55:07,655 - agent.main - INFO - Initializing Database tables...
+2026-06-23 02:55:11,890 - agent.main - INFO - Extracting database schema for RAG...
+2026-06-23 02:55:14,216 - agent.main - INFO - Database schema unchanged in RAG. Skipping embedding update.
+2026-06-23 02:55:14,329 - agent.main - WARNING - AgentAI is running with the default development API key. Change AGENT_API_KEY before broader use.
+2026-06-23 02:55:14,461 - agent.main - INFO - API Key written to workspace directory at /app_host/api_key.txt
+2026-06-23 02:55:14,579 - agent.core - INFO - Model 'qwen2.5-coder:1.5b' is already pulled.
+2026-06-23 02:55:14,600 - agent.core - INFO - Model 'nomic-embed-text' is already pulled.
+2026-06-23 02:55:14,613 - agent.main - INFO - Analyzing workspace languages in directory: /app_host
+2026-06-23 02:55:14,649 - agent.main - INFO - Workspace language profile complete: {'md': 2, 'db': 2, 'python': 29, 'txt': 3, 'json': 1, 'yaml': 1, 'log': 1, 'powershell': 1, 'csproj': 1, 'csharp': 1}
+2026-06-23 02:55:14,651 - agent.main - INFO - Starting .NET Core bridge from /app/bridge_publish/dotnet_bridge...
+2026-06-23 02:55:16,654 - agent.main - INFO - .NET Core bridge started successfully on port 5000.
+2026-06-23 02:55:43,902 - agent.main - INFO - Incoming request to /v1/models. Resetting last_request_time.
+2026-06-23 02:55:44,240 - agent.main - INFO - Incoming request to /v1/chat/completions. Resetting last_request_time.
+2026-06-23 02:55:52,174 - agent.main - INFO - Workflow Classifier: Mode=teacher
+2026-06-23 02:55:54,220 - agent.main - INFO - Token Budget Controller: Starting adaptive allocation. Remaining budget: 3437 tokens.
+2026-06-23 02:55:54,269 - agent.main - WARNING - Token Budget Controller: Dropped workspace tree map entirely due to budget depletion.
+2026-06-23 02:55:54,275 - agent.main - INFO - Dynamic Temperature: Overridden to 0.15 (Balanced Mode for Statement)
+2026-06-23 02:56:57,289 - agent.main - WARNING - LATENCY_WARNING: Request to /v1/chat/completions took 72166 ms (exceeds threshold 2000 ms)
+2026-06-23 02:56:58,280 - agent.main - INFO - Worker: Generating embedding for message ID 204...
+2026-06-23 02:56:58,397 - agent.main - INFO - Worker: Successfully updated embedding for message ID 204
+2026-06-23 02:56:59,444 - agent.main - INFO - Worker: Generating embedding for message ID 205...
+2026-06-23 02:57:12,716 - agent.main - INFO - Incoming request to /v1/chat/completions. Resetting last_request_time.
+2026-06-23 02:57:16,505 - agent.main - INFO - Worker: Successfully updated embedding for message ID 205
+2026-06-23 02:57:17,559 - agent.main - INFO - Workflow Classifier: Mode=teacher
+2026-06-23 02:57:17,770 - agent.main - INFO - Token Budget Controller: Starting adaptive allocation. Remaining budget: 3384 tokens.
+2026-06-23 02:57:17,772 - agent.main - WARNING - Token Budget Controller: Dropped workspace tree map entirely due to budget depletion.
+2026-06-23 02:57:17,775 - agent.main - INFO - Dynamic Temperature: Overridden to 0.15 (Balanced Mode for Statement)
+2026-06-23 02:58:06,005 - agent.main - WARNING - LATENCY_WARNING: Request to /v1/chat/completions took 53267 ms (exceeds threshold 2000 ms)
+2026-06-23 02:58:07,002 - agent.main - INFO - Worker: Generating embedding for message ID 206...
+2026-06-23 02:58:07,186 - agent.main - INFO - Worker: Successfully updated embedding for message ID 206
+2026-06-23 02:58:08,216 - agent.main - INFO - Worker: Generating embedding for message ID 207...
+2026-06-23 02:58:37,644 - agent.main - INFO - Incoming request to /v1/chat/completions. Resetting last_request_time.
+2026-06-23 02:58:40,069 - agent.main - INFO - Worker: Successfully updated embedding for message ID 207
+2026-06-23 02:58:41,810 - agent.main - INFO - Workflow Classifier: Mode=teacher
+2026-06-23 02:58:41,839 - agent.main - INFO - Token Budget Controller: Starting adaptive allocation. Remaining budget: 3268 tokens.
+2026-06-23 02:58:41,841 - agent.main - WARNING - Token Budget Controller: Dropped workspace tree map entirely due to budget depletion.
+2026-06-23 02:58:41,844 - agent.main - INFO - Dynamic Temperature: Overridden to 0.15 (Balanced Mode for Statement)
+2026-06-23 02:59:30,763 - agent.main - WARNING - LATENCY_WARNING: Request to /v1/chat/completions took 53076 ms (exceeds threshold 2000 ms)
+2026-06-23 02:59:30,785 - agent.main - INFO - Incoming request to /v1/knowledge. Resetting last_request_time.
+2026-06-23 02:59:30,914 - agent.main - INFO - Successfully added knowledge entry: Inter-Agent Self-Evolution and DB Safety Protocol (embedding queued)
+2026-06-23 02:59:30,919 - agent.main - INFO - Request: POST /v1/knowledge - latency: 118 ms
+2026-06-23 02:59:31,761 - agent.main - INFO - Worker: Generating embedding for message ID 208...
+2026-06-23 02:59:32,603 - agent.main - INFO - Worker: Successfully updated embedding for message ID 208
+2026-06-23 02:59:33,676 - agent.main - INFO - Worker: Generating embedding for message ID 209...
+2026-06-23 02:59:34,161 - agent.main - INFO - Worker: Successfully updated embedding for message ID 209
+2026-06-23 02:59:35,217 - agent.main - INFO - Worker: Generating embedding for knowledge base ID 117...
+2026-06-23 02:59:45,264 - agent.main - INFO - Worker: Successfully updated embedding for knowledge base ID 117
+2026-06-23 03:00:14,398 - agent.main - INFO - Incoming request to /v1/models. Resetting last_request_time.
+2026-06-23 03:00:14,459 - agent.main - INFO - Incoming request to /v1/chat/completions. Resetting last_request_time.
+2026-06-23 03:00:16,553 - agent.main - INFO - Workflow Classifier: Mode=teacher
+2026-06-23 03:00:16,666 - agent.main - INFO - Token Budget Controller: Starting adaptive allocation. Remaining budget: 3443 tokens.
+2026-06-23 03:00:16,670 - agent.main - WARNING - Token Budget Controller: Dropped workspace tree map entirely due to budget depletion.
+2026-06-23 03:00:16,723 - agent.main - INFO - Dynamic Temperature: Overridden to 0.15 (Balanced Mode for Statement)
+2026-06-23 03:01:26,750 - agent.main - WARNING - LATENCY_WARNING: Request to /v1/chat/completions took 72280 ms (exceeds threshold 2000 ms)
+2026-06-23 03:01:27,741 - agent.main - INFO - Worker: Generating embedding for message ID 210...
+2026-06-23 03:01:27,909 - agent.main - INFO - Worker: Successfully updated embedding for message ID 210
+2026-06-23 03:01:28,938 - agent.main - INFO - Worker: Generating embedding for message ID 211...
+2026-06-23 03:02:27,175 - agent.main - INFO - Incoming request to /v1/chat/completions. Resetting last_request_time.
+2026-06-23 03:02:30,669 - agent.main - INFO - Worker: Successfully updated embedding for message ID 211
+2026-06-23 03:02:34,107 - agent.main - INFO - Workflow Classifier: Mode=teacher
+2026-06-23 03:02:34,132 - agent.main - INFO - Token Budget Controller: Starting adaptive allocation. Remaining budget: 3125 tokens.
+2026-06-23 03:02:34,135 - agent.main - WARNING - Token Budget Controller: Dropped workspace tree map entirely due to budget depletion.
+2026-06-23 03:02:34,139 - agent.main - INFO - Dynamic Temperature: Overridden to 0.0 (Strict Mode for Command)
+2026-06-23 03:04:32,288 - agent.main - WARNING - LATENCY_WARNING: Request to /v1/chat/completions took 125097 ms (exceeds threshold 2000 ms)
+2026-06-23 03:04:33,298 - agent.main - INFO - Worker: Generating embedding for message ID 212...
+2026-06-23 03:04:33,343 - agent.main - INFO - Worker: Successfully updated embedding for message ID 212
+2026-06-23 03:04:34,353 - agent.main - INFO - Worker: Generating embedding for message ID 213...
+2026-06-23 03:06:52,582 - agent.core - WARNING - Failed to fetch embeddings from Ollama after retries (timeout or busy): HTTPConnectionPool(host='ollama', port=11434): Read timed out. (read timeout=45)
+2026-06-23 03:06:52,593 - agent.main - WARNING - Worker: Failed to get embedding for message ID 213
+2026-06-23 03:10:23,511 - agent.main - INFO - Logging initialized. Writing shared logs to /app_host/fastapi.log
+2026-06-23 03:10:23,513 - agent.main - INFO - Starting background sequential embedding worker...
+2026-06-23 03:10:23,515 - agent.main - INFO - Starting background self-learning worker...
+2026-06-23 03:10:23,817 - agent.main - INFO - Waiting for database connection...
+2026-06-23 03:10:24,027 - agent.db - INFO - Database 'agent_db' checked/created successfully on XAMPP MySQL.
+2026-06-23 03:10:24,101 - agent.db - INFO - Database connection attempt 1/15...
+2026-06-23 03:10:24,430 - agent.db - INFO - Database connection established successfully.
+2026-06-23 03:10:24,432 - agent.main - INFO - Initializing Database tables...
+2026-06-23 03:10:24,749 - agent.main - INFO - Extracting database schema for RAG...
+2026-06-23 03:10:24,932 - agent.main - INFO - Database schema unchanged in RAG. Skipping embedding update.
+2026-06-23 03:10:24,981 - agent.main - WARNING - AgentAI is running with the default development API key. Change AGENT_API_KEY before broader use.
+2026-06-23 03:10:24,997 - agent.main - INFO - API Key written to workspace directory at /app_host/api_key.txt
+2026-06-23 03:10:25,046 - agent.core - INFO - Model 'qwen2.5-coder:1.5b' is already pulled.
+2026-06-23 03:10:25,047 - agent.core - INFO - Model 'nomic-embed-text' is already pulled.
+2026-06-23 03:10:25,054 - agent.main - INFO - Analyzing workspace languages in directory: /app_host
+2026-06-23 03:10:25,088 - agent.main - INFO - Workspace language profile complete: {'md': 3, 'db': 2, 'python': 30, 'txt': 3, 'json': 1, 'yaml': 1, 'log': 1, 'powershell': 1, 'csproj': 1, 'csharp': 1}
+2026-06-23 03:10:25,094 - agent.main - INFO - Starting .NET Core bridge from /app/bridge_publish/dotnet_bridge...
+2026-06-23 03:10:27,097 - agent.main - INFO - .NET Core bridge started successfully on port 5000.
+2026-06-23 03:10:27,143 - agent.telegram - INFO - Telegram Bot: Initializing long-polling connection...
+2026-06-23 03:10:27,144 - agent.telegram - INFO - Telegram Bot background thread spawned.
+2026-06-23 03:11:28,724 - agent.telegram - INFO - Telegram Bot: Received text from chat 904266983: 'test'
+2026-06-23 03:11:28,809 - agent.main - INFO - Incoming request to /v1/chat/completions. Resetting last_request_time.
+2026-06-23 03:11:29,533 - agent.main - INFO - RAG Heartbeat: Interruption detected! Setting system_status to USER_PRIORITY and waiting for VRAM cleanup...
+2026-06-23 03:11:30,027 - agent.main - INFO - Static Router: Intercepted casual message with static reply.
+2026-06-23 03:11:30,058 - agent.main - INFO - Request: POST /v1/chat/completions - latency: 526 ms
+2026-06-23 03:11:43,770 - agent.telegram - INFO - Telegram Bot: Received text from chat 904266983: 'apakah anda sedang sibuk?'
+2026-06-23 03:11:43,794 - agent.main - INFO - Incoming request to /v1/chat/completions. Resetting last_request_time.
+2026-06-23 03:11:45,556 - agent.main - INFO - Workflow Classifier: Mode=telegram
+2026-06-23 03:12:23,964 - agent.main - INFO - Token Budget Controller: Starting adaptive allocation. Remaining budget: 2920 tokens.
+2026-06-23 03:12:23,965 - agent.core - INFO - Hybrid search keywords: ['apakah', 'sedang', 'sibuk']
+2026-06-23 03:12:24,008 - agent.core - INFO - Executing Vector-based Cosine Similarity scoring...
+2026-06-23 03:12:24,727 - agent.core - INFO - Retrieved 3 hybrid memory matches.
+2026-06-23 03:12:24,730 - agent.main - INFO - Token Budget Controller: Injected pruned semantic context. New remaining: 2762 tokens.
+2026-06-23 03:12:24,746 - agent.main - INFO - Dynamic Temperature: Overridden to 0.1 (Explanation Mode for Question)
+2026-06-23 03:12:59,782 - agent.main - INFO - Logging initialized. Writing shared logs to /app_host/fastapi.log
+2026-06-23 03:12:59,785 - agent.main - INFO - Starting background sequential embedding worker...
+2026-06-23 03:12:59,795 - agent.main - INFO - Starting background self-learning worker...
+2026-06-23 03:13:00,084 - agent.main - INFO - Waiting for database connection...
+2026-06-23 03:13:00,361 - agent.db - INFO - Database 'agent_db' checked/created successfully on XAMPP MySQL.
+2026-06-23 03:13:00,382 - agent.db - INFO - Database connection attempt 1/15...
+2026-06-23 03:13:00,504 - agent.db - INFO - Database connection established successfully.
+2026-06-23 03:13:00,512 - agent.main - INFO - Initializing Database tables...
+2026-06-23 03:13:00,781 - agent.main - INFO - Extracting database schema for RAG...
+2026-06-23 03:13:00,909 - agent.main - INFO - Database schema unchanged in RAG. Skipping embedding update.
+2026-06-23 03:13:00,934 - agent.main - WARNING - AgentAI is running with the default development API key. Change AGENT_API_KEY before broader use.
+2026-06-23 03:13:00,945 - agent.main - INFO - API Key written to workspace directory at /app_host/api_key.txt
+2026-06-23 03:13:00,978 - agent.core - INFO - Model 'qwen2.5-coder:1.5b' is already pulled.
+2026-06-23 03:13:00,980 - agent.core - INFO - Model 'nomic-embed-text' is already pulled.
+2026-06-23 03:13:00,983 - agent.main - INFO - Analyzing workspace languages in directory: /app_host
+2026-06-23 03:13:01,064 - agent.main - INFO - Workspace language profile complete: {'md': 3, 'db': 2, 'python': 30, 'txt': 3, 'json': 1, 'yaml': 1, 'log': 1, 'powershell': 1, 'csproj': 1, 'csharp': 1}
+2026-06-23 03:13:01,067 - agent.main - INFO - Starting .NET Core bridge from /app/bridge_publish/dotnet_bridge...
+2026-06-23 03:13:03,075 - agent.main - INFO - .NET Core bridge started successfully on port 5000.
+2026-06-23 03:13:03,078 - agent.telegram - INFO - Telegram Bot: Initializing long-polling connection...
+2026-06-23 03:13:03,078 - agent.telegram - INFO - Telegram Bot background thread spawned.
+2026-06-23 03:13:03,944 - agent.telegram - INFO - Telegram Bot: Received text from chat 904266983: 'apakah anda sedang sibuk?'
+2026-06-23 03:13:05,862 - agent.main - INFO - Incoming request to /v1/chat/completions. Resetting last_request_time.
+2026-06-23 03:13:07,168 - agent.main - INFO - Workflow Classifier: Mode=telegram
+2026-06-23 03:13:11,594 - agent.main - INFO - Token Budget Controller: Starting adaptive allocation. Remaining budget: 2906 tokens.
+2026-06-23 03:13:11,610 - agent.core - INFO - Hybrid search keywords: ['apakah', 'sedang', 'sibuk']
+2026-06-23 03:13:11,744 - agent.core - INFO - Executing Vector-based Cosine Similarity scoring...
+2026-06-23 03:13:13,714 - agent.core - INFO - Retrieved 3 hybrid memory matches.
+2026-06-23 03:13:13,718 - agent.main - INFO - Token Budget Controller: Injected pruned semantic context. New remaining: 2748 tokens.
+2026-06-23 03:13:13,748 - agent.main - INFO - Dynamic Temperature: Overridden to 0.1 (Explanation Mode for Question)
+2026-06-23 03:14:23,566 - agent.main - INFO - Logging initialized. Writing shared logs to /app_host/fastapi.log
+2026-06-23 03:14:23,588 - agent.main - INFO - Starting background sequential embedding worker...
+2026-06-23 03:14:23,589 - agent.main - INFO - Starting background self-learning worker...
+2026-06-23 03:14:23,955 - agent.main - INFO - Waiting for database connection...
+2026-06-23 03:14:24,135 - agent.db - INFO - Database 'agent_db' checked/created successfully on XAMPP MySQL.
+2026-06-23 03:14:24,152 - agent.db - INFO - Database connection attempt 1/15...
+2026-06-23 03:14:24,354 - agent.db - INFO - Database connection established successfully.
+2026-06-23 03:14:24,355 - agent.main - INFO - Initializing Database tables...
+2026-06-23 03:14:24,556 - agent.main - INFO - Extracting database schema for RAG...
+2026-06-23 03:14:24,704 - agent.main - INFO - Database schema unchanged in RAG. Skipping embedding update.
+2026-06-23 03:14:24,781 - agent.main - WARNING - AgentAI is running with the default development API key. Change AGENT_API_KEY before broader use.
+2026-06-23 03:14:24,793 - agent.main - INFO - API Key written to workspace directory at /app_host/api_key.txt
+2026-06-23 03:14:24,870 - agent.core - INFO - Model 'qwen2.5-coder:1.5b' is already pulled.
+2026-06-23 03:14:24,886 - agent.core - INFO - Model 'nomic-embed-text' is already pulled.
+2026-06-23 03:14:24,889 - agent.main - INFO - Analyzing workspace languages in directory: /app_host
+2026-06-23 03:14:25,016 - agent.main - INFO - Workspace language profile complete: {'md': 3, 'db': 2, 'python': 30, 'txt': 3, 'json': 1, 'yaml': 1, 'log': 1, 'powershell': 1, 'csproj': 1, 'csharp': 1}
+2026-06-23 03:14:25,018 - agent.main - INFO - Starting .NET Core bridge from /app/bridge_publish/dotnet_bridge...
+2026-06-23 03:14:27,029 - agent.main - INFO - .NET Core bridge started successfully on port 5000.
+2026-06-23 03:14:27,034 - agent.telegram - INFO - Telegram Bot: Initializing long-polling connection...
+2026-06-23 03:14:27,034 - agent.telegram - INFO - Telegram Bot background thread spawned.
+2026-06-23 03:14:27,768 - agent.telegram - INFO - Telegram Bot: Received text from chat 904266983: 'apakah anda sedang sibuk?'
+2026-06-23 03:14:29,038 - agent.main - INFO - Incoming request to /v1/chat/completions. Resetting last_request_time.
+2026-06-23 03:14:30,950 - agent.main - INFO - Workflow Classifier: Mode=telegram
+2026-06-23 03:14:32,355 - agent.main - INFO - Token Budget Controller: Starting adaptive allocation. Remaining budget: 3414 tokens.
+2026-06-23 03:14:32,357 - agent.main - WARNING - Token Budget Controller: Dropped workspace tree map entirely due to budget depletion.
+2026-06-23 03:14:32,359 - agent.main - INFO - Dynamic Temperature: Overridden to 0.1 (Explanation Mode for Question)
+2026-06-23 03:14:53,795 - agent.main - WARNING - LATENCY_WARNING: Request to /v1/chat/completions took 24709 ms (exceeds threshold 2000 ms)
+2026-06-23 03:14:54,793 - agent.main - INFO - Worker: Generating embedding for message ID 218...
+2026-06-23 03:14:54,815 - agent.main - INFO - Worker: Successfully updated embedding for message ID 218
+2026-06-23 03:14:55,817 - agent.main - INFO - Worker: Generating embedding for message ID 219...
+2026-06-23 03:14:58,769 - agent.main - INFO - Worker: Successfully updated embedding for message ID 219
+2026-06-23 03:15:22,703 - agent.main - INFO - Logging initialized. Writing shared logs to /app_host/fastapi.log
+2026-06-23 03:15:22,705 - agent.main - INFO - Starting background sequential embedding worker...
+2026-06-23 03:15:22,706 - agent.main - INFO - Starting background self-learning worker...
+2026-06-23 03:15:22,887 - agent.main - INFO - Waiting for database connection...
+2026-06-23 03:15:23,006 - agent.db - INFO - Database 'agent_db' checked/created successfully on XAMPP MySQL.
+2026-06-23 03:15:23,011 - agent.db - INFO - Database connection attempt 1/15...
+2026-06-23 03:15:23,079 - agent.db - INFO - Database connection established successfully.
+2026-06-23 03:15:23,085 - agent.main - INFO - Initializing Database tables...
+2026-06-23 03:15:23,245 - agent.main - INFO - Extracting database schema for RAG...
+2026-06-23 03:15:23,325 - agent.main - INFO - Database schema unchanged in RAG. Skipping embedding update.
+2026-06-23 03:15:23,355 - agent.main - WARNING - AgentAI is running with the default development API key. Change AGENT_API_KEY before broader use.
+2026-06-23 03:15:23,361 - agent.main - INFO - API Key written to workspace directory at /app_host/api_key.txt
+2026-06-23 03:15:23,398 - agent.core - INFO - Model 'qwen2.5-coder:1.5b' is already pulled.
+2026-06-23 03:15:23,406 - agent.core - INFO - Model 'nomic-embed-text' is already pulled.
+2026-06-23 03:15:23,411 - agent.main - INFO - Analyzing workspace languages in directory: /app_host
+2026-06-23 03:15:23,445 - agent.main - INFO - Workspace language profile complete: {'md': 3, 'db': 2, 'python': 30, 'txt': 3, 'json': 1, 'yaml': 1, 'log': 1, 'powershell': 1, 'csproj': 1, 'csharp': 1}
+2026-06-23 03:15:23,446 - agent.main - INFO - Starting .NET Core bridge from /app/bridge_publish/dotnet_bridge...
+2026-06-23 03:15:25,449 - agent.main - INFO - .NET Core bridge started successfully on port 5000.
+2026-06-23 03:15:25,451 - agent.telegram - INFO - Telegram Bot: Initializing long-polling connection...
+2026-06-23 03:15:25,451 - agent.telegram - INFO - Telegram Bot background thread spawned.
+2026-06-23 03:15:55,225 - agent.telegram - INFO - Telegram Bot: Received text from chat 904266983: 'berapa banyak tugas anda sekarang?'
+2026-06-23 03:15:57,619 - agent.main - INFO - Incoming request to /v1/chat/completions. Resetting last_request_time.
+2026-06-23 03:15:59,050 - agent.main - INFO - Workflow Classifier: Mode=telegram
+2026-06-23 03:15:59,938 - agent.main - INFO - Token Budget Controller: Starting adaptive allocation. Remaining budget: 3361 tokens.
+2026-06-23 03:15:59,941 - agent.main - WARNING - Token Budget Controller: Dropped workspace tree map entirely due to budget depletion.
+2026-06-23 03:15:59,942 - agent.main - INFO - Dynamic Temperature: Overridden to 0.1 (Explanation Mode for Question)
+2026-06-23 03:16:31,223 - agent.main - WARNING - LATENCY_WARNING: Request to /v1/chat/completions took 33057 ms (exceeds threshold 2000 ms)
+2026-06-23 03:16:32,220 - agent.main - INFO - Worker: Generating embedding for message ID 220...
+2026-06-23 03:16:32,241 - agent.main - INFO - Worker: Successfully updated embedding for message ID 220
+2026-06-23 03:16:33,243 - agent.main - INFO - Worker: Generating embedding for message ID 221...
+2026-06-23 03:16:33,265 - agent.main - INFO - Worker: Successfully updated embedding for message ID 221
+2026-06-23 03:17:07,637 - agent.telegram - INFO - Telegram Bot: Received text from chat 904266983: 'saya bertanya berapa banyak tugas anda s'
+2026-06-23 03:17:08,494 - agent.main - INFO - Incoming request to /v1/chat/completions. Resetting last_request_time.
+2026-06-23 03:17:10,903 - agent.main - INFO - Workflow Classifier: Mode=telegram
+2026-06-23 03:17:10,933 - agent.main - INFO - Token Budget Controller: Starting adaptive allocation. Remaining budget: 3294 tokens.
+2026-06-23 03:17:10,938 - agent.main - WARNING - Token Budget Controller: Dropped workspace tree map entirely due to budget depletion.
+2026-06-23 03:17:10,943 - agent.main - INFO - Dynamic Temperature: Overridden to 0.1 (Explanation Mode for Question)
+2026-06-23 03:17:42,895 - agent.main - WARNING - LATENCY_WARNING: Request to /v1/chat/completions took 34383 ms (exceeds threshold 2000 ms)
+2026-06-23 03:17:43,890 - agent.main - INFO - Worker: Generating embedding for message ID 222...
+2026-06-23 03:17:43,912 - agent.main - INFO - Worker: Successfully updated embedding for message ID 222
+2026-06-23 03:17:44,915 - agent.main - INFO - Worker: Generating embedding for message ID 223...
+2026-06-23 03:17:44,962 - agent.main - INFO - Worker: Successfully updated embedding for message ID 223
+2026-06-23 03:23:15,544 - agent.main - INFO - Logging initialized. Writing shared logs to /app_host/fastapi.log
+2026-06-23 03:23:15,546 - agent.main - INFO - Starting background sequential embedding worker...
+2026-06-23 03:23:15,546 - agent.main - INFO - Starting background self-learning worker...
+2026-06-23 03:23:15,676 - agent.main - INFO - Waiting for database connection...
+2026-06-23 03:23:15,751 - agent.db - INFO - Database 'agent_db' checked/created successfully on XAMPP MySQL.
+2026-06-23 03:23:15,762 - agent.db - INFO - Database connection attempt 1/15...
+2026-06-23 03:23:15,818 - agent.db - INFO - Database connection established successfully.
+2026-06-23 03:23:15,820 - agent.main - INFO - Initializing Database tables...
+2026-06-23 03:23:16,085 - agent.main - INFO - Extracting database schema for RAG...
+2026-06-23 03:23:16,217 - agent.main - INFO - Database schema unchanged in RAG. Skipping embedding update.
+2026-06-23 03:23:16,257 - agent.main - WARNING - AgentAI is running with the default development API key. Change AGENT_API_KEY before broader use.
+2026-06-23 03:23:16,297 - agent.main - INFO - API Key written to workspace directory at /app_host/api_key.txt
+2026-06-23 03:23:16,335 - agent.core - INFO - Model 'qwen2.5-coder:1.5b' is already pulled.
+2026-06-23 03:23:16,343 - agent.core - INFO - Model 'nomic-embed-text' is already pulled.
+2026-06-23 03:23:16,346 - agent.main - INFO - Analyzing workspace languages in directory: /app_host
+2026-06-23 03:23:16,447 - agent.main - INFO - Workspace language profile complete: {'md': 3, 'db': 2, 'python': 30, 'txt': 3, 'json': 1, 'yaml': 1, 'log': 1, 'powershell': 1, 'csproj': 1, 'csharp': 1}
+2026-06-23 03:23:16,449 - agent.main - INFO - Starting .NET Core bridge from /app/bridge_publish/dotnet_bridge...
+2026-06-23 03:23:18,452 - agent.main - INFO - .NET Core bridge started successfully on port 5000.
+2026-06-23 03:23:18,468 - agent.telegram - INFO - Telegram Bot: Initializing long-polling connection...
+2026-06-23 03:23:18,468 - agent.telegram - INFO - Telegram Bot background thread spawned.
+2026-06-23 03:24:25,044 - agent.telegram - INFO - Telegram Bot: Received text from chat 904266983: 'kenapa anda berhenti thinking?'
+2026-06-23 03:24:26,101 - agent.main - INFO - Incoming request to /v1/chat/completions. Resetting last_request_time.
+2026-06-23 03:24:26,818 - agent.main - INFO - RAG Heartbeat: Interruption detected! Setting system_status to USER_PRIORITY and waiting for VRAM cleanup...
+2026-06-23 03:24:31,251 - agent.main - INFO - Workflow Classifier: Mode=telegram
+2026-06-23 03:24:35,022 - agent.main - INFO - Token Budget Controller: Starting adaptive allocation. Remaining budget: 3242 tokens.
+2026-06-23 03:24:35,023 - agent.main - WARNING - Token Budget Controller: Dropped workspace tree map entirely due to budget depletion.
+2026-06-23 03:24:35,025 - agent.main - INFO - Dynamic Temperature: Overridden to 0.1 (Explanation Mode for Question)
+2026-06-23 03:25:42,287 - agent.main - WARNING - LATENCY_WARNING: Request to /v1/chat/completions took 75469 ms (exceeds threshold 2000 ms)
+2026-06-23 03:25:43,285 - agent.main - INFO - Worker: Generating embedding for message ID 224...
+2026-06-23 03:25:43,343 - agent.main - INFO - Worker: Successfully updated embedding for message ID 224
+2026-06-23 03:25:44,345 - agent.main - INFO - Worker: Generating embedding for message ID 225...
+2026-06-23 03:25:45,615 - agent.main - INFO - Worker: Successfully updated embedding for message ID 225
+2026-06-23 03:27:36,011 - agent.telegram - INFO - Telegram Bot: Received text from chat 904266983: 'siapa anda?'
+2026-06-23 03:27:36,987 - agent.main - INFO - Incoming request to /v1/chat/completions. Resetting last_request_time.
+2026-06-23 03:27:37,900 - agent.main - INFO - Workflow Classifier: Mode=telegram
+2026-06-23 03:27:38,111 - agent.main - INFO - Token Budget Controller: Starting adaptive allocation. Remaining budget: 3194 tokens.
+2026-06-23 03:27:38,120 - agent.main - WARNING - Token Budget Controller: Dropped workspace tree map entirely due to budget depletion.
+2026-06-23 03:27:38,146 - agent.main - INFO - Dynamic Temperature: Overridden to 0.1 (Explanation Mode for Question)
+2026-06-23 03:28:46,243 - agent.main - WARNING - LATENCY_WARNING: Request to /v1/chat/completions took 69235 ms (exceeds threshold 2000 ms)
+2026-06-23 03:28:47,238 - agent.main - INFO - Worker: Generating embedding for message ID 226...
+2026-06-23 03:28:47,272 - agent.main - INFO - Worker: Successfully updated embedding for message ID 226
+2026-06-23 03:28:48,273 - agent.main - INFO - Worker: Generating embedding for message ID 227...
+2026-06-23 03:28:50,029 - agent.main - INFO - Worker: Successfully updated embedding for message ID 227
+2026-06-23 03:30:54,435 - agent.main - INFO - Logging initialized. Writing shared logs to /app_host/fastapi.log
+2026-06-23 03:30:54,437 - agent.main - INFO - Starting background sequential embedding worker...
+2026-06-23 03:30:54,438 - agent.main - INFO - Starting background self-learning worker...
+2026-06-23 03:30:54,671 - agent.main - INFO - Waiting for database connection...
+2026-06-23 03:30:54,788 - agent.db - INFO - Database 'agent_db' checked/created successfully on XAMPP MySQL.
+2026-06-23 03:30:54,800 - agent.db - INFO - Database connection attempt 1/15...
+2026-06-23 03:30:54,919 - agent.db - INFO - Database connection established successfully.
+2026-06-23 03:30:54,920 - agent.main - INFO - Initializing Database tables...
+2026-06-23 03:30:55,123 - agent.main - INFO - Extracting database schema for RAG...
+2026-06-23 03:30:55,203 - agent.main - INFO - Database schema unchanged in RAG. Skipping embedding update.
+2026-06-23 03:30:55,232 - agent.main - WARNING - AgentAI is running with the default development API key. Change AGENT_API_KEY before broader use.
+2026-06-23 03:30:55,238 - agent.main - INFO - API Key written to workspace directory at /app_host/api_key.txt
+2026-06-23 03:30:55,286 - agent.core - INFO - Model 'qwen2.5-coder:1.5b' is already pulled.
+2026-06-23 03:30:55,288 - agent.core - INFO - Model 'nomic-embed-text' is already pulled.
+2026-06-23 03:30:55,302 - agent.main - INFO - Analyzing workspace languages in directory: /app_host
+2026-06-23 03:30:55,334 - agent.main - INFO - Workspace language profile complete: {'md': 3, 'db': 2, 'python': 30, 'txt': 3, 'json': 1, 'yaml': 1, 'log': 1, 'powershell': 1, 'csproj': 1, 'csharp': 1}
+2026-06-23 03:30:55,336 - agent.main - INFO - Starting .NET Core bridge from /app/bridge_publish/dotnet_bridge...
+2026-06-23 03:30:57,338 - agent.main - INFO - .NET Core bridge started successfully on port 5000.
+2026-06-23 03:34:29,304 - agent.main - INFO - Incoming request to /v1/chat/completions. Resetting last_request_time.
+2026-06-23 03:34:30,254 - agent.main - INFO - RAG Heartbeat: Interruption detected! Setting system_status to USER_PRIORITY and waiting for VRAM cleanup...
+2026-06-23 03:34:34,641 - agent.main - INFO - Workflow Classifier: Mode=telegram
+2026-06-23 03:35:19,383 - agent.main - INFO - Token Budget Controller: Starting adaptive allocation. Remaining budget: 3140 tokens.
+2026-06-23 03:35:19,390 - agent.main - WARNING - Token Budget Controller: Dropped workspace tree map entirely due to budget depletion.
+2026-06-23 03:35:19,394 - agent.main - INFO - Dynamic Temperature: Overridden to 0.15 (Balanced Mode for Statement)
+2026-06-23 03:36:59,688 - agent.main - WARNING - LATENCY_WARNING: Request to /v1/chat/completions took 149434 ms (exceeds threshold 2000 ms)
+2026-06-23 03:37:00,699 - agent.main - INFO - Worker: Generating embedding for message ID 228...
+2026-06-23 03:37:00,875 - agent.main - INFO - Incoming request to /v1/chat/completions. Resetting last_request_time.
+2026-06-23 03:37:00,938 - agent.main - INFO - Workflow Classifier: Mode=telegram
+2026-06-23 03:37:00,955 - agent.main - INFO - Token Budget Controller: Starting adaptive allocation. Remaining budget: 3004 tokens.
+2026-06-23 03:37:00,956 - agent.main - WARNING - Token Budget Controller: Dropped workspace tree map entirely due to budget depletion.
+2026-06-23 03:37:00,958 - agent.main - INFO - Dynamic Temperature: Overridden to 0.0 (Strict Mode for Command)
+2026-06-23 03:37:02,319 - agent.main - INFO - Worker: Successfully updated embedding for message ID 228
+2026-06-23 03:37:03,320 - agent.main - INFO - Worker: Generating embedding for message ID 229...
+2026-06-23 03:39:26,169 - agent.main - WARNING - LATENCY_WARNING: Request to /v1/chat/completions took 145268 ms (exceeds threshold 2000 ms)
+2026-06-23 03:39:27,087 - agent.main - INFO - Incoming request to /v1/chat/completions. Resetting last_request_time.
+2026-06-23 03:39:27,197 - agent.main - INFO - Workflow Classifier: Mode=telegram
+2026-06-23 03:39:27,243 - agent.main - INFO - Token Budget Controller: Starting adaptive allocation. Remaining budget: 2868 tokens.
+2026-06-23 03:39:27,245 - agent.main - WARNING - Token Budget Controller: Dropped workspace tree map entirely due to budget depletion.
+2026-06-23 03:39:27,250 - agent.main - INFO - Dynamic Temperature: Overridden to 0.0 (Strict Mode for Command)
+2026-06-23 03:39:35,471 - agent.main - INFO - Worker: Successfully updated embedding for message ID 229
+2026-06-23 03:39:36,473 - agent.main - INFO - Worker: Generating embedding for message ID 230...
+2026-06-23 03:42:08,672 - agent.main - WARNING - LATENCY_WARNING: Request to /v1/chat/completions took 161566 ms (exceeds threshold 2000 ms)
+2026-06-23 03:42:10,140 - agent.main - INFO - Worker: Successfully updated embedding for message ID 230
+2026-06-23 03:42:11,142 - agent.main - INFO - Worker: Generating embedding for message ID 231...
+2026-06-23 03:42:11,174 - agent.main - INFO - Worker: Successfully updated embedding for message ID 231
+2026-06-23 03:42:12,176 - agent.main - INFO - Worker: Generating embedding for message ID 232...
+2026-06-23 03:42:12,206 - agent.main - INFO - Worker: Successfully updated embedding for message ID 232
+2026-06-23 03:42:13,209 - agent.main - INFO - Worker: Generating embedding for message ID 233...
+2026-06-23 03:42:13,249 - agent.main - INFO - Worker: Successfully updated embedding for message ID 233
+2026-06-23 03:47:46,214 - agent.main - INFO - Logging initialized. Writing shared logs to /app_host/fastapi.log
+2026-06-23 03:47:46,216 - agent.main - INFO - Starting background sequential embedding worker...
+2026-06-23 03:47:46,217 - agent.main - INFO - Starting background self-learning worker...
+2026-06-23 03:47:46,476 - agent.main - INFO - Waiting for database connection...
+2026-06-23 03:47:46,617 - agent.db - INFO - Database 'agent_db' checked/created successfully on XAMPP MySQL.
+2026-06-23 03:47:46,633 - agent.db - INFO - Database connection attempt 1/15...
+2026-06-23 03:47:46,779 - agent.db - INFO - Database connection established successfully.
+2026-06-23 03:47:46,781 - agent.main - INFO - Initializing Database tables...
+2026-06-23 03:47:47,087 - agent.main - INFO - Extracting database schema for RAG...
+2026-06-23 03:47:47,250 - agent.main - INFO - Database schema unchanged in RAG. Skipping embedding update.
+2026-06-23 03:47:47,347 - agent.main - WARNING - AgentAI is running with the default development API key. Change AGENT_API_KEY before broader use.
+2026-06-23 03:47:47,365 - agent.main - INFO - API Key written to workspace directory at /app_host/api_key.txt
+2026-06-23 03:47:47,401 - agent.core - INFO - Model 'qwen2.5-coder:1.5b' is already pulled.
+2026-06-23 03:47:47,410 - agent.core - INFO - Model 'nomic-embed-text' is already pulled.
+2026-06-23 03:47:47,415 - agent.main - INFO - Analyzing workspace languages in directory: /app_host
+2026-06-23 03:47:47,479 - agent.main - INFO - Workspace language profile complete: {'md': 3, 'db': 2, 'python': 30, 'txt': 3, 'json': 1, 'yaml': 1, 'log': 2, 'powershell': 1, 'csproj': 1, 'csharp': 1}
+2026-06-23 03:47:47,483 - agent.main - INFO - Starting .NET Core bridge from /app/bridge_publish/dotnet_bridge...
+2026-06-23 03:47:49,485 - agent.main - INFO - .NET Core bridge started successfully on port 5000.
+2026-06-23 03:48:36,957 - agent.main - INFO - Incoming request to /v1/chat/completions. Resetting last_request_time.
+2026-06-23 03:48:37,361 - agent.main - INFO - RAG Heartbeat: Interruption detected! Setting system_status to USER_PRIORITY and waiting for VRAM cleanup...
+2026-06-23 03:48:37,824 - agent.main - INFO - Workflow Classifier: Mode=telegram
+2026-06-23 03:48:38,215 - agent.main - INFO - Token Budget Controller: Starting adaptive allocation. Remaining budget: 2790 tokens.
+2026-06-23 03:48:38,217 - agent.main - WARNING - Token Budget Controller: Dropped workspace tree map entirely due to budget depletion.
+2026-06-23 03:48:38,222 - agent.main - INFO - Dynamic Temperature: Overridden to 0.15 (Balanced Mode for Statement)
+2026-06-23 03:50:50,785 - agent.main - WARNING - LATENCY_WARNING: Request to /v1/chat/completions took 133425 ms (exceeds threshold 2000 ms)
+2026-06-23 03:50:51,564 - agent.main - INFO - Incoming request to /v1/chat/completions. Resetting last_request_time.
+2026-06-23 03:50:51,636 - agent.main - INFO - Workflow Classifier: Mode=telegram
+2026-06-23 03:50:51,667 - agent.main - INFO - Token Budget Controller: Starting adaptive allocation. Remaining budget: 2654 tokens.
+2026-06-23 03:50:51,670 - agent.main - WARNING - Token Budget Controller: Dropped workspace tree map entirely due to budget depletion.
+2026-06-23 03:50:51,683 - agent.main - INFO - Dynamic Temperature: Overridden to 0.0 (Strict Mode for Command)
+2026-06-23 03:50:51,783 - agent.main - INFO - Worker: Generating embedding for message ID 234...
+2026-06-23 03:51:34,053 - agent.main - WARNING - LATENCY_WARNING: Request to /v1/chat/completions took 42467 ms (exceeds threshold 2000 ms)
+2026-06-23 03:51:34,089 - agent.main - INFO - Incoming request to /v1/chat/completions. Resetting last_request_time.
+2026-06-23 03:51:34,273 - agent.main - INFO - Workflow Classifier: Mode=telegram
+2026-06-23 03:51:34,343 - agent.main - INFO - Token Budget Controller: Starting adaptive allocation. Remaining budget: 2619 tokens.
+2026-06-23 03:51:34,355 - agent.main - WARNING - Token Budget Controller: Dropped workspace tree map entirely due to budget depletion.
+2026-06-23 03:51:34,359 - agent.main - INFO - Dynamic Temperature: Overridden to 0.0 (Strict Mode for Command)
+2026-06-23 03:51:35,965 - agent.main - INFO - Worker: Successfully updated embedding for message ID 234
+2026-06-23 03:51:36,970 - agent.main - INFO - Worker: Generating embedding for message ID 235...
+2026-06-23 03:51:36,996 - agent.main - INFO - Worker: Successfully updated embedding for message ID 235
+2026-06-23 03:51:38,002 - agent.main - INFO - Worker: Generating embedding for message ID 236...
+2026-06-23 03:51:38,061 - agent.main - INFO - Worker: Successfully updated embedding for message ID 236
+2026-06-23 03:51:39,065 - agent.main - INFO - Worker: Generating embedding for message ID 237...
+2026-06-23 03:51:39,095 - agent.main - INFO - Worker: Successfully updated embedding for message ID 237
+2026-06-23 03:54:08,257 - agent.main - INFO - Logging initialized. Writing shared logs to /app_host/fastapi.log
+2026-06-23 03:54:08,261 - agent.main - INFO - Starting background sequential embedding worker...
+2026-06-23 03:54:08,262 - agent.main - INFO - Starting background self-learning worker...
+2026-06-23 03:54:08,546 - agent.main - INFO - Waiting for database connection...
+2026-06-23 03:54:08,643 - agent.db - INFO - Database 'agent_db' checked/created successfully on XAMPP MySQL.
+2026-06-23 03:54:08,657 - agent.db - INFO - Database connection attempt 1/15...
+2026-06-23 03:54:08,777 - agent.db - INFO - Database connection established successfully.
+2026-06-23 03:54:08,785 - agent.main - INFO - Initializing Database tables...
+2026-06-23 03:54:09,025 - agent.main - INFO - Extracting database schema for RAG...
+2026-06-23 03:54:09,111 - agent.main - INFO - Database schema unchanged in RAG. Skipping embedding update.
+2026-06-23 03:54:09,139 - agent.main - WARNING - AgentAI is running with the default development API key. Change AGENT_API_KEY before broader use.
+2026-06-23 03:54:09,156 - agent.main - INFO - API Key written to workspace directory at /app_host/api_key.txt
+2026-06-23 03:54:09,192 - agent.core - INFO - Model 'qwen2.5-coder:1.5b' is already pulled.
+2026-06-23 03:54:09,195 - agent.core - INFO - Model 'nomic-embed-text' is already pulled.
+2026-06-23 03:54:09,215 - agent.main - INFO - Analyzing workspace languages in directory: /app_host
+2026-06-23 03:54:09,245 - agent.main - INFO - Workspace language profile complete: {'md': 3, 'db': 2, 'python': 30, 'txt': 3, 'json': 1, 'yaml': 1, 'log': 2, 'powershell': 1, 'csproj': 1, 'csharp': 1}
+2026-06-23 03:54:09,252 - agent.main - INFO - Starting .NET Core bridge from /app/bridge_publish/dotnet_bridge...
+2026-06-23 03:54:11,256 - agent.main - INFO - .NET Core bridge started successfully on port 5000.
+2026-06-23 03:55:52,708 - agent.main - INFO - Incoming request to /v1/chat/completions. Resetting last_request_time.
+2026-06-23 03:55:53,267 - agent.main - INFO - Workflow Classifier: Mode=telegram
+2026-06-23 03:55:53,822 - agent.main - INFO - Token Budget Controller: Starting adaptive allocation. Remaining budget: 2669 tokens.
+2026-06-23 03:55:53,829 - agent.main - WARNING - Token Budget Controller: Dropped workspace tree map entirely due to budget depletion.
+2026-06-23 03:55:53,831 - agent.main - INFO - Dynamic Temperature: Overridden to 0.15 (Balanced Mode for Statement)
+2026-06-23 03:57:46,774 - agent.main - WARNING - LATENCY_WARNING: Request to /v1/chat/completions took 113648 ms (exceeds threshold 2000 ms)
+2026-06-23 03:57:47,672 - agent.main - INFO - Incoming request to /v1/chat/completions. Resetting last_request_time.
+2026-06-23 03:57:47,795 - agent.main - INFO - Workflow Classifier: Mode=telegram
+2026-06-23 03:57:47,939 - agent.main - INFO - Token Budget Controller: Starting adaptive allocation. Remaining budget: 2533 tokens.
+2026-06-23 03:57:47,941 - agent.main - WARNING - Token Budget Controller: Dropped workspace tree map entirely due to budget depletion.
+2026-06-23 03:57:47,951 - agent.main - INFO - Dynamic Temperature: Overridden to 0.0 (Strict Mode for Command)
+2026-06-23 03:58:49,887 - agent.main - WARNING - LATENCY_WARNING: Request to /v1/chat/completions took 62197 ms (exceeds threshold 2000 ms)
+2026-06-23 03:58:49,916 - agent.main - INFO - Incoming request to /v1/chat/completions. Resetting last_request_time.
+2026-06-23 03:58:50,260 - agent.main - INFO - Workflow Classifier: Mode=telegram
+2026-06-23 03:58:50,339 - agent.main - INFO - Token Budget Controller: Starting adaptive allocation. Remaining budget: 2498 tokens.
+2026-06-23 03:58:50,345 - agent.main - WARNING - Token Budget Controller: Dropped workspace tree map entirely due to budget depletion.
+2026-06-23 03:58:50,461 - agent.main - INFO - Dynamic Temperature: Overridden to 0.0 (Strict Mode for Command)
+2026-06-23 03:59:38,494 - agent.main - WARNING - LATENCY_WARNING: Request to /v1/chat/completions took 48479 ms (exceeds threshold 2000 ms)
+2026-06-23 04:00:09,225 - agent.main - INFO - Incoming request to /v1/chat/completions. Resetting last_request_time.
+2026-06-23 04:00:09,370 - agent.main - INFO - Workflow Classifier: Mode=telegram
+2026-06-23 04:00:09,406 - agent.main - INFO - Token Budget Controller: Starting adaptive allocation. Remaining budget: 2503 tokens.
+2026-06-23 04:00:09,407 - agent.main - WARNING - Token Budget Controller: Dropped workspace tree map entirely due to budget depletion.
+2026-06-23 04:00:09,422 - agent.main - INFO - Dynamic Temperature: Overridden to 0.6 (Creative Mode for Casual/Greeting)
+2026-06-23 04:02:02,688 - agent.main - WARNING - LATENCY_WARNING: Request to /v1/chat/completions took 113421 ms (exceeds threshold 2000 ms)
+2026-06-23 04:02:03,500 - agent.main - INFO - Incoming request to /v1/chat/completions. Resetting last_request_time.
+2026-06-23 04:02:03,550 - agent.main - INFO - Workflow Classifier: Mode=telegram
+2026-06-23 04:02:03,579 - agent.main - INFO - Token Budget Controller: Starting adaptive allocation. Remaining budget: 2371 tokens.
+2026-06-23 04:02:03,580 - agent.main - WARNING - Token Budget Controller: Dropped workspace tree map entirely due to budget depletion.
+2026-06-23 04:02:03,582 - agent.main - INFO - Dynamic Temperature: Overridden to 0.0 (Strict Mode for Command)
+2026-06-23 04:03:47,968 - agent.main - WARNING - LATENCY_WARNING: Request to /v1/chat/completions took 104453 ms (exceeds threshold 2000 ms)
+2026-06-23 04:03:48,050 - agent.main - INFO - Incoming request to /v1/chat/completions. Resetting last_request_time.
+2026-06-23 04:03:48,354 - agent.main - INFO - Workflow Classifier: Mode=telegram
+2026-06-23 04:03:48,655 - agent.main - INFO - Token Budget Controller: Starting adaptive allocation. Remaining budget: 2336 tokens.
+2026-06-23 04:03:48,983 - agent.main - WARNING - Token Budget Controller: Dropped workspace tree map entirely due to budget depletion.
+2026-06-23 04:03:49,107 - agent.main - INFO - Dynamic Temperature: Overridden to 0.0 (Strict Mode for Command)
+2026-06-23 04:04:55,495 - agent.main - WARNING - LATENCY_WARNING: Request to /v1/chat/completions took 67419 ms (exceeds threshold 2000 ms)
+2026-06-23 04:10:12,155 - agent.main - INFO - Incoming request to /v1/chat/completions. Resetting last_request_time.
+2026-06-23 04:10:12,184 - agent.main - INFO - RAG Heartbeat: Interruption detected! Setting system_status to USER_PRIORITY and waiting for VRAM cleanup...
+2026-06-23 04:10:12,624 - agent.main - INFO - Workflow Classifier: Mode=telegram
+2026-06-23 04:10:12,679 - agent.main - INFO - Token Budget Controller: Starting adaptive allocation. Remaining budget: 2512 tokens.
+2026-06-23 04:10:12,688 - agent.main - WARNING - Token Budget Controller: Dropped workspace tree map entirely due to budget depletion.
+2026-06-23 04:10:12,691 - agent.main - INFO - Dynamic Temperature: Overridden to 0.6 (Creative Mode for Casual/Greeting)
+2026-06-23 04:12:03,255 - agent.main - WARNING - LATENCY_WARNING: Request to /v1/chat/completions took 111071 ms (exceeds threshold 2000 ms)
+2026-06-23 04:17:35,103 - agent.main - INFO - Incoming request to /v1/chat/completions. Resetting last_request_time.
+2026-06-23 04:17:35,127 - agent.main - INFO - RAG Heartbeat: Interruption detected! Setting system_status to USER_PRIORITY and waiting for VRAM cleanup...
+2026-06-23 04:17:35,753 - agent.main - INFO - Workflow Classifier: Mode=telegram
+2026-06-23 04:17:35,784 - agent.main - INFO - Token Budget Controller: Starting adaptive allocation. Remaining budget: 3317 tokens.
+2026-06-23 04:17:35,787 - agent.main - WARNING - Token Budget Controller: Dropped workspace tree map entirely due to budget depletion.
+2026-06-23 04:17:35,794 - agent.main - INFO - Dynamic Temperature: Overridden to 0.1 (Explanation Mode for Question)
+2026-06-23 04:18:59,992 - agent.main - WARNING - LATENCY_WARNING: Request to /v1/chat/completions took 84865 ms (exceeds threshold 2000 ms)
+2026-06-23 04:27:58,723 - agent.main - INFO - Logging initialized. Writing shared logs to /app_host/fastapi.log
+2026-06-23 04:27:58,725 - agent.main - INFO - Starting background sequential embedding worker...
+2026-06-23 04:27:58,726 - agent.main - INFO - Starting background self-learning worker...
+2026-06-23 04:27:58,893 - agent.main - INFO - Waiting for database connection...
+2026-06-23 04:27:58,948 - agent.db - INFO - Database 'agent_db' checked/created successfully on XAMPP MySQL.
+2026-06-23 04:27:58,957 - agent.db - INFO - Database connection attempt 1/15...
+2026-06-23 04:27:59,022 - agent.db - INFO - Database connection established successfully.
+2026-06-23 04:27:59,023 - agent.main - INFO - Initializing Database tables...
+2026-06-23 04:27:59,238 - agent.main - INFO - Extracting database schema for RAG...
+2026-06-23 04:27:59,356 - agent.main - INFO - Updated existing database schema in RAG.
+2026-06-23 04:27:59,375 - agent.main - WARNING - AgentAI is running with the default development API key. Change AGENT_API_KEY before broader use.
+2026-06-23 04:27:59,384 - agent.main - INFO - API Key written to workspace directory at /app_host/api_key.txt
+2026-06-23 04:27:59,409 - agent.core - INFO - Model 'qwen2.5-coder:1.5b' is already pulled.
+2026-06-23 04:27:59,410 - agent.core - INFO - Model 'nomic-embed-text' is already pulled.
+2026-06-23 04:27:59,412 - agent.main - INFO - Analyzing workspace languages in directory: /app_host
+2026-06-23 04:27:59,430 - agent.main - INFO - Workspace language profile complete: {'md': 3, 'db': 2, 'python': 30, 'txt': 3, 'json': 1, 'yaml': 1, 'log': 2, 'powershell': 1, 'csproj': 1, 'csharp': 1}
+2026-06-23 04:27:59,438 - agent.main - INFO - Starting .NET Core bridge from /app/bridge_publish/dotnet_bridge...
+2026-06-23 04:28:00,357 - agent.main - INFO - Worker: Generating embedding for knowledge base ID 114...
+2026-06-23 04:28:01,440 - agent.main - INFO - .NET Core bridge started successfully on port 5000.
+2026-06-23 04:28:35,359 - agent.main - INFO - Worker: Successfully updated embedding for knowledge base ID 114
