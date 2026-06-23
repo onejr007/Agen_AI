@@ -3,18 +3,20 @@ import os
 import json
 
 os.environ["OLLAMA_HOST"] = "http://localhost:11434"
+os.environ["OLLAMA_BASE_URL"] = "http://localhost:11434"
 os.environ["DATABASE_URL"] = "sqlite:///./test_cache.db"
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from app.agent import get_embedding
-from app.database import SessionLocal, init_db_with_retry
+from app.database import SessionLocal, init_db_with_retry, Base, engine
 from app.models import Message
 from app.main import chat_completions
 
 print("\n--- Testing Semantic Query Caching ---")
 
 init_db_with_retry()
+Base.metadata.create_all(bind=engine)
 db = SessionLocal()
 
 # Get embedding for a specific question

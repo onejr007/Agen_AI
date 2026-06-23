@@ -3,7 +3,7 @@ import os
 
 import requests
 import app.agent as agent_module
-from app.agent import supervise_terminal_command, lint_code_style, call_ollama_chat_stream
+from app.agent import supervise_terminal_command, lint_code_style, call_ollama_chat_stream, validate_code_syntax
 from app.main import preprocess_tool_call
 
 def test_terminal_supervisor():
@@ -147,6 +147,8 @@ def test_dynamic_multilang_support():
             return self
         def all(self):
             return self.guidelines
+        def first(self):
+            return self.guidelines[0] if self.guidelines else None
 
     class MockDB:
         def __init__(self):

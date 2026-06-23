@@ -16,6 +16,7 @@ def _parse_int_env(name: str, default: str) -> int:
 
 class Settings(BaseSettings):
     DATABASE_URL: str = os.getenv("DATABASE_URL", "mysql+pymysql://agent_user:agent_password_123@db/agent_db")
+    REDIS_URL: str = os.getenv("REDIS_URL", "redis://localhost:6379/0")
     OLLAMA_BASE_URL: str = os.getenv("OLLAMA_BASE_URL", "http://ollama:11434")
     OLLAMA_MODEL: str = os.getenv("OLLAMA_MODEL", "qwen2.5-coder:1.5b")
     OLLAMA_EMBED_MODEL: str = os.getenv("OLLAMA_EMBED_MODEL", "nomic-embed-text")

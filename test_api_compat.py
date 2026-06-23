@@ -240,6 +240,143 @@ def test_execution_approval_gate_helpers():
     print("Execution Approval Gate Helpers: PASS")
 
 
+def test_token_counting():
+    print("\n--- Testing Token Counting Helpers ---")
+    
+    # 1. Test count_tokens
+    t1 = main.count_tokens("Hello, world!")
+    print(f"Token count for 'Hello, world!': {t1}")
+    assert t1 > 0
+    
+    t2 = main.count_tokens("")
+    assert t2 == 0
+    
+    # 2. Test count_messages_tokens
+    messages = [
+        {"role": "system", "content": "You are a helpful assistant."},
+        {"role": "user", "content": "Hello!"}
+    ]
+    t3 = main.count_messages_tokens(messages)
+    print(f"Token count for message history: {t3}")
+    assert t3 > 0
+    
+    print("Token Counting Helpers: PASS")
+
+
+
+def test_sql_formatting_and_validation():
+    print("\n--- Testing SQL Formatting and Validation ---")
+    
+    # 1. Formatting
+    raw_markdown = "Here is a query:\n```sql\nselect * from users where id = '1'\n```"
+    formatted = main.format_sql_blocks(raw_markdown)
+    print(f"Formatted markdown: {repr(formatted)}")
+    assert "SELECT" in formatted
+    assert "FROM" in formatted
+    assert "WHERE" in formatted
+    
+    # 2. Valid Syntax
+    err1 = main.validate_code_syntax("SELECT * FROM users WHERE id = 1;", "sql")
+    print(f"Valid SQL syntax check result: {repr(err1)}")
+    assert err1 == ""
+    
+    # 3. Invalid Syntax (unbalanced quotes)
+    err2 = main.validate_code_syntax("SELECT * FROM 'table_name;", "sql")
+    print(f"Unbalanced quote check result: {repr(err2)}")
+    assert "SQL Syntax Error" in err2 or "Syntax Warning" in err2
+    
+    # 4. Invalid Syntax (unclosed parenthesis)
+    err3 = main.validate_code_syntax("SELECT * FROM table WHERE (id = 1", "sql")
+    print(f"Unclosed parenthesis check result: {repr(err3)}")
+    assert "SQL Syntax Error" in err3 or "Syntax Warning" in err3
+    
+    print("SQL Formatting and Validation: PASS")
+
+def test_jsonschema_validation_and_repair():
+    print("\n--- Testing JSONSchema Validation and Repair ---")
+    
+    schema = {
+        "type": "object",
+        "properties": {
+            "path": {"type": "string"},
+            "lines": {"type": "integer"},
+            "overwrite": {"type": "boolean", "default": False}
+        },
+        "required": ["path", "lines"]
+    }
+    
+    # 1. String to integer/boolean conversion
+    args = {"path": "test.txt", "lines": "123", "overwrite": "true"}
+    repaired = main.validate_and_repair_arguments(args, schema)
+    print(f"Repaired arguments: {repaired}")
+    assert repaired["lines"] == 123
+    assert repaired["overwrite"] is True
+    
+    # 2. Missing required field default injection
+    args2 = {"path": "test.txt"}
+    repaired2 = main.validate_and_repair_arguments(args2, schema)
+    print(f"Repaired missing field: {repaired2}")
+    assert "lines" in repaired2
+    assert repaired2["lines"] == 0
+    
+    print("JSONSchema Validation and Repair: PASS")
+
+def test_native_tool_call_preprocessing_and_protection():
+    print("\n--- Testing Native Tool Call Preprocessing and Protection ---")
+    
+    client_tools = [
+        {
+            "type": "function",
+            "function": {
+                "name": "execute_command",
+                "description": "Run shell command",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "command": {"type": "string"}
+                    },
+                    "required": ["command"]
+                }
+            }
+        }
+    ]
+    
+    # 1. Safe command
+    native_calls = [
+        {
+            "type": "function",
+            "function": {
+                "name": "execute_command",
+                "arguments": {"command": "git status"}
+            }
+        }
+    ]
+    preprocessed = main.preprocess_native_tool_calls(native_calls, client_tools=client_tools)
+    print(f"Safe native call preprocessed: {preprocessed}")
+    assert len(preprocessed) == 1
+    assert preprocessed[0]["function"]["name"] == "execute_command"
+    assert preprocessed[0]["function"]["arguments"]["command"] == "git status"
+    
+    # 2. Hazardous command
+    hazardous_calls = [
+        {
+            "type": "function",
+            "function": {
+                "name": "execute_command",
+                "arguments": {"command": "rm -rf /"}
+            }
+        }
+    ]
+    preprocessed_haz = main.preprocess_native_tool_calls(hazardous_calls, client_tools=client_tools)
+    print(f"Hazardous native call preprocessed: {preprocessed_haz}")
+    assert len(preprocessed_haz) == 1
+    command_run = preprocessed_haz[0]["function"]["arguments"]["command"]
+    assert "echo" in command_run
+    assert "Blocked" in command_run
+    
+    print("Native Tool Call Preprocessing and Protection: PASS")
+
+
 if __name__ == "__main__":
     test_static_response_language()
     test_openai_models_endpoints()
@@ -249,4 +386,8 @@ if __name__ == "__main__":
     test_chat_request_validation()
     test_embedding_input_validation()
     test_execution_approval_gate_helpers()
+    test_token_counting()
+    test_sql_formatting_and_validation()
+    test_jsonschema_validation_and_repair()
+    test_native_tool_call_preprocessing_and_protection()
     print("\nAPI compatibility tests PASSED!")

@@ -62,3 +62,12 @@ class LanguageGuideline(Base):
     instructions = Column(Text, nullable=False)
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
+
+class LanguageDocumentation(Base):
+    __tablename__ = "language_documentations"
+
+    id = Column(Integer, primary_key=True, index=True)
+    language_name = Column(String(255), unique=True, index=True, nullable=False)
+    documentation_content = Column(Text, nullable=False)
+    updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)

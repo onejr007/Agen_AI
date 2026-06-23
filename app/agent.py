@@ -10,13 +10,62 @@ from app.models import SearchCache, Message, KnowledgeBase
 from app.database import cosine_similarity, parse_json_embedding
 import time
 import threading
+import tiktoken
+import jinja2
+import sqlparse
 
 ollama_lock = threading.Lock()
 
 logger = logging.getLogger("agent.core")
 
-# Custom System Prompt tailored for professional, autonomous coding and Roblox Luau
-DEFAULT_SYSTEM_PROMPT = """You are AgentAI, an elite, autonomous software engineering agent. You are designed to act as the primary programming backend for plugins like Roo Code and VS Code integrations. You specialize in Web Development, Python, general programming, and especially Lua and Roblox Luau.
+def count_tokens(text: str, model_or_encoding: str = "cl100k_base") -> int:
+    """
+    Counts the number of tokens in a text string using tiktoken.
+    Falls back to character-based estimation (chars / 4.0) if tiktoken fails.
+    """
+    if not text:
+        return 0
+    try:
+        # Check if model_or_encoding is a known tiktoken encoding
+        if model_or_encoding in ("cl100k_base", "p50k_base", "r50k_base", "o200k_base"):
+            encoding = tiktoken.get_encoding(model_or_encoding)
+        else:
+            try:
+                encoding = tiktoken.encoding_for_model(model_or_encoding)
+            except Exception:
+                encoding = tiktoken.get_encoding("cl100k_base")
+        return len(encoding.encode(text, disallowed_special=()))
+    except Exception as e:
+        logger.warning(f"tiktoken failed to count tokens: {str(e)}. Falling back to character-based estimation.")
+        return max(1, int(len(text) / 4))
+
+def count_messages_tokens(messages: list, model_or_encoding: str = "cl100k_base") -> int:
+    """
+    Counts tokens for a list of message objects in standard OpenAI format.
+    """
+    num_tokens = 0
+    for message in messages:
+        num_tokens += 4  # overhead per message
+        for key, value in message.items():
+            if isinstance(value, str):
+                num_tokens += count_tokens(value, model_or_encoding)
+            elif isinstance(value, list):  # tool_calls
+                for tc in value:
+                    if isinstance(tc, dict):
+                        func = tc.get("function", {})
+                        num_tokens += count_tokens(func.get("name", ""), model_or_encoding)
+                        num_tokens += count_tokens(func.get("arguments", ""), model_or_encoding)
+    num_tokens += 2  # overhead for assistant response priming
+    return num_tokens
+
+
+# Custom System Prompt templates tailored for professional, autonomous coding and Roblox Luau
+DEFAULT_SYSTEM_PROMPT_TEMPLATE = """You are AgentAI, an elite, autonomous software engineering agent. You are designed to act as the primary programming backend for plugins like Roo Code and VS Code integrations. You specialize in Web Development, Python, general programming, and especially Lua and Roblox Luau.
+
+{% if language_profile %}
+[WORKSPACE LANGUAGE PROFILE]
+You are currently working in a project with a language profile of: {{ language_profile }}. Adjust your code format, conventions, and style accordingly.
+{% endif %}
 
 [CRITICAL: PROBLEM SOLVING & CHAIN-OF-THOUGHT]
 Before making ANY decision, writing ANY code, or calling ANY tool, you MUST engage in deep reasoning using a `<think>...</think>` block. Inside the think block, you should:
@@ -80,9 +129,14 @@ Verification:
 1. ...
 """
 
-CASUAL_SYSTEM_PROMPT = """You are AgentAI, a friendly and elite software engineering assistant.
+CASUAL_SYSTEM_PROMPT_TEMPLATE = """You are AgentAI, a friendly and elite software engineering assistant.
 The user is currently testing the connection, saying hello, or having a casual chat.
 Respond directly, concisely, and warmly.
+
+{% if language_profile %}
+[WORKSPACE INFO]
+Active project language profile: {{ language_profile }}.
+{% endif %}
 
 CRITICAL OVERRIDE: Ignore the five-phase methodology (Research, Plan, Approval, Execute, Verify) listed in `.clinerules` or other system prompts. They do NOT apply to casual messages, Greetings, or Pings.
 - Confirm you are online, working perfectly, and ready.
@@ -90,6 +144,19 @@ CRITICAL OVERRIDE: Ignore the five-phase methodology (Research, Plan, Approval, 
 - Ask how you can help them with their coding or development tasks today.
 Keep your response short, pleasant, and to the point.
 """
+
+def get_rendered_system_prompt(workflow_mode: str = "engineering", language_profile: str = None) -> str:
+    """Renders the chosen system prompt template using Jinja2."""
+    if workflow_mode == "engineering":
+        template = jinja2.Template(DEFAULT_SYSTEM_PROMPT_TEMPLATE)
+    else:
+        template = jinja2.Template(CASUAL_SYSTEM_PROMPT_TEMPLATE)
+    return template.render(language_profile=language_profile)
+
+# Default rendered strings for compatibility
+DEFAULT_SYSTEM_PROMPT = jinja2.Template(DEFAULT_SYSTEM_PROMPT_TEMPLATE).render(language_profile=None)
+CASUAL_SYSTEM_PROMPT = jinja2.Template(CASUAL_SYSTEM_PROMPT_TEMPLATE).render(language_profile=None)
+
 
 def pull_ollama_model():
     """Triggers Ollama to pull the LLM and Embedding models if not already present."""
@@ -196,7 +263,7 @@ def set_cached_search(db: Session, query: str, results_json: str):
         db.rollback()
         logger.error(f"Failed to cache search: {str(e)}")
 
-def process_search_and_context(db: Session, user_message: str) -> str:
+def process_search_and_context(db: Session, user_message: str, max_chars: int = None) -> str:
     """Detect if search is needed, execute it, cache it, and return markdown context."""
     if not check_should_search(user_message):
         return ""
@@ -212,7 +279,7 @@ def process_search_and_context(db: Session, user_message: str) -> str:
         if results:
             set_cached_search(db, user_message, json.dumps(results))
     
-    return format_search_results(results)
+    return format_search_results(results, max_chars=max_chars)
 
 def get_embedding(text: str, model: str = None) -> list:
     """Calls Ollama's embeddings API to get a vector representation of the text."""
@@ -228,8 +295,8 @@ def get_embedding(text: str, model: str = None) -> list:
     try:
         # Use a lock to ensure Ollama is never called concurrently
         with ollama_lock:
-            # Use a slightly longer timeout of 10s now that we have a lock, since it won't be contested
-            response = requests.post(url, json=payload, timeout=10)
+            # Use a longer timeout of 45s to avoid read timeouts when Ollama is under load
+            response = requests.post(url, json=payload, timeout=45)
         if response.status_code == 200:
             return response.json().get("embedding", [])
         else:
@@ -347,7 +414,7 @@ def check_semantic_cache(db: Session, user_query: str, chat_id: str = None) -> s
             
     return None
 
-def retrieve_semantic_memory(db: Session, query: str, limit: int = 2) -> str:
+def retrieve_semantic_memory(db: Session, query: str, limit: int = 2, max_tokens: int = None) -> str:
     """
     Finds semantically similar or keyword-matching historical chat messages or knowledge entries.
     Uses Hybrid Search (BM25-like keyword score + Vector Cosine Similarity).
@@ -519,7 +586,6 @@ def retrieve_semantic_memory(db: Session, query: str, limit: int = 2) -> str:
     logger.info(f"Retrieved {len(top_matches)} hybrid memory matches.")
     
     formatted = ["### Long-term Memory & Knowledge Base (Konteks Terkait Dari Memori)\n"]
-    total_chars = 0
     for i, m in enumerate(top_matches, 1):
         match_type = ""
         if m["similarity"] > 0 and m["keyword_score"] > 0:
@@ -530,14 +596,36 @@ def retrieve_semantic_memory(db: Session, query: str, limit: int = 2) -> str:
             match_type = "Keyword Fallback Match"
 
         snippet = truncate_context_text(m["content"], settings.RETRIEVAL_MAX_CONTENT_CHARS)
-        projected_total = total_chars + len(snippet)
-        if projected_total > settings.RETRIEVAL_MAX_TOTAL_CHARS and i > 1:
-            break
-
-        formatted.append(f"[{i}] [{m['type']}] {m['title']} ({match_type} - Score: {m['score']:.2f})")
-        formatted.append(f"    Content: {snippet}")
-        formatted.append("-" * 40)
-        total_chars = projected_total
+        
+        # Estimate token count
+        temp_list = list(formatted)
+        temp_list.append(f"[{i}] [{m['type']}] {m['title']} ({match_type} - Score: {m['score']:.2f})")
+        temp_list.append(f"    Content: {snippet}")
+        temp_list.append("-" * 40)
+        temp_str = "\n".join(temp_list)
+        
+        if max_tokens is not None and count_tokens(temp_str) > max_tokens:
+            if i == 1:
+                # If even the first entry doesn't fit, trim the snippet to fit
+                step_size = 50
+                while len(snippet) > 100:
+                    snippet = snippet[:-step_size] + "..."
+                    temp_list[-2] = f"    Content: {snippet}"
+                    temp_str = "\n".join(temp_list)
+                    if count_tokens(temp_str) <= max_tokens:
+                        formatted = temp_list
+                        break
+                break
+            else:
+                break
+        
+        # Check standard character count limit if max_tokens is not active
+        if max_tokens is None:
+            projected_total = sum(len(x) for x in formatted) + len(snippet)
+            if projected_total > settings.RETRIEVAL_MAX_TOTAL_CHARS and i > 1:
+                break
+                
+        formatted = temp_list
         
     return "\n".join(formatted)
 
@@ -599,7 +687,7 @@ def call_ollama_chat_stream(messages: list, tools: list = None, model: str = Non
         }
 
 def repair_json_string(json_str: str) -> str:
-    """Attempts to repair common JSON syntax errors from small LLMs."""
+    """Attempts to repair common JSON syntax errors from small LLMs using json_repair and fallbacks."""
     import re
     json_str = json_str.strip()
     if not json_str:
@@ -614,6 +702,15 @@ def repair_json_string(json_str: str) -> str:
     
     json_str = json_str.strip()
 
+    try:
+        import json_repair
+        repaired = json_repair.repair_json(json_str)
+        if repaired:
+            return repaired
+    except Exception:
+        pass
+
+    # Fallback to custom regex-based repair logic
     # Handle unescaped newlines inside string values (common with small LLMs)
     # We find all string literals "..." and escape any raw \n characters inside them
     def escape_newlines_in_strings(match):
@@ -772,9 +869,129 @@ def validate_code_syntax(code: str, lang: str) -> str:
         except json.JSONDecodeError as e:
             return f"JSON Decode Error: {e.msg} at char position {e.pos}"
             
-    # Generic bracket balancing fallback for all other block-based languages (e.g. luau, php, typescript, java, javascript, go, rust, c++, c#)
+    elif lang in ("sql", "mysql"):
+        if not code.strip():
+            return ""
+        try:
+            parsed = sqlparse.parse(code)
+            if not parsed:
+                return "SQL Syntax Error: Empty statement or failed to parse"
+            
+            # Simple check for unclosed quotes
+            for q in ("'", '"', '`'):
+                if code.count(q) % 2 != 0:
+                    return f"SQL Syntax Error: Unbalanced quotes/backticks ({q})"
+            
+            # Check matching parentheses
+            parentheses = []
+            for i, char in enumerate(code, 1):
+                if char == '(':
+                    parentheses.append(i)
+                elif char == ')':
+                    if not parentheses:
+                        return f"SQL Syntax Error: Unexpected closing parenthesis ')' at position {i}"
+                    parentheses.pop()
+            if parentheses:
+                return f"SQL Syntax Error: Unclosed parenthesis '(' at position {parentheses[-1]}"
+                
+            return ""
+        except Exception as e:
+            return f"SQL Syntax Error: {str(e)}"
+
+    elif lang in ("lua", "luau"):
+        # 1. Balanced comments check
+        if code.count("--[[") != code.count("]]"):
+            return "Luau Syntax Error: Unbalanced multi-line comment markers '--[[' and ']]'"
+            
+        # 2. Block keywords matching check (then, do, function, repeat -> end, until)
+        import re
+        tokens = re.findall(r'\b(then|do|function|repeat|end|until)\b', code)
+        stack = []
+        for token in tokens:
+            if token in ("then", "do", "function", "repeat"):
+                stack.append(token)
+            elif token == "end":
+                if not stack:
+                    return "Luau Syntax Error: Unexpected 'end' without matching block initiator"
+                opened = stack.pop()
+                if opened not in ("then", "do", "function"):
+                    return "Luau Syntax Error: Mismatched 'end' (expected matching 'until' for 'repeat')"
+            elif token == "until":
+                if not stack:
+                    return "Luau Syntax Error: Unexpected 'until' without matching 'repeat'"
+                opened = stack.pop()
+                if opened != "repeat":
+                    return f"Luau Syntax Error: Mismatched 'until' (expected matching 'end' for '{opened}')"
+        if stack:
+            return f"Luau Syntax Error: Unclosed block initiator '{stack[-1]}'"
+
+        # 3. Detect common operator mistakes
+        for op, correction in [("!=", "~="), ("&&", "and"), ("||", "or")]:
+            for line_no, line in enumerate(code.split("\n"), 1):
+                clean_line = line.split("--")[0] # remove comments
+                if op in clean_line:
+                    return f"Luau Syntax Error at line {line_no}: Invalid operator '{op}'. Use '{correction}' instead."
+
+        # 4. Perform standard brace/bracket/parentheses check
+        braces_stack = []
+        lines_list = code.split("\n")
+        for i, line in enumerate(lines_list, 1):
+            for char in line:
+                if char in "{[(":
+                    braces_stack.append((char, i))
+                elif char in "}])":
+                    if not braces_stack:
+                        return f"Syntax Warning: Unexpected closing character '{char}' at line {i}"
+                    opened, open_line = braces_stack.pop()
+                    match_map = {'}': '{', ']': '[', ')': '('}
+                    if match_map[char] != opened:
+                        return f"Syntax Warning: Mismatched closing character '{char}' at line {i} (expected matching '{opened}' from line {open_line})"
+        if braces_stack:
+            opened, open_line = braces_stack[-1]
+            return f"Syntax Warning: Unclosed opening character '{opened}' from line {open_line}"
+
+    elif lang == "html":
+        import re
+        clean_code = re.sub(r'<!--.*?-->', '', code, flags=re.DOTALL)
+        tags = re.findall(r'<(/?)(\w+)(?:\s+[^>]*?)?>', clean_code)
+        
+        self_closing = {
+            "img", "input", "br", "hr", "meta", "link", "col", "embed", "source", "area", "base",
+            "keygen", "param", "track", "wbr"
+        }
+        
+        stack = []
+        for is_close, tag_name in tags:
+            tag_name_lower = tag_name.lower()
+            if tag_name_lower in self_closing:
+                continue
+                
+            if not is_close:
+                stack.append((tag_name_lower, len(stack) + 1))
+            else:
+                if not stack:
+                    return f"HTML Syntax Error: Unexpected closing tag </{tag_name_lower}>"
+                opened, pos = stack.pop()
+                if opened != tag_name_lower:
+                    return f"HTML Syntax Error: Mismatched tag </{tag_name_lower}> (expected matching </{opened}>)"
+        if stack:
+            return f"HTML Syntax Error: Unclosed tag <{stack[-1][0]}>"
+
+    elif lang == "css":
+        braces = []
+        for i, line in enumerate(code.split("\n"), 1):
+            for char in line:
+                if char == "{":
+                    braces.append(i)
+                elif char == "}":
+                    if not braces:
+                        return f"CSS Syntax Error: Unexpected closing brace '}}' at line {i}"
+                    braces.pop()
+        if braces:
+            return f"CSS Syntax Error: Unclosed opening brace '{{' at line {braces[-1]}"
+            
+    # Generic bracket balancing fallback for all other block-based languages
     else:
-        # Quick brace balancing check
         braces = []
         lines = code.split("\n")
         for i, line in enumerate(lines, 1):
@@ -785,7 +1002,6 @@ def validate_code_syntax(code: str, lang: str) -> str:
                     if not braces:
                         return f"Syntax Warning: Unexpected closing character '{char}' at line {i}"
                     opened, open_line = braces.pop()
-                    # Check matching
                     match_map = {'}': '{', ']': '[', ')': '('}
                     if match_map[char] != opened:
                         return f"Syntax Warning: Mismatched closing character '{char}' at line {i} (expected matching '{opened}' from line {open_line})"
@@ -794,6 +1010,35 @@ def validate_code_syntax(code: str, lang: str) -> str:
             return f"Syntax Warning: Unclosed opening character '{opened}' from line {open_line}"
             
     return ""
+
+def format_sql_blocks(text: str) -> str:
+    """
+    Scans markdown text, finds all SQL code blocks (```sql or ```mysql),
+    and formats them using sqlparse.format with reindentation and upper keyword casing.
+    """
+    import re
+    if not text:
+        return text
+        
+    pattern = r'(```(?:sql|mysql)\n)(.*?)(```)'
+    
+    def replacer(match):
+        prefix = match.group(1)
+        sql_content = match.group(2)
+        suffix = match.group(3)
+        try:
+            formatted = sqlparse.format(
+                sql_content,
+                reindent=True,
+                keyword_case='upper',
+                strip_comments=False
+            )
+            return f"{prefix}{formatted.strip()}\n{suffix}"
+        except Exception as e:
+            logger.warning(f"Failed to format SQL block: {str(e)}")
+            return match.group(0)
+            
+    return re.sub(pattern, replacer, text, flags=re.DOTALL)
 
 def apply_unified_diff(original_text: str, diff_text: str) -> str:
     """
@@ -919,6 +1164,38 @@ def lint_code_style(code: str, lang: str) -> str:
             if "var " in line and not line.strip().startswith("//") and not line.strip().startswith("/*"):
                 if any(x in line for x in ("= ", "=json", " =")):
                     warnings.append(f"Line {i} uses 'var'. Use 'const' or 'let' instead.")
+
+    elif lang in ("lua", "luau"):
+        import re
+        deprecated_maps = {
+            r'\bspawn\s*\(': "task.spawn() or task.defer()",
+            r'\bdelay\s*\(': "task.delay()",
+            r'\bwait\s*\(': "task.wait()",
+            r'\bypcall\s*\(': "pcall()",
+            r'\btick\s*\(': "os.time() or DateTime.now()"
+        }
+        for i, line in enumerate(lines, 1):
+            clean_line = line.split("--")[0]
+            for pattern, replacement in deprecated_maps.items():
+                if re.search(pattern, clean_line):
+                    warnings.append(f"Line {i} uses deprecated/discouraged Luau function. Suggest replacing with '{replacement}'.")
+
+    elif lang in ("sql", "mysql"):
+        if "select *" in code.lower():
+            warnings.append("SQL Style Rule: Avoid using 'SELECT *'. Specify required columns explicitly.")
+        import re
+        sql_keywords = ["select", "insert", "update", "delete", "from", "where", "join", "left join", "inner join"]
+        for i, line in enumerate(lines, 1):
+            clean_line = line.split("--")[0]
+            for kw in sql_keywords:
+                matches = re.findall(rf'\b{kw}\b', clean_line)
+                if matches:
+                    warnings.append(f"Line {i}: SQL keyword '{kw}' should be written in UPPERCASE.")
+
+    elif lang == "html":
+        for i, line in enumerate(lines, 1):
+            if 'style=' in line.lower() and not line.strip().startswith("<!--"):
+                warnings.append(f"Line {i} contains inline HTML styles ('style=...'). Recommend using external/scoped CSS classes.")
                     
     if warnings:
         return "Style Warning:\n- " + "\n- ".join(warnings)

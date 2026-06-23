@@ -307,6 +307,84 @@ def test_semantic_cache():
     print("Semantic Query Caching: PASS")
 
 
+def test_luau_html_css_validation():
+    print("\n--- Testing Luau, HTML, CSS Syntax & Linter Validation ---")
+    from app.agent import validate_code_syntax, lint_code_style
+    
+    # Luau syntax checks
+    lua_code_ok = "function hello()\n  local x = 1\n  if x == 1 then\n    print(x)\n  end\nend"
+    lua_code_err1 = "function hello()\n  local x = 1\n  if x != 1 then\n    print(x)\n  end\nend" # != instead of ~=
+    lua_code_err2 = "function hello()\n  local x = 1\n  if x == 1 then\n    print(x)\n  -- end missing"
+    
+    assert validate_code_syntax(lua_code_ok, "luau") == ""
+    assert "Invalid operator" in validate_code_syntax(lua_code_err1, "luau")
+    assert "Unclosed block" in validate_code_syntax(lua_code_err2, "luau")
+    
+    # Luau linter check
+    lua_linter_err = "spawn(function() wait(1) end)"
+    assert "deprecated/discouraged" in lint_code_style(lua_linter_err, "luau")
+    
+    # HTML tag checks
+    html_ok = "<div><span>hello</span></div>"
+    html_err = "<div><span>hello</div>" # mismatched or unclosed
+    assert validate_code_syntax(html_ok, "html") == ""
+    assert "HTML Syntax Error" in validate_code_syntax(html_err, "html")
+    
+    # HTML linter check
+    html_lint = "<div style='color:red;'>hello</div>"
+    assert "inline HTML styles" in lint_code_style(html_lint, "html")
+    
+    # CSS checks
+    css_ok = ".container { color: blue; }"
+    css_err = ".container { color: blue;" # unclosed brace
+    assert validate_code_syntax(css_ok, "css") == ""
+    assert "CSS Syntax Error" in validate_code_syntax(css_err, "css")
+    
+    # SQL linter check
+    sql_lint_err1 = "select * from users"
+    sql_lint_err2 = "SELECT * FROM users"
+    assert "SELECT *" in lint_code_style(sql_lint_err1, "sql")
+    assert "keyword 'select' should be written in UPPERCASE" in lint_code_style(sql_lint_err1, "sql")
+    assert "keyword 'select' should be written in UPPERCASE" not in lint_code_style(sql_lint_err2, "sql")
+    
+    print("Luau, HTML, CSS, SQL Validation Tests: PASS")
+
+def test_context_fractional_pruning():
+    print("\n--- Testing Context Fractional Pruning ---")
+    from app.agent import retrieve_semantic_memory
+    import json
+    import datetime
+    
+    mock_db = DummyDB()
+    now = datetime.datetime.utcnow()
+    mock_db.knowledge_entries = [
+        DummyRetrievalEntry(title="Guide 1", content="This is matching guide number one.", embedding='[1, 0]', created_at=now),
+        DummyRetrievalEntry(title="Guide 2", content="This is matching guide number two which is longer.", embedding='[1, 0]', created_at=now - datetime.timedelta(days=5)),
+        DummyRetrievalEntry(title="Guide 3", content="This is matching guide number three.", embedding='[1, 0]', created_at=now - datetime.timedelta(days=10)),
+    ]
+    
+    # Mock embedding generator
+    import app.agent as agent_module
+    original_get_embedding = getattr(agent_module, "get_embedding", None)
+    try:
+        agent_module.get_embedding = lambda query, model=None: [1.0, 0.0]
+        
+        # Test without token limit
+        full_context = retrieve_semantic_memory(mock_db, "matching guide", limit=3)
+        print(f"Full context len: {len(full_context)}")
+        
+        # Test with very tight token limit (should prune or drop subsequent entries)
+        pruned_context = retrieve_semantic_memory(mock_db, "matching guide", limit=3, max_tokens=85)
+        print(f"Pruned context:\n{pruned_context}")
+        assert len(pruned_context) < len(full_context)
+        # Verify it still has some guide data
+        assert "Guide 1" in pruned_context
+        assert "Guide 3" not in pruned_context # Guide 3 should have been dropped to fit
+    finally:
+        agent_module.get_embedding = original_get_embedding
+        
+    print("Context Fractional Pruning Tests: PASS")
+
 if __name__ == "__main__":
     test_language_classification()
     test_tool_call_repair()
@@ -316,5 +394,7 @@ if __name__ == "__main__":
     test_embedding_parser_guard()
     test_retrieval_handles_invalid_embeddings()
     test_semantic_cache()
+    test_luau_html_css_validation()
+    test_context_fractional_pruning()
     
     print("\nAll Multilingual, Tool Repair, and Cache tests PASSED!")

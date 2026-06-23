@@ -71,18 +71,31 @@ def get_db():
         db.close()
 
 def cosine_similarity(v1: list, v2: list) -> float:
-    """Calculates cosine similarity between two float vectors in pure Python."""
+    """Calculates cosine similarity between two float vectors using NumPy if available, with a pure Python fallback."""
     if not v1 or not v2 or len(v1) != len(v2):
         return 0.0
     
-    dot_product = sum(a * b for a, b in zip(v1, v2))
-    norm_a = math.sqrt(sum(a * a for a in v1))
-    norm_b = math.sqrt(sum(b * b for b in v2))
-    
-    if norm_a == 0.0 or norm_b == 0.0:
-        return 0.0
+    try:
+        import numpy as np
+        arr1 = np.array(v1, dtype=np.float32)
+        arr2 = np.array(v2, dtype=np.float32)
+        dot = np.dot(arr1, arr2)
+        norm1 = np.linalg.norm(arr1)
+        norm2 = np.linalg.norm(arr2)
+        if norm1 == 0.0 or norm2 == 0.0:
+            return 0.0
+        return float(dot / (norm1 * norm2))
+    except Exception:
+        # Fallback to pure Python in case numpy fails
+        import math
+        dot_product = sum(a * b for a, b in zip(v1, v2))
+        norm_a = math.sqrt(sum(a * a for a in v1))
+        norm_b = math.sqrt(sum(b * b for b in v2))
         
-    return dot_product / (norm_a * norm_b)
+        if norm_a == 0.0 or norm_b == 0.0:
+            return 0.0
+            
+        return dot_product / (norm_a * norm_b)
 
 def parse_json_embedding(raw_embedding) -> list[float]:
     """Safely parses a JSON-encoded embedding vector into a float list."""

@@ -1,8 +1,10 @@
 import sys
 import os
 
+os.environ["DATABASE_URL"] = "sqlite:///./test_cache.db"
+
 from app.agent import validate_code_syntax
-from app.database import SessionLocal
+from app.database import SessionLocal, Base, engine, init_db_with_retry
 from app.models import KnowledgeBase
 
 def test_syntax_validator():
@@ -36,8 +38,21 @@ def test_syntax_validator():
 
 def test_db_schema_extraction():
     print("\n--- Testing DB Schema Extraction ---")
+    init_db_with_retry()
+    Base.metadata.create_all(bind=engine)
     db = SessionLocal()
     try:
+        # Seed dummy if not exists
+        existing = db.query(KnowledgeBase).filter(KnowledgeBase.tags.like("%mysql-schema%")).first()
+        if not existing:
+            dummy = KnowledgeBase(
+                title="Mock Schema",
+                content="Table: users\nColumns: id, name, email",
+                tags="mysql-schema,test"
+            )
+            db.add(dummy)
+            db.commit()
+
         # Query MySQL schema entry in KnowledgeBase
         schema_entry = db.query(KnowledgeBase).filter(KnowledgeBase.tags.like("%mysql-schema%")).first()
         assert schema_entry is not None, "Schema entry not found in RAG database!"
